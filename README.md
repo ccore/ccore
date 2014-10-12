@@ -5,6 +5,9 @@ ccore is a light weight low level library to facilitate cross platform software 
 
 ccore is described in detail in [the ccore wiki.](../../wiki)
 
+###Status###
+[![Build Status](https://travis-ci.org/ccore/ccore.svg?branch=develop)](https://travis-ci.org/ccore/ccore)
+
 ###Features###
 The features of ccore include support for the following:
 - Supports the following Operating Systems (more coming in the future):
