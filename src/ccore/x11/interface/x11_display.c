@@ -32,7 +32,6 @@ static ccReturn ccXFindDisplaysXinerama(Display *display, char *displayName)
 		outputInfo = XRRGetOutputInfo(display, resources, resources->outputs[i]);
 		/* Ignore disconnected devices */
 		if(outputInfo->connection != 0){
-			ccPrintf("X: Ignored disconnected display %d\n", i);
 			continue;
 		}
 
@@ -266,10 +265,8 @@ ccReturn ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
 			return CC_FAIL;
 		}
 
-		ccPrintf("X: Setting display %d to %dx%d\n", DISPLAY_DATA(display)->XScreen, displayData->width, displayData->height);
 		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, ((ccDisplayData_x11*)displayData->data)->XMode, crtcInfo->rotation, &DISPLAY_DATA(display)->XOutput, 1);
 	}else{
-		ccPrintf("X: Reverting display %d\n", DISPLAY_DATA(display)->XScreen);
 		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, DISPLAY_DATA(display)->XOldMode, crtcInfo->rotation, &DISPLAY_DATA(display)->XOutput, 1);
 	}
 
