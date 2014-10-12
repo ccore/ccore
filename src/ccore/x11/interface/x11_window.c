@@ -297,6 +297,7 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	XWINDATA->XCursor = 0;
 	XWINDATA->XEmptyCursorImage = XCreateBitmapFromData(XWINDATA->XDisplay, XWINDATA->XWindow, emptyCursorData, 8, 8);
 	XWINDATA->XClipString = NULL;
+	XWINDATA->XContext = NULL;
 	XWINDATA->XClipStringLength = 0;
 
 	return CC_SUCCESS;
