@@ -92,9 +92,8 @@ void testWindow(int *test)
 	ccWindowFree();
 	err();
 
-	ccWindowCreate((ccRect){0, 0, 100, 100}, "ccore test", CC_WINDOW_FLAG_NORESIZE);
+	ccWindowCreate((ccRect){ 0, 0, 1, 1 }, "ccore test", CC_WINDOW_FLAG_ALWAYSONTOP | CC_WINDOW_FLAG_NORESIZE | CC_WINDOW_FLAG_NORAWINPUT | CC_WINDOW_FLAG_NOBUTTONS);
 	err();
-	ccTimeDelay(2000);
 	ccWindowFree();
 	err();
 	
