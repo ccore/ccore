@@ -72,9 +72,47 @@ void testGamepad(int *test)
 	ccGamepadInitialize();
 	err();
 
-	ccPrintf("\tFound %d gamepad(s)\n", ccGamepadCount());
+	ccPrintf("\tFound %d gamepad(s)\n", ccGamepadGetAmount());
 	err();
 	ccPrintf("Passed\n");
+}
+
+void testEvent(int *test)
+{
+	bool quit;
+
+	ccPrintf("Test %d: Event\n", ++(*test));
+
+	ccDisplayInitialize();
+	err();
+
+	ccWindowCreate((ccRect){100, 100, 100, 100}, "Click to test mouse events", CC_WINDOW_FLAG_NOBUTTONS);
+	err();
+
+	ccWindowSetFullscreen(1, ccDisplayGetDefault());
+	err();
+
+	quit = false;
+	while(!quit){
+		while(ccWindowEventPoll()) {
+			err();
+			switch(ccWindowEventGet().type) {
+				case CC_EVENT_WINDOW_QUIT:
+					quit = true;	
+					break;
+				case CC_EVENT_MOUSE_MOVE:
+					quit = true;
+					err();
+					break;
+			}
+		}
+	}
+
+	ccWindowFree();
+	err();
+
+	ccDisplayFree();
+	err();
 }
 
 void testWindow(int *test)
@@ -86,13 +124,32 @@ void testWindow(int *test)
 
 	ccWindowCreate((ccRect){0, 0, 1, 1}, "ccore test", 0);
 	err();
+	ccWindowFree();
+	err();
 
+	ccWindowCreate((ccRect){0, 0, 1, 1}, "ccore test", CC_WINDOW_FLAG_ALWAYSONTOP | CC_WINDOW_FLAG_NORESIZE | CC_WINDOW_FLAG_NORAWINPUT | CC_WINDOW_FLAG_NOBUTTONS);
+	err();
 	ccWindowFree();
 	err();
 
 	ccWindowCreate((ccRect){0, 0, 100, 100}, "ccore test", 0);
 	err();
-
+	ccWindowSetBlink();
+	err();
+	ccWindowSetCentered();
+	err();
+	ccWindowSetMaximized();
+	err();
+	ccWindowSetWindowed();
+	err();
+	ccWindowSetFullscreen(1, ccDisplayGetDefault());
+	err();
+	ccWindowMouseSetPosition((ccPoint){0, 0});
+	err();
+	ccWindowClipboardSet(ccWindowClipboardGet());
+	err();
+	ccWindowFree();
+	err();
 	ccDisplayFree();
 	err();
 	ccPrintf(" - passed\n");
@@ -200,6 +257,7 @@ int main(int argc, char **argv)
 	testTime(&test);
 	testDisplay(&test);
 	testWindow(&test);
+	testEvent(&test);
 	testGamepad(&test);
 
 	ccFree();

@@ -680,6 +680,11 @@ ccReturn ccWindowClipboardSet(const char *text)
 {
 	ccAssert(_ccWindow);
 
+	if(text == NULL){
+		return CC_FAIL;
+	}
+
+
 	if(XWINDATA->CLIPBOARD != None && XGetSelectionOwner(XWINDATA->XDisplay, XWINDATA->CLIPBOARD) != XWINDATA->XWindow){
 		XSetSelectionOwner(XWINDATA->XDisplay, XWINDATA->CLIPBOARD, XWINDATA->XWindow, CurrentTime);
 	}
