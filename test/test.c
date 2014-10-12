@@ -194,38 +194,6 @@ void testTime(int *test)
 	ccPrintf(" - passed\n");
 }
 
-void test10BytesFile(int *test)
-{
-	char *file;
-
-	ccPrintf("Test %d: File with 10 bytes information", ++(*test));
-
-	file = ccStringConcatenate(2, ccFileDataDirGet(), "10bytesfile.txt");
-	err();
-
-	if(ccFileInfoGet(file).size != 11){
-		reportDiscrepancy("Size of 10bytesfile.txt");
-	}
-	err();
-	ccPrintf(" - passed\n");
-}
-
-void testEmptyFile(int *test)
-{
-	char *file;
-
-	ccPrintf("Test %d: Empty file information", ++(*test));
-
-	file = ccStringConcatenate(2, ccFileDataDirGet(), "emptyfile.txt");
-	err();
-
-	if(ccFileInfoGet(file).size != 0){
-		reportDiscrepancy("Size of empty.txt");
-	}
-	err();
-	ccPrintf(" - passed\n");
-}
-
 void testDefaultDirectories(int *test)
 {
 	ccPrintf("Test %d: Default directories\n", ++(*test));
@@ -246,8 +214,6 @@ int main(int argc, char **argv)
 	
 	test = 0;
 	testDefaultDirectories(&test);
-	testEmptyFile(&test);
-	test10BytesFile(&test);
 	testTime(&test);
 	testDisplay(&test);
 	testWindow(&test);
