@@ -1,4 +1,4 @@
-ccore
+ccore ![License](http://img.shields.io/badge/license-BSD-red.svg?style=flat)
 =====
 
 ccore is a light weight low level library to facilitate cross platform software development in C/C++. ccore is focused on but not exclusively aimed at game development. It provides the user with basic functionality while leaving high level implementations up to the user.
@@ -11,6 +11,7 @@ ccore is described in detail in [the ccore wiki.](../../wiki)
 | Develop | [![Build Status](https://travis-ci.org/ccore/ccore.svg?branch=develop)](https://travis-ci.org/ccore/ccore) |
 
 ###Features###
+
 The features of ccore include support for the following:
 - Supports the following Operating Systems (more coming in the future):
   - GNU/Linux distributions
