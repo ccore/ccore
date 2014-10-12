@@ -228,6 +228,8 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 {
 	Atom DELETE;
 
+	ccAssert(rect.width > 0 && rect.height > 0);
+
 	if(CC_UNLIKELY(_ccWindow != NULL)){
 		ccErrorPush(CC_ERROR_WINDOW_CREATE);
 		return CC_FAIL;
@@ -567,6 +569,7 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 ccReturn ccWindowResizeMove(ccRect rect)
 {
 	ccAssert(_ccWindow);
+	ccAssert(rect.width > 0 && rect.height > 0);
 
 	setResizable(true);
 	XMoveResizeWindow(XWINDATA->XDisplay, XWINDATA->XWindow, rect.x, rect.y, rect.width, rect.height);

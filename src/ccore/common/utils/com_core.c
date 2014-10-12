@@ -33,7 +33,9 @@ void ccFree(void)
 	}
 #endif
 	if(_ccWindow != NULL) {
-		if(ccGLContextIsActive()) ccGLContextFree();
+		if(ccGLContextIsActive()){
+			ccGLContextFree();
+		}
 		ccWindowFree();
 	}
 	if(_ccDisplays != NULL){

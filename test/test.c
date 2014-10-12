@@ -25,6 +25,7 @@
 
 #include <ccore/print.h>
 #include <ccore/file.h>
+#include <ccore/time.h>
 #include <ccore/string.h>
 #include <ccore/gamepad.h>
 #include <ccore/window.h>
@@ -46,6 +47,7 @@ void _err(int line)
 	ccError error;
 	bool die;
 
+	die = false;
 	while((error = ccErrorPop()) != CC_ERROR_NONE){
 		ccPrintf("\nError on line %d:\t\"%s\"\n", line - 1, ccErrorString(error));		
 		die = true;
@@ -86,6 +88,9 @@ void testWindow(int *test)
 	err();
 
 	ccWindowFree();
+	err();
+
+	ccWindowCreate((ccRect){0, 0, 100, 100}, "ccore test", 0);
 	err();
 
 	ccDisplayFree();
