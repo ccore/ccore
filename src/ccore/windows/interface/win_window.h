@@ -37,6 +37,7 @@ typedef struct {
 	LPBYTE lpb;
 	UINT lpbSize;
 	UINT dwSize;
+	ATOM winClass;
 #if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 	bool queryXinput;
 #endif

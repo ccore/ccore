@@ -13,6 +13,8 @@ static LPSTR _cursor[] =
 	IDC_HELP
 };
 
+#define CC_WINDOW_CLASS_NAME "ccWindow"
+
 void _ccEventStackPush(ccEvent event)
 {
 	WINDOW_DATA->eventStackPos++;
@@ -217,7 +219,6 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 static bool regHinstance(HINSTANCE instanceHandle)
 {
 	WNDCLASSEX winClass;
-
 	winClass.cbSize = sizeof(WNDCLASSEX);
 	winClass.style = CS_OWNDC;
 	winClass.lpfnWndProc = wndProc;
@@ -228,10 +229,10 @@ static bool regHinstance(HINSTANCE instanceHandle)
 	winClass.hCursor = LoadCursor(NULL, IDC_ARROW);
 	winClass.hbrBackground = NULL;
 	winClass.lpszMenuName = NULL;
-	winClass.lpszClassName = "ccWindow";
+	winClass.lpszClassName = CC_WINDOW_CLASS_NAME;
 	winClass.hIconSm = NULL;
 
-	if(RegisterClassEx(&winClass) == 0) {
+	if((WINDOW_DATA->winClass = RegisterClassEx(&winClass)) == 0) {
 		ccErrorPush(CC_ERROR_WINDOW_CREATE);
 		return false;
 	}
@@ -291,7 +292,7 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 	_ccWindow->supportsRawInput = true; // Raw input is always supported on windows
 	_ccWindow->rect = rect;
 	ccMalloc(_ccWindow->data, sizeof(ccWindow_win));
-
+	
 	WINDOW_DATA->eventStackSize = 0;
 	WINDOW_DATA->eventStackPos = -1;
 	WINDOW_DATA->eventStackIndex = 0;
@@ -323,7 +324,7 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 
 	WINDOW_DATA->winHandle = CreateWindowEx(
 		WS_EX_APPWINDOW,
-		"ccWindow",
+		CC_WINDOW_CLASS_NAME,
 		title,
 		WINDOW_DATA->style,
 		windowRect.left, windowRect.top,
@@ -377,6 +378,12 @@ ccReturn ccWindowFree(void)
 		ccErrorPush(CC_ERROR_WINDOW_DESTROY);
 		return CC_FAIL;
 	}
+
+	if(UnregisterClass(WINDOW_DATA->winClass, NULL) == FALSE) {
+		ccErrorPush(CC_ERROR_WINDOW_DESTROY);
+		return CC_FAIL;
+	}
+
 	if(WINDOW_DATA->eventStackSize != 0) free(WINDOW_DATA->eventStack);
 
 	free(_ccWindow->data);

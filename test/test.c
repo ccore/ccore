@@ -92,11 +92,12 @@ void testWindow(int *test)
 	ccWindowFree();
 	err();
 
-	ccWindowCreate((ccRect){0, 0, 1, 1}, "ccore test", CC_WINDOW_FLAG_ALWAYSONTOP | CC_WINDOW_FLAG_NORESIZE | CC_WINDOW_FLAG_NORAWINPUT | CC_WINDOW_FLAG_NOBUTTONS);
+	ccWindowCreate((ccRect){0, 0, 100, 100}, "ccore test", CC_WINDOW_FLAG_NORESIZE);
 	err();
+	ccTimeDelay(2000);
 	ccWindowFree();
 	err();
-
+	
 	ccWindowCreate((ccRect){0, 0, 100, 100}, "ccore test", CC_WINDOW_FLAG_ALWAYSONTOP);
 	err();
 	ccWindowSetCentered();
@@ -215,7 +216,7 @@ int main(int argc, char **argv)
 	test = 0;
 	testDefaultDirectories(&test);
 	testTime(&test);
-	testDisplay(&test);
+	//testDisplay(&test);
 	testWindow(&test);
 	testGamepad(&test);
 
