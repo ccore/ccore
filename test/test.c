@@ -80,6 +80,7 @@ void testGamepad(int *test)
 void testWindow(int *test)
 {
 	bool quit; 
+	unsigned long *iconData;
 
 	ccPrintf("Test %d: Window", ++(*test));
 
@@ -96,7 +97,7 @@ void testWindow(int *test)
 	ccWindowFree();
 	err();
 
-	ccWindowCreate((ccRect){0, 0, 100, 100}, "ccore test", CC_WINDOW_FLAG_NOBUTTONS);
+	ccWindowCreate((ccRect){0, 0, 100, 100}, "ccore test", CC_WINDOW_FLAG_ALWAYSONTOP);
 	err();
 	ccWindowSetCentered();
 	err();
@@ -104,12 +105,23 @@ void testWindow(int *test)
 	err();
 	ccWindowSetFullscreen(1, ccDisplayGetDefault());
 	err();
-	ccWindowMouseSetPosition((ccPoint){0, 0});
-	err();
-	ccWindowClipboardSet(ccWindowClipboardGet());
+
+	ccWindowClipboardSet("ccore test");
 	err();
 	ccWindowSetWindowed();
 	err();
+
+	iconData = iconGetData();
+	ccWindowIconSet(iconGetSize(), iconData);
+	free(iconData);
+	err();
+
+	ccWindowMouseSetPosition((ccPoint){0, 0});
+	err();
+	ccWindowMouseSetCursor(CC_CURSOR_NONE);
+	err();
+
+	ccDisplayResolutionSet(ccWindowGetDisplay(), ccWindowGetDisplay()->current + 1);
 
 	quit = false;
 	while(!quit){
@@ -119,13 +131,17 @@ void testWindow(int *test)
 				case CC_EVENT_WINDOW_QUIT:
 					quit = true;	
 					break;
-				case CC_EVENT_MOUSE_DOWN:
+				case CC_EVENT_FOCUS_LOST:
 					ccWindowSetBlink();
 					err();
 					break;
 			}
 		}
 	}
+	
+	ccDisplayRevertModes();
+	err();
+
 	ccWindowFree();
 	err();
 	ccDisplayFree();
