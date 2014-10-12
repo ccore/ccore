@@ -64,7 +64,7 @@ ccDisplays *_ccDisplays;
 
 #define ccDisplayResolutionGetCurrent(display) (&display->resolution[display->current])
 #define ccDisplayResolutionGet(display, index) (&display->resolution[index])
-#define ccDisplayResolutionGetAmount(display) display->amount
+#define ccDisplayResolutionGetAmount(display) (display->amount)
 
 // Display
 ccReturn ccDisplayInitialize(void); // Get all displays currently connected and active

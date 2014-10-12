@@ -39,9 +39,9 @@
 #include <crtdbg.h>
 #endif
 
-#define checkErrors() _checkErrors(__LINE__)
+#define err() _err(__LINE__)
 
-void _checkErrors(int line)
+void _err(int line)
 {
 	ccError error;
 	bool die;
@@ -59,7 +59,7 @@ void _checkErrors(int line)
 void reportDiscrepancy(const char *where)
 {
 	ccPrintf("\n\nDiscrepancy detected between results and expected results:\n\t\"%s\"\n", where);
-	checkErrors();
+	err();
 	exit(-1);
 }
 
@@ -68,10 +68,10 @@ void testGamepad(int *test)
 	ccPrintf("Test %d: Gamepad\n", ++(*test));
 
 	ccGamepadInitialize();
-	checkErrors();
+	err();
 
 	ccPrintf("\tFound %d gamepad(s)\n", ccGamepadCount());
-	checkErrors();
+	err();
 	ccPrintf("Passed\n");
 }
 
@@ -80,16 +80,16 @@ void testWindow(int *test)
 	ccPrintf("Test %d: Window", ++(*test));
 
 	ccDisplayInitialize();
-	checkErrors();
+	err();
 
 	ccWindowCreate((ccRect){0, 0, 1, 1}, "ccore test", 0);
-	checkErrors();
+	err();
 
 	ccWindowFree();
-	checkErrors();
+	err();
 
 	ccDisplayFree();
-	checkErrors();
+	err();
 	ccPrintf(" - passed\n");
 }
 
@@ -100,20 +100,31 @@ void testDisplay(int *test)
 	ccPrintf("Test %d: Display\n", ++(*test));
 
 	ccDisplayInitialize();
-	checkErrors();
+	err();
 
 	ccPrintf("\tFound %d display(s)\n", ccDisplayGetAmount());
-	checkErrors();
+	err();
 	if(ccDisplayGetAmount() > 0){
 		display = ccDisplayGetDefault();
-		checkErrors();
+		err();
+#ifndef LINUX //TODO fix bug #15
 		if(ccDisplayResolutionGetAmount(display) <= 0){
 			reportDiscrepancy("Display has no resolutions");
 		}
+		if(display->current > 0){
+			ccDisplayResolutionSet(display, display->current - 1);
+			err();
+		}else if(ccDisplayResolutionGetAmount(display) > 0){
+			ccDisplayResolutionSet(display, 1);
+			err();
+		}
+#endif
+		ccDisplayRevertModes();
+		err();
 	}
 
 	ccDisplayFree();
-	checkErrors();
+	err();
 	ccPrintf("Passed\n");
 }
 
@@ -123,7 +134,7 @@ void testTime(int *test)
 	fflush(stdout);
 
 	ccTimeDelay(1000);
-	checkErrors();
+	err();
 	ccPrintf(" - passed\n");
 }
 
@@ -134,12 +145,12 @@ void test10BytesFile(int *test)
 	ccPrintf("Test %d: File with 10 bytes information", ++(*test));
 
 	file = ccStringConcatenate(2, ccFileDataDirGet(), "10bytesfile.txt");
-	checkErrors();
+	err();
 
 	if(ccFileInfoGet(file).size != 11){
 		reportDiscrepancy("Size of 10bytesfile.txt");
 	}
-	checkErrors();
+	err();
 	ccPrintf(" - passed\n");
 }
 
@@ -150,12 +161,12 @@ void testEmptyFile(int *test)
 	ccPrintf("Test %d: Empty file information", ++(*test));
 
 	file = ccStringConcatenate(2, ccFileDataDirGet(), "emptyfile.txt");
-	checkErrors();
+	err();
 
 	if(ccFileInfoGet(file).size != 0){
 		reportDiscrepancy("Size of empty.txt");
 	}
-	checkErrors();
+	err();
 	ccPrintf(" - passed\n");
 }
 
@@ -163,11 +174,11 @@ void testDefaultDirectories(int *test)
 {
 	ccPrintf("Test %d: Default directories\n", ++(*test));
 	ccPrintf("\tUser directory: %s\n", ccFileUserDirGet());
-	checkErrors();
+	err();
 	ccPrintf("\tData directory: %s\n", ccFileDataDirGet());
-	checkErrors();
+	err();
 	ccPrintf("\tTemp directory: %s\n", ccFileTempDirGet());
-	checkErrors();
+	err();
 	ccPrintf("Passed\n");
 }
 
