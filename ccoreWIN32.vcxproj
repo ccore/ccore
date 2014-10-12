@@ -44,7 +44,6 @@
     <ClInclude Include="src\ccore\windows\utils\win_thread.h" />
     <ClInclude Include="src\ccore\windows\utils\win_time.h" />
     <ClInclude Include="test\icon.h" />
-    <ClInclude Include="test\tga.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ccore\common\interface\com_display.c" />
@@ -63,9 +62,7 @@
     <ClCompile Include="src\ccore\windows\utils\win_thread.c" />
     <ClCompile Include="src\ccore\windows\utils\win_time.c" />
     <ClCompile Include="src\glew\glew.c" />
-    <ClCompile Include="test\featuretest.c" />
     <ClCompile Include="test\icon.c" />
-    <ClCompile Include="test\tga.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E3B9EEBD-534A-442C-B3E4-A5FE4BEC3A3C}</ProjectGuid>
