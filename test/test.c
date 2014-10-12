@@ -23,15 +23,9 @@
 
 #ifdef _DEBUG
 
-#include <ccore/display.h>
-#include <ccore/window.h>
-#include <ccore/event.h>
-#include <ccore/opengl.h>
-#include <ccore/time.h>
+#include <ccore/print.h>
 #include <ccore/file.h>
 #include <ccore/string.h>
-#include <ccore/thread.h>
-#include <ccore/print.h>
 #include <ccore/gamepad.h>
 
 #include "icon.h"
@@ -43,13 +37,15 @@
 #include <crtdbg.h>
 #endif
 
-void checkErrors()
+#define checkErrors() _checkErrors(__LINE__)
+
+void _checkErrors(int line)
 {
 	ccError error;
 	bool die;
 
 	while((error = ccErrorPop()) != CC_ERROR_NONE){
-		ccPrintf("\nError:\t\"%s\"\n", ccErrorString(error));		
+		ccPrintf("\nError on line %d:\t\"%s\"\n", line - 1, ccErrorString(error));		
 		die = true;
 	}
 
@@ -60,49 +56,91 @@ void checkErrors()
 
 void reportDiscrepancy(const char *where)
 {
-	ccPrintf("\nDiscrepancy detected between results and expected results:\n\t\"%s\"\n", where);
+	ccPrintf("\n\nDiscrepancy detected between results and expected results:\n\t\"%s\"\n", where);
 	exit(-1);
+}
+
+void testGamepad(int *test)
+{
+	ccPrintf("Test %d: Gamepad\n", ++(*test));
+
+	ccGamepadInitialize();
+	checkErrors();
+
+	ccPrintf("\tFound %d gamepad(s)\n", ccGamepadCount());
+	checkErrors();
+}
+
+void testWindow(int *test)
+{
+	ccPrintf("Test %d: Window", ++(*test));
+
+	ccDisplayInitialize();
+	checkErrors();
+
+	ccWindowCreate((ccRect){0, 0, 1, 1}, "ccore test", 0);
+	checkErrors();
+
+	ccWindowFree();
+	checkErrors();
+
+	ccDisplayFree();
+	checkErrors();
+
+	ccPrintf(" - passed\n");
+}
+
+void testTime(int *test)
+{
+	ccPrintf("Test %d: Time delay of 1 second", ++(*test));
+	fflush(stdout);
+
+	ccTimeDelay(1000);
+	checkErrors();
+
+	ccPrintf(" - passed\n");
 }
 
 void test10BytesFile(int *test)
 {
 	char *file;
 
-	ccPrintf("Test %d: File with 10 bytes information\n", ++(*test));
+	ccPrintf("Test %d: File with 10 bytes information", ++(*test));
 
 	file = ccStringConcatenate(2, ccFileDataDirGet(), "10bytesfile.txt");
 	checkErrors();
 
-	ccPrintf("\tGetting filesize of: %s\n", file);
 	if(ccFileInfoGet(file).size != 11){
 		reportDiscrepancy("Size of 10bytesfile.txt");
 	}
 	checkErrors();
+	ccPrintf(" - passed\n");
 }
 
 void testEmptyFile(int *test)
 {
 	char *file;
 
-	ccPrintf("Test %d: Empty file information\n", ++(*test));
+	ccPrintf("Test %d: Empty file information", ++(*test));
 
 	file = ccStringConcatenate(2, ccFileDataDirGet(), "emptyfile.txt");
 	checkErrors();
 
-	ccPrintf("\tGetting filesize of: %s\n", file);
 	if(ccFileInfoGet(file).size != 0){
 		reportDiscrepancy("Size of empty.txt");
 	}
 	checkErrors();
+	ccPrintf(" - passed\n");
 }
 
 void testDefaultDirectories(int *test)
 {
 	ccPrintf("Test %d: Default directories\n", ++(*test));
 	ccPrintf("\tUser directory: %s\n", ccFileUserDirGet());
+	checkErrors();
 	ccPrintf("\tData directory: %s\n", ccFileDataDirGet());
+	checkErrors();
 	ccPrintf("\tTemp directory: %s\n", ccFileTempDirGet());
-
 	checkErrors();
 }
 
@@ -116,6 +154,9 @@ int main(int argc, char **argv)
 	testDefaultDirectories(&test);
 	testEmptyFile(&test);
 	test10BytesFile(&test);
+	testTime(&test);
+	testWindow(&test);
+	testGamepad(&test);
 
 	ccFree();
 
