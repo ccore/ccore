@@ -27,6 +27,8 @@
 #include <ccore/file.h>
 #include <ccore/string.h>
 #include <ccore/gamepad.h>
+#include <ccore/window.h>
+#include <ccore/display.h>
 
 #include "icon.h"
 
@@ -57,6 +59,7 @@ void _checkErrors(int line)
 void reportDiscrepancy(const char *where)
 {
 	ccPrintf("\n\nDiscrepancy detected between results and expected results:\n\t\"%s\"\n", where);
+	checkErrors();
 	exit(-1);
 }
 
@@ -69,6 +72,7 @@ void testGamepad(int *test)
 
 	ccPrintf("\tFound %d gamepad(s)\n", ccGamepadCount());
 	checkErrors();
+	ccPrintf("Passed\n");
 }
 
 void testWindow(int *test)
@@ -86,8 +90,31 @@ void testWindow(int *test)
 
 	ccDisplayFree();
 	checkErrors();
-
 	ccPrintf(" - passed\n");
+}
+
+void testDisplay(int *test)
+{
+	ccDisplay *display;
+
+	ccPrintf("Test %d: Display\n", ++(*test));
+
+	ccDisplayInitialize();
+	checkErrors();
+
+	ccPrintf("\tFound %d display(s)\n", ccDisplayGetAmount());
+	checkErrors();
+	if(ccDisplayGetAmount() > 0){
+		display = ccDisplayGetDefault();
+		checkErrors();
+		if(ccDisplayResolutionGetAmount(display) <= 0){
+			reportDiscrepancy("Display has no resolutions");
+		}
+	}
+
+	ccDisplayFree();
+	checkErrors();
+	ccPrintf("Passed\n");
 }
 
 void testTime(int *test)
@@ -97,7 +124,6 @@ void testTime(int *test)
 
 	ccTimeDelay(1000);
 	checkErrors();
-
 	ccPrintf(" - passed\n");
 }
 
@@ -142,6 +168,7 @@ void testDefaultDirectories(int *test)
 	checkErrors();
 	ccPrintf("\tTemp directory: %s\n", ccFileTempDirGet());
 	checkErrors();
+	ccPrintf("Passed\n");
 }
 
 int main(int argc, char **argv)
@@ -155,6 +182,7 @@ int main(int argc, char **argv)
 	testEmptyFile(&test);
 	test10BytesFile(&test);
 	testTime(&test);
+	testDisplay(&test);
 	testWindow(&test);
 	testGamepad(&test);
 
