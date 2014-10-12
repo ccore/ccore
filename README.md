@@ -16,7 +16,7 @@ The features of ccore include support for the following:
 - Supports the following Operating Systems (more coming in the future):
   - GNU/Linux distributions
   - Microsoft Windows Vista and higher
-- Creating a window with an OpenGL context (with glew built in to load extensions)
+- Creating a window with an OpenGL context
 - Managing multiple monitors, multi monitor fullscreen
 - Raw input with gamepad support
 - Threading

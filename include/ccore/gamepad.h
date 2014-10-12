@@ -79,7 +79,7 @@ typedef struct {
 
 ccGamepads *_ccGamepads;
 
-#define ccGamepadCount() _ccGamepads->amount
+#define ccGamepadGetAmount() _ccGamepads->amount
 #define ccGamepadGet(index) (&_ccGamepads->gamepad[index])
 
 ccReturn ccGamepadInitialize(void); // Initializes gamepad input
