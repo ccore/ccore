@@ -89,9 +89,9 @@ ccReturn ccGamepadFree(void)
 	
 	RegisterRawInputDevices(&WINDOW_DATA->rid[RAWINPUT_GAMEPAD], RAWINPUT_GAMEPADCOUNT, sizeof(RAWINPUTDEVICE));
 
-	if(ccGamepadCount() != 0) {
+	if(ccGamepadGetAmount() != 0) {
 		int i;
-		for(i = 0; i < ccGamepadCount(); i++) {
+		for(i = 0; i < ccGamepadGetAmount(); i++) {
 			if(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->inputType == CC_GAMEPAD_INPUT_RAW) {
 				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->buttonCaps);
 				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->valueCaps);
@@ -139,14 +139,14 @@ void _queryXinput()
 				if(GAMEPADS_DATA->xInputConnected[i] == -1) {
 					// Allocate memory for newly connected gamepad
 					_ccGamepads->amount++;
-					_ccGamepads->gamepad = realloc(_ccGamepads->gamepad, ccGamepadCount() * sizeof(ccGamepad));
+					_ccGamepads->gamepad = realloc(_ccGamepads->gamepad, ccGamepadGetAmount() * sizeof(ccGamepad));
 
-					GAMEPADS_DATA->xInputConnected[i] = ccGamepadCount() - 1;
+					GAMEPADS_DATA->xInputConnected[i] = ccGamepadGetAmount() - 1;
 					currentGamepad = &_ccGamepads->gamepad[GAMEPADS_DATA->xInputConnected[i]];
 					currentGamepad->data = malloc(sizeof(ccGamepad_win));
 
 					// Create connect event
-					event.gamepadEvent.id = ccGamepadCount() - 1;
+					event.gamepadEvent.id = ccGamepadGetAmount() - 1;
 					event.gamepadEvent.type = CC_GAMEPAD_CONNECT;
 					_ccEventStackPush(event);
 
@@ -257,7 +257,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 
 	event.type = CC_EVENT_GAMEPAD;
 
-	for(i = 0; i < ccGamepadCount(); i++) {
+	for(i = 0; i < ccGamepadGetAmount(); i++) {
 		if(((ccGamepad_win*)(_ccGamepads->gamepad[i].data))->inputType == CC_GAMEPAD_INPUT_RAW && ((ccGamepad_win*)(_ccGamepads->gamepad[i].data))->raw->handle == raw->header.hDevice) {
 			currentGamepad = &_ccGamepads->gamepad[i];
 			event.gamepadEvent.id = i;
@@ -268,10 +268,10 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		USHORT capsLength;
 
 		_ccGamepads->amount++;
-		_ccGamepads->gamepad = realloc(_ccGamepads->gamepad, ccGamepadCount() * sizeof(ccGamepad));
+		_ccGamepads->gamepad = realloc(_ccGamepads->gamepad, ccGamepadGetAmount() * sizeof(ccGamepad));
 
-		currentGamepad = &_ccGamepads->gamepad[ccGamepadCount() - 1];
-		event.gamepadEvent.id = ccGamepadCount() - 1;
+		currentGamepad = &_ccGamepads->gamepad[ccGamepadGetAmount() - 1];
+		event.gamepadEvent.id = ccGamepadGetAmount() - 1;
 
 		// Initialize current gamepad
 		currentGamepad->data = malloc(sizeof(ccGamepad_win));
