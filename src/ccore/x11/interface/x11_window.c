@@ -226,7 +226,7 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 
 ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 {
-	Atom DELETE;
+	Atom DELETE, WM_WINDOW_TYPE, WM_WINDOW_TYPE_DIALOG;
 
 	ccAssert(rect.width > 0 && rect.height > 0);
 
@@ -251,6 +251,8 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 
 	XWINDATA->XScreen = DefaultScreen(XWINDATA->XDisplay);
 
+	WM_WINDOW_TYPE = XInternAtom(XWINDATA->XDisplay, "_NET_WM_WINDOW_TYPE", False);
+	WM_WINDOW_TYPE_DIALOG = XInternAtom(XWINDATA->XDisplay, "_NET_WM_WINDOW_TYPE_DOCK", False);
 	XWINDATA->WM_ICON = XInternAtom(XWINDATA->XDisplay, "_NET_WM_ICON", False);
 	XWINDATA->CLIPBOARD = XInternAtom(XWINDATA->XDisplay, "CLIPBOARD", False);
 	XWINDATA->INCR = XInternAtom(XWINDATA->XDisplay, "INCR", False);
@@ -270,6 +272,10 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	XWINDATA->resizable = true;
 	if(flags & CC_WINDOW_FLAG_NORESIZE){
 		setResizable(false);
+	}
+
+	if(flags & CC_WINDOW_FLAG_NOBUTTONS){
+		XChangeProperty(XWINDATA->XDisplay, XWINDATA->XWindow, WM_WINDOW_TYPE, XA_ATOM, 32, PropModeReplace, (unsigned char*)&WM_WINDOW_TYPE_DIALOG, 1);
 	}
 
 	XMapWindow(XWINDATA->XDisplay, XWINDATA->XWindow);

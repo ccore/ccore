@@ -77,46 +77,10 @@ void testGamepad(int *test)
 	ccPrintf("Passed\n");
 }
 
-void testEvent(int *test)
-{
-	bool quit;
-
-	ccPrintf("Test %d: Event\n", ++(*test));
-
-	ccDisplayInitialize();
-	err();
-
-	ccWindowCreate((ccRect){100, 100, 100, 100}, "Click to test mouse events", CC_WINDOW_FLAG_NOBUTTONS);
-	err();
-
-	ccWindowSetFullscreen(1, ccDisplayGetDefault());
-	err();
-
-	quit = false;
-	while(!quit){
-		while(ccWindowEventPoll()) {
-			err();
-			switch(ccWindowEventGet().type) {
-				case CC_EVENT_WINDOW_QUIT:
-					quit = true;	
-					break;
-				case CC_EVENT_MOUSE_MOVE:
-					quit = true;
-					err();
-					break;
-			}
-		}
-	}
-
-	ccWindowFree();
-	err();
-
-	ccDisplayFree();
-	err();
-}
-
 void testWindow(int *test)
 {
+	bool quit; 
+
 	ccPrintf("Test %d: Window", ++(*test));
 
 	ccDisplayInitialize();
@@ -132,15 +96,11 @@ void testWindow(int *test)
 	ccWindowFree();
 	err();
 
-	ccWindowCreate((ccRect){0, 0, 100, 100}, "ccore test", 0);
-	err();
-	ccWindowSetBlink();
+	ccWindowCreate((ccRect){0, 0, 100, 100}, "ccore test", CC_WINDOW_FLAG_NOBUTTONS);
 	err();
 	ccWindowSetCentered();
 	err();
 	ccWindowSetMaximized();
-	err();
-	ccWindowSetWindowed();
 	err();
 	ccWindowSetFullscreen(1, ccDisplayGetDefault());
 	err();
@@ -148,6 +108,24 @@ void testWindow(int *test)
 	err();
 	ccWindowClipboardSet(ccWindowClipboardGet());
 	err();
+	ccWindowSetWindowed();
+	err();
+
+	quit = false;
+	while(!quit){
+		while(ccWindowEventPoll()) {
+			err();
+			switch(ccWindowEventGet().type) {
+				case CC_EVENT_WINDOW_QUIT:
+					quit = true;	
+					break;
+				case CC_EVENT_MOUSE_DOWN:
+					ccWindowSetBlink();
+					err();
+					break;
+			}
+		}
+	}
 	ccWindowFree();
 	err();
 	ccDisplayFree();
@@ -257,7 +235,6 @@ int main(int argc, char **argv)
 	testTime(&test);
 	testDisplay(&test);
 	testWindow(&test);
-	testEvent(&test);
 	testGamepad(&test);
 
 	ccFree();
