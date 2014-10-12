@@ -103,8 +103,7 @@ typedef enum {
 	} \
 
 const char *ccErrorString(ccError error);
-void _ccErrorPush(ccError error, char *file, int line);
-#define ccErrorPush(error) _ccErrorPush(error, __FILE__, __LINE__)
+void ccErrorPush(ccError error);
 ccError ccErrorPop(void);
 
 void _ccErrorFree(void);

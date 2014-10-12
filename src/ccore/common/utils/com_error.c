@@ -4,7 +4,7 @@ static ccError *ccErrorStack;
 static int ccErrorStackIndex;
 static int ccErrorStackSize;
 
-void _ccErrorPush(ccError error, char *file, int line)
+void ccErrorPush(ccError error)
 {
 	if(ccErrorStackSize <= ccErrorStackIndex) {
 		ccErrorStackSize++;
@@ -12,8 +12,6 @@ void _ccErrorPush(ccError error, char *file, int line)
 	}
 	ccErrorStack[ccErrorStackIndex] = error;
 	ccErrorStackIndex++;
-
-	ccPrintf("File \"%s\", line %d:\n\tPushed error: \"%s\"\n", file, line, ccErrorString(error));
 }
 
 ccError ccErrorPop(void)
