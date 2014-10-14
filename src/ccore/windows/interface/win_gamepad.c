@@ -61,7 +61,7 @@ ccReturn ccGamepadInitialize(void)
 	WINDOW_DATA->queryXinput = true;
 
 	for(i = 0; i < XUSER_MAX_COUNT; i++) {
-		GAMEPADS_DATA->xInputConnected[i] = -1;
+		_CC_GAMEPADS_DATA->xInputConnected[i] = -1;
 	}
 
 	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].usUsagePage = 1;
@@ -135,14 +135,14 @@ void _queryXinput()
 			int axisValue;
 
 			// Handle creating or reconnecting
-			if(GAMEPADS_DATA->xInputConnected[i] == -1 || ccGamepadGet(GAMEPADS_DATA->xInputConnected[i])->plugged == false) {
-				if(GAMEPADS_DATA->xInputConnected[i] == -1) {
+			if(_CC_GAMEPADS_DATA->xInputConnected[i] == -1 || ccGamepadGet(_CC_GAMEPADS_DATA->xInputConnected[i])->plugged == false) {
+				if(_CC_GAMEPADS_DATA->xInputConnected[i] == -1) {
 					// Allocate memory for newly connected gamepad
 					_ccGamepads->amount++;
 					_ccGamepads->gamepad = realloc(_ccGamepads->gamepad, ccGamepadGetAmount() * sizeof(ccGamepad));
 
-					GAMEPADS_DATA->xInputConnected[i] = ccGamepadGetAmount() - 1;
-					currentGamepad = &_ccGamepads->gamepad[GAMEPADS_DATA->xInputConnected[i]];
+					_CC_GAMEPADS_DATA->xInputConnected[i] = ccGamepadGetAmount() - 1;
+					currentGamepad = &_ccGamepads->gamepad[_CC_GAMEPADS_DATA->xInputConnected[i]];
 					currentGamepad->data = malloc(sizeof(ccGamepad_win));
 
 					// Create connect event
@@ -151,34 +151,34 @@ void _queryXinput()
 					_ccEventStackPush(event);
 
 					// Fill new gamepad data
-					GAMEPAD_DATA->inputType = CC_GAMEPAD_INPUT_XINPUT;
-					GAMEPAD_DATA->xinputIndex = i;
+					_CC_GAMEPAD_DATA->inputType = CC_GAMEPAD_INPUT_XINPUT;
+					_CC_GAMEPAD_DATA->xinputIndex = i;
 
 					currentGamepad->name = "Xbox gamepad";
 					currentGamepad->plugged = true;
-					currentGamepad->outputAmount = GAMEPAD_XINPUT_HAPTICAMOUNT;
-					currentGamepad->buttonAmount = GAMEPAD_XINPUT_BUTTONCOUNT;
-					currentGamepad->axisAmount = GAMEPAD_XINPUT_AXISCOUNT;
-					currentGamepad->button = calloc(GAMEPAD_XINPUT_BUTTONCOUNT, sizeof(bool));
-					currentGamepad->axis = malloc(GAMEPAD_XINPUT_AXISCOUNT * sizeof(int));
-					currentGamepad->output = calloc(GAMEPAD_XINPUT_HAPTICAMOUNT, sizeof(int));
+					currentGamepad->outputAmount = _CC_GAMEPAD_XINPUT_HAPTICAMOUNT;
+					currentGamepad->buttonAmount = _CC_GAMEPAD_XINPUT_BUTTONCOUNT;
+					currentGamepad->axisAmount = _CC_GAMEPAD_XINPUT_AXISCOUNT;
+					currentGamepad->button = calloc(_CC_GAMEPAD_XINPUT_BUTTONCOUNT, sizeof(bool));
+					currentGamepad->axis = malloc(_CC_GAMEPAD_XINPUT_AXISCOUNT * sizeof(int));
+					currentGamepad->output = calloc(_CC_GAMEPAD_XINPUT_HAPTICAMOUNT, sizeof(int));
 				}
-				else if(ccGamepadGet(GAMEPADS_DATA->xInputConnected[i])->plugged == false) {
+				else if(ccGamepadGet(_CC_GAMEPADS_DATA->xInputConnected[i])->plugged == false) {
 					// Reconnect a previously disconnected gamepad
-					ccGamepadGet(GAMEPADS_DATA->xInputConnected[i])->plugged = true;
+					ccGamepadGet(_CC_GAMEPADS_DATA->xInputConnected[i])->plugged = true;
 
-					event.gamepadEvent.id = GAMEPADS_DATA->xInputConnected[i];
+					event.gamepadEvent.id = _CC_GAMEPADS_DATA->xInputConnected[i];
 					event.gamepadEvent.type = CC_GAMEPAD_CONNECT;
 					_ccEventStackPush(event);
 				}
 			}
 
-			currentGamepad = &_ccGamepads->gamepad[GAMEPADS_DATA->xInputConnected[i]];
+			currentGamepad = &_ccGamepads->gamepad[_CC_GAMEPADS_DATA->xInputConnected[i]];
 
 			// Update gamepad
-			event.gamepadEvent.id = GAMEPADS_DATA->xInputConnected[i];
+			event.gamepadEvent.id = _CC_GAMEPADS_DATA->xInputConnected[i];
 
-			for(j = 0; j < GAMEPAD_XINPUT_BUTTONCOUNT; j++) {
+			for(j = 0; j < _CC_GAMEPAD_XINPUT_BUTTONCOUNT; j++) {
 				if(currentGamepad->button[j] == false && state.Gamepad.wButtons & _gamepadXinputButtons[j]) {
 					currentGamepad->button[j] = true;
 
@@ -195,24 +195,24 @@ void _queryXinput()
 				}
 			}
 
-			for(j = 0; j < GAMEPAD_XINPUT_AXISCOUNT; j++) {
+			for(j = 0; j < _CC_GAMEPAD_XINPUT_AXISCOUNT; j++) {
 				switch(j) {
-				case GAMEPAD_XINPUT_ILEFTTRIGGER:
-					axisValue = (state.Gamepad.bLeftTrigger + CHAR_MIN) * GAMEPAD_XINPUT_TRIGGER_FACTOR;
+				case _CC_GAMEPAD_XINPUT_ILEFTTRIGGER:
+					axisValue = (state.Gamepad.bLeftTrigger + CHAR_MIN) * _CC_GAMEPAD_XINPUT_TRIGGER_FACTOR;
 					break;
-				case GAMEPAD_XINPUT_IRIGHTTRIGGER:
-					axisValue = (state.Gamepad.bRightTrigger + CHAR_MIN) * GAMEPAD_XINPUT_TRIGGER_FACTOR;
+				case _CC_GAMEPAD_XINPUT_IRIGHTTRIGGER:
+					axisValue = (state.Gamepad.bRightTrigger + CHAR_MIN) * _CC_GAMEPAD_XINPUT_TRIGGER_FACTOR;
 					break;
-				case GAMEPAD_XINPUT_ITHUMBLX:
+				case _CC_GAMEPAD_XINPUT_ITHUMBLX:
 					axisValue = state.Gamepad.sThumbLX;
 					break;
-				case GAMEPAD_XINPUT_ITHUMBLY:
+				case _CC_GAMEPAD_XINPUT_ITHUMBLY:
 					axisValue = state.Gamepad.sThumbLY;
 					break;
-				case GAMEPAD_XINPUT_ITHUMBRX:
+				case _CC_GAMEPAD_XINPUT_ITHUMBRX:
 					axisValue = state.Gamepad.sThumbRX;
 					break;
-				case GAMEPAD_XINPUT_ITHUMBRY:
+				case _CC_GAMEPAD_XINPUT_ITHUMBRY:
 					axisValue = state.Gamepad.sThumbRY;
 					break;
 				}
@@ -234,9 +234,9 @@ void _queryXinput()
 			}
 		}
 		else {
-			if(GAMEPADS_DATA->xInputConnected[i] != -1 && ccGamepadGet(GAMEPADS_DATA->xInputConnected[i])->plugged != false) {
-				ccGamepadGet(GAMEPADS_DATA->xInputConnected[i])->plugged = false;
-				event.gamepadEvent.id = GAMEPADS_DATA->xInputConnected[i];
+			if(_CC_GAMEPADS_DATA->xInputConnected[i] != -1 && ccGamepadGet(_CC_GAMEPADS_DATA->xInputConnected[i])->plugged != false) {
+				ccGamepadGet(_CC_GAMEPADS_DATA->xInputConnected[i])->plugged = false;
+				event.gamepadEvent.id = _CC_GAMEPADS_DATA->xInputConnected[i];
 				event.gamepadEvent.type = CC_GAMEPAD_DISCONNECT;
 				_ccEventStackPush(event);
 			}
@@ -277,39 +277,39 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		currentGamepad->data = malloc(sizeof(ccGamepad_win));
 		((ccGamepad_win*)currentGamepad->data)->raw = malloc(sizeof(ccGamepad_win_raw));
 
-		GAMEPAD_DATA->inputType = CC_GAMEPAD_INPUT_RAW;
+		_CC_GAMEPAD_DATA->inputType = CC_GAMEPAD_INPUT_RAW;
 
-		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, NULL, &GAMEPAD_DATA->raw->preparsedDataSize);
-		GAMEPAD_DATA->raw->preparsedData = malloc(GAMEPAD_DATA->raw->preparsedDataSize);
-		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, GAMEPAD_DATA->raw->preparsedData, &GAMEPAD_DATA->raw->preparsedDataSize);
+		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, NULL, &_CC_GAMEPAD_DATA->raw->preparsedDataSize);
+		_CC_GAMEPAD_DATA->raw->preparsedData = malloc(_CC_GAMEPAD_DATA->raw->preparsedDataSize);
+		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, _CC_GAMEPAD_DATA->raw->preparsedData, &_CC_GAMEPAD_DATA->raw->preparsedDataSize);
 		
 		currentGamepad->name = "Gamepad"; //TODO: can I fetch this?
 		currentGamepad->plugged = true; //TODO: use this properly
 		currentGamepad->outputAmount = 0;
-		GAMEPAD_DATA->raw->handle = raw->header.hDevice;
-		HidP_GetCaps(GAMEPAD_DATA->raw->preparsedData, &GAMEPAD_DATA->raw->caps);
+		_CC_GAMEPAD_DATA->raw->handle = raw->header.hDevice;
+		HidP_GetCaps(_CC_GAMEPAD_DATA->raw->preparsedData, &_CC_GAMEPAD_DATA->raw->caps);
 
-		GAMEPAD_DATA->raw->buttonCaps = malloc(sizeof(HIDP_BUTTON_CAPS)* GAMEPAD_DATA->raw->caps.NumberInputButtonCaps);
-		GAMEPAD_DATA->raw->valueCaps = malloc(sizeof(HIDP_VALUE_CAPS)* GAMEPAD_DATA->raw->caps.NumberInputValueCaps);
+		_CC_GAMEPAD_DATA->raw->buttonCaps = malloc(sizeof(HIDP_BUTTON_CAPS)* _CC_GAMEPAD_DATA->raw->caps.NumberInputButtonCaps);
+		_CC_GAMEPAD_DATA->raw->valueCaps = malloc(sizeof(HIDP_VALUE_CAPS)* _CC_GAMEPAD_DATA->raw->caps.NumberInputValueCaps);
 
-		capsLength = GAMEPAD_DATA->raw->caps.NumberInputButtonCaps;
-		HidP_GetButtonCaps(HidP_Input, GAMEPAD_DATA->raw->buttonCaps, &capsLength, GAMEPAD_DATA->raw->preparsedData);
-		capsLength = GAMEPAD_DATA->raw->caps.NumberInputValueCaps;
-		HidP_GetValueCaps(HidP_Input, GAMEPAD_DATA->raw->valueCaps, &capsLength, GAMEPAD_DATA->raw->preparsedData);
+		capsLength = _CC_GAMEPAD_DATA->raw->caps.NumberInputButtonCaps;
+		HidP_GetButtonCaps(HidP_Input, _CC_GAMEPAD_DATA->raw->buttonCaps, &capsLength, _CC_GAMEPAD_DATA->raw->preparsedData);
+		capsLength = _CC_GAMEPAD_DATA->raw->caps.NumberInputValueCaps;
+		HidP_GetValueCaps(HidP_Input, _CC_GAMEPAD_DATA->raw->valueCaps, &capsLength, _CC_GAMEPAD_DATA->raw->preparsedData);
 
-		currentGamepad->buttonAmount = GAMEPAD_DATA->raw->buttonCaps->Range.UsageMax - GAMEPAD_DATA->raw->buttonCaps->Range.UsageMin + 1;
-		if(currentGamepad->buttonAmount > GAMEPAD_MAXBUTTONS) currentGamepad->buttonAmount = GAMEPAD_MAXBUTTONS;
-		currentGamepad->axisAmount = GAMEPAD_DATA->raw->caps.NumberInputValueCaps;
+		currentGamepad->buttonAmount = _CC_GAMEPAD_DATA->raw->buttonCaps->Range.UsageMax - _CC_GAMEPAD_DATA->raw->buttonCaps->Range.UsageMin + 1;
+		if(currentGamepad->buttonAmount > _CC_GAMEPAD_MAXBUTTONS) currentGamepad->buttonAmount = _CC_GAMEPAD_MAXBUTTONS;
+		currentGamepad->axisAmount = _CC_GAMEPAD_DATA->raw->caps.NumberInputValueCaps;
 		
 		currentGamepad->button = calloc(currentGamepad->buttonAmount, sizeof(bool));
 		currentGamepad->axis = malloc(sizeof(int)* currentGamepad->axisAmount);
 
-		GAMEPAD_DATA->raw->axisFactor = malloc(sizeof(double)* currentGamepad->axisAmount);
-		GAMEPAD_DATA->raw->axisNegativeComponent = malloc(sizeof(int)* currentGamepad->axisAmount);
+		_CC_GAMEPAD_DATA->raw->axisFactor = malloc(sizeof(double)* currentGamepad->axisAmount);
+		_CC_GAMEPAD_DATA->raw->axisNegativeComponent = malloc(sizeof(int)* currentGamepad->axisAmount);
 		
 		for(i = 0; i < currentGamepad->axisAmount; i++) {
-			GAMEPAD_DATA->raw->axisFactor[i] = (double)(CC_GAMEPAD_AXIS_MAX - CC_GAMEPAD_AXIS_MIN) / (GAMEPAD_DATA->raw->valueCaps[i].PhysicalMax - GAMEPAD_DATA->raw->valueCaps[i].PhysicalMin);
-			GAMEPAD_DATA->raw->axisNegativeComponent[i] = ((GAMEPAD_DATA->raw->valueCaps[i].PhysicalMax - GAMEPAD_DATA->raw->valueCaps[i].PhysicalMin) >> 1) - GAMEPAD_DATA->raw->valueCaps[i].PhysicalMin;
+			_CC_GAMEPAD_DATA->raw->axisFactor[i] = (double)(CC_GAMEPAD_AXIS_MAX - CC_GAMEPAD_AXIS_MIN) / (_CC_GAMEPAD_DATA->raw->valueCaps[i].PhysicalMax - _CC_GAMEPAD_DATA->raw->valueCaps[i].PhysicalMin);
+			_CC_GAMEPAD_DATA->raw->axisNegativeComponent[i] = ((_CC_GAMEPAD_DATA->raw->valueCaps[i].PhysicalMax - _CC_GAMEPAD_DATA->raw->valueCaps[i].PhysicalMin) >> 1) - _CC_GAMEPAD_DATA->raw->valueCaps[i].PhysicalMin;
 		}
 
 		event.gamepadEvent.type = CC_GAMEPAD_CONNECT;
@@ -318,11 +318,11 @@ void _generateGamepadEvents(RAWINPUT *raw)
 	
 	// Get buttons
 	usageLength = currentGamepad->buttonAmount;
-	HidP_GetUsages(HidP_Input, GAMEPAD_DATA->raw->buttonCaps->UsagePage, 0, GAMEPADS_DATA->usage, &usageLength, GAMEPAD_DATA->raw->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
+	HidP_GetUsages(HidP_Input, _CC_GAMEPAD_DATA->raw->buttonCaps->UsagePage, 0, _CC_GAMEPADS_DATA->usage, &usageLength, _CC_GAMEPAD_DATA->raw->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
 	
 	for(i = 0; i < (int)usageLength; i++)
 	{
-		int index = GAMEPADS_DATA->usage[i] - GAMEPAD_DATA->raw->buttonCaps->Range.UsageMin;
+		int index = _CC_GAMEPADS_DATA->usage[i] - _CC_GAMEPAD_DATA->raw->buttonCaps->Range.UsageMin;
 
 		if(currentGamepad->button[index] == false) {
 			currentGamepad->button[index] = true;
@@ -335,7 +335,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 	for(i = 0; i < currentGamepad->buttonAmount; i++) {
 		if(currentGamepad->button[i] == true) {
 			for(j = 0; j < (int)usageLength; j++) {
-				if(currentGamepad->button[GAMEPADS_DATA->usage[j] - GAMEPAD_DATA->raw->buttonCaps->Range.UsageMin] == true) {
+				if(currentGamepad->button[_CC_GAMEPADS_DATA->usage[j] - _CC_GAMEPAD_DATA->raw->buttonCaps->Range.UsageMin] == true) {
 					goto pressed;
 				}
 			}
@@ -350,9 +350,9 @@ void _generateGamepadEvents(RAWINPUT *raw)
 	
 	for(i = 0; i < currentGamepad->axisAmount; i++)
 	{
-		HidP_GetUsageValue(HidP_Input, GAMEPAD_DATA->raw->valueCaps[i].UsagePage, 0, GAMEPAD_DATA->raw->valueCaps[i].NotRange.Usage, &newInt, GAMEPAD_DATA->raw->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
-		if(GAMEPAD_DATA->raw->valueCaps[i].Range.UsageMin != HID_USAGE_GENERIC_HATSWITCH) {
-			newInt = (int)((newInt - GAMEPAD_DATA->raw->axisNegativeComponent[i]) * GAMEPAD_DATA->raw->axisFactor[i]);
+		HidP_GetUsageValue(HidP_Input, _CC_GAMEPAD_DATA->raw->valueCaps[i].UsagePage, 0, _CC_GAMEPAD_DATA->raw->valueCaps[i].NotRange.Usage, &newInt, _CC_GAMEPAD_DATA->raw->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
+		if(_CC_GAMEPAD_DATA->raw->valueCaps[i].Range.UsageMin != HID_USAGE_GENERIC_HATSWITCH) {
+			newInt = (int)((newInt - _CC_GAMEPAD_DATA->raw->axisNegativeComponent[i]) * _CC_GAMEPAD_DATA->raw->axisFactor[i]);
 			if(newInt < CC_GAMEPAD_AXIS_MIN) {
 				newInt = CC_GAMEPAD_AXIS_MIN;
 			}
