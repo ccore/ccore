@@ -121,8 +121,6 @@ void testWindow(int *test)
 	ccWindowMouseSetCursor(CC_CURSOR_NONE);
 	err();
 
-	ccDisplayResolutionSet(ccWindowGetDisplay(), ccWindowGetDisplay()->current + 1);
-
 	quit = false;
 	while(!quit){
 		while(ccWindowEventPoll()) {
