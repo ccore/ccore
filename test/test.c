@@ -143,10 +143,6 @@ void testWindow(int *test)
 	ccDisplayRevertModes();
 	err();
 
-	ccWindowFree();
-	err();
-	ccDisplayFree();
-	err();
 	ccPrintf(" - passed\n");
 }
 
