@@ -254,6 +254,8 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	WM_WINDOW_TYPE = XInternAtom(XWINDATA->XDisplay, "_NET_WM_WINDOW_TYPE", False);
 	WM_WINDOW_TYPE_DIALOG = XInternAtom(XWINDATA->XDisplay, "_NET_WM_WINDOW_TYPE_DOCK", False);
 	XWINDATA->WM_ICON = XInternAtom(XWINDATA->XDisplay, "_NET_WM_ICON", False);
+	XWINDATA->WM_NAME = XInternAtom(XWINDATA->XDisplay, "_NET_WM_NAME", False);
+	XWINDATA->WM_ICON_NAME = XInternAtom(XWINDATA->XDisplay, "_NET_WM_ICON_NAME", False);
 	XWINDATA->CLIPBOARD = XInternAtom(XWINDATA->XDisplay, "CLIPBOARD", False);
 	XWINDATA->INCR = XInternAtom(XWINDATA->XDisplay, "INCR", False);
 	XWINDATA->TARGETS = XInternAtom(XWINDATA->XDisplay, "TARGETS", False);
@@ -623,6 +625,27 @@ ccReturn ccWindowSetBlink(void)
 	ccAssert(_ccWindow);
 
 	return setWindowState("_NET_WM_STATE_DEMANDS_ATTENTION", true);
+}
+
+ccReturn ccWindowSetTitle(const char *title)
+{
+	char *titleCopy;
+	XTextProperty titleProperty;
+
+	titleCopy = strdup(title);
+	if(!XStringListToTextProperty(&titleCopy, 1, &titleProperty)){
+		ccErrorPush(CC_ERROR_WINDOW_MODE);
+		return CC_FAIL;
+	}
+	free(titleCopy);
+
+	XSetTextProperty(XWINDATA->XDisplay, XWINDATA->XWindow, &titleProperty, XWINDATA->WM_NAME); 
+	XSetTextProperty(XWINDATA->XDisplay, XWINDATA->XWindow, &titleProperty, XWINDATA->WM_ICON_NAME); 
+	XSetWMName(XWINDATA->XDisplay, XWINDATA->XWindow, &titleProperty); 
+	XSetWMIconName(XWINDATA->XDisplay, XWINDATA->XWindow, &titleProperty); 
+	XFree(titleProperty.value);
+
+	return CC_SUCCESS;
 }
 
 ccReturn ccWindowIconSet(ccPoint size, unsigned long *icon)

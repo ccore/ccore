@@ -94,25 +94,27 @@ void testWindow(int *test)
 
 	ccWindowCreate((ccRect){0, 0, 1, 1}, "ccore test", 0);
 	err();
+	ccTimeDelay(500);
 	ccWindowFree();
 	err();
 
 	ccWindowCreate((ccRect){ 0, 0, 1, 1 }, "ccore test", CC_WINDOW_FLAG_ALWAYSONTOP | CC_WINDOW_FLAG_NORESIZE | CC_WINDOW_FLAG_NORAWINPUT | CC_WINDOW_FLAG_NOBUTTONS);
 	err();
+	ccTimeDelay(500);
 	ccWindowFree();
 	err();
 	
 	ccWindowCreate((ccRect){0, 0, 100, 100}, "ccore test", CC_WINDOW_FLAG_ALWAYSONTOP);
 	err();
 	ccWindowSetCentered();
-	ccTimeDelay(500);
 	err();
+	ccTimeDelay(500);
 	ccWindowSetMaximized();
-	ccTimeDelay(500);
 	err();
+	ccTimeDelay(500);
 	ccWindowSetFullscreen(1, ccDisplayGetDefault());
-	ccTimeDelay(500);
 	err();
+	ccTimeDelay(500);
 
 	ccWindowClipboardSet("ccore test");
 	err();
@@ -127,8 +129,11 @@ void testWindow(int *test)
 	ccWindowMouseSetPosition((ccPoint){0, 0});
 	err();
 	ccWindowMouseSetCursor(CC_CURSOR_NONE);
+	err();
 	ccTimeDelay(500);
 	ccWindowMouseSetCursor(CC_CURSOR_ARROW);
+	err();
+	ccWindowSetTitle("ccore changed title");
 	err();
 
 	quit = false;
@@ -216,8 +221,8 @@ int main(int argc, char **argv)
 	
 	test = 0;
 	testDefaultDirectories(&test);
-	testTime(&test);
-	testDisplay(&test);
+	//testTime(&test);
+	//testDisplay(&test);
 	testWindow(&test);
 	testGamepad(&test);
 
