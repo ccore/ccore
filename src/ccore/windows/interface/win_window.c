@@ -13,7 +13,7 @@ static LPSTR _cc_cursor[] =
 	IDC_HELP
 };
 
-#define CC_WINDOW_CLASS_NAME "ccWindow"
+#define _CC_WINDOW_CLASS_NAME "ccWindow"
 
 void _ccEventStackPush(ccEvent event)
 {
@@ -229,7 +229,7 @@ static bool regHinstance(HINSTANCE instanceHandle)
 	winClass.hCursor = LoadCursor(NULL, IDC_ARROW);
 	winClass.hbrBackground = NULL;
 	winClass.lpszMenuName = NULL;
-	winClass.lpszClassName = CC_WINDOW_CLASS_NAME;
+	winClass.lpszClassName = _CC_WINDOW_CLASS_NAME;
 	winClass.hIconSm = NULL;
 
 	if((_CC_WINDOW_DATA->winClass = RegisterClassEx(&winClass)) == 0) {
@@ -324,7 +324,7 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 
 	_CC_WINDOW_DATA->winHandle = CreateWindowEx(
 		WS_EX_APPWINDOW,
-		CC_WINDOW_CLASS_NAME,
+		_CC_WINDOW_CLASS_NAME,
 		title,
 		_CC_WINDOW_DATA->style,
 		windowRect.left, windowRect.top,
