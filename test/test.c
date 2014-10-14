@@ -105,25 +105,30 @@ void testWindow(int *test)
 	ccWindowCreate((ccRect){0, 0, 100, 100}, "ccore test", CC_WINDOW_FLAG_ALWAYSONTOP);
 	err();
 	ccWindowSetCentered();
+	ccTimeDelay(500);
 	err();
 	ccWindowSetMaximized();
+	ccTimeDelay(500);
 	err();
 	ccWindowSetFullscreen(1, ccDisplayGetDefault());
+	ccTimeDelay(500);
 	err();
 
 	ccWindowClipboardSet("ccore test");
 	err();
-	ccWindowSetWindowed();
+	ccWindowSetWindowed((ccRect){ 0, 0, 300, 100 });
 	err();
-
+	ccWindowSetCentered();
+	err();
 	iconData = iconGetData();
 	ccWindowIconSet(iconGetSize(), iconData);
 	free(iconData);
 	err();
-
 	ccWindowMouseSetPosition((ccPoint){0, 0});
 	err();
 	ccWindowMouseSetCursor(CC_CURSOR_NONE);
+	ccTimeDelay(500);
+	ccWindowMouseSetCursor(CC_CURSOR_ARROW);
 	err();
 
 	quit = false;
@@ -145,10 +150,6 @@ void testWindow(int *test)
 	ccDisplayRevertModes();
 	err();
 
-	ccWindowFree();
-	err();
-	ccDisplayFree();
-	err();
 	ccPrintf(" - passed\n");
 }
 

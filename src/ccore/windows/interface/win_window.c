@@ -394,7 +394,7 @@ ccReturn ccWindowFree(void)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowSetWindowed(void)
+ccReturn ccWindowSetWindowed(ccRect rect)
 {
 	ccAssert(_ccWindow != NULL);
 
@@ -404,7 +404,7 @@ ccReturn ccWindowSetWindowed(void)
 		return CC_FAIL;
 	}
 	
-	return ccWindowResizeMove(ccDisplayGetRect(_ccWindow->display));
+	return ccWindowResizeMove(rect);
 }
 
 ccReturn ccWindowSetMaximized(void)
