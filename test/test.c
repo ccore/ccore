@@ -116,7 +116,7 @@ void testWindow(int *test)
 
 	ccWindowClipboardSet("ccore test");
 	err();
-	ccWindowSetWindowed((ccRect){ 0, 0, 300, 100 });
+	ccWindowSetWindowed(&(ccRect){ 0, 0, 300, 100 });
 	err();
 	ccWindowSetCentered();
 	err();

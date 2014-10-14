@@ -491,7 +491,7 @@ bool ccWindowEventPoll(void)
 	return true;
 }
 
-ccReturn ccWindowSetWindowed(ccRect rect)
+ccReturn ccWindowSetWindowed(ccRect *rect)
 {	
 	ccAssert(_ccWindow);
 
@@ -500,14 +500,18 @@ ccReturn ccWindowSetWindowed(ccRect rect)
 	setWindowState("_NET_WM_STATE_MAXIMIZED_VERT", false);
 	setWindowState("_NET_WM_STATE_MAXIMIZED_HORZ", false);
 
-	return ccWindowResizeMove(rect);
+	if(rect == NULL){
+		return CC_SUCCESS;
+	}else{
+		return ccWindowResizeMove(*rect);
+	}
 }
 
 ccReturn ccWindowSetMaximized(void)
 {
 	ccAssert(_ccWindow);
 
-	ccWindowSetWindowed();
+	ccWindowSetWindowed(NULL);
 
 	setWindowState("_NET_WM_STATE_MAXIMIZED_VERT", true);
 	setWindowState("_NET_WM_STATE_MAXIMIZED_HORZ", true);
