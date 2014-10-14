@@ -217,11 +217,11 @@ void _queryXinput()
 					break;
 				}
 
-				if(axisValue > GAMEPAD_AXIS_MAX) {
-					axisValue = GAMEPAD_AXIS_MAX;
+				if(axisValue > CC_GAMEPAD_AXIS_MAX) {
+					axisValue = CC_GAMEPAD_AXIS_MAX;
 				}
-				else if(axisValue < GAMEPAD_AXIS_MIN) {
-					axisValue = GAMEPAD_AXIS_MIN;
+				else if(axisValue < CC_GAMEPAD_AXIS_MIN) {
+					axisValue = CC_GAMEPAD_AXIS_MIN;
 				}
 
 				if(currentGamepad->axis[j] != axisValue) {
@@ -308,7 +308,7 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		GAMEPAD_DATA->raw->axisNegativeComponent = malloc(sizeof(int)* currentGamepad->axisAmount);
 		
 		for(i = 0; i < currentGamepad->axisAmount; i++) {
-			GAMEPAD_DATA->raw->axisFactor[i] = (double)(GAMEPAD_AXIS_MAX - GAMEPAD_AXIS_MIN) / (GAMEPAD_DATA->raw->valueCaps[i].PhysicalMax - GAMEPAD_DATA->raw->valueCaps[i].PhysicalMin);
+			GAMEPAD_DATA->raw->axisFactor[i] = (double)(CC_GAMEPAD_AXIS_MAX - CC_GAMEPAD_AXIS_MIN) / (GAMEPAD_DATA->raw->valueCaps[i].PhysicalMax - GAMEPAD_DATA->raw->valueCaps[i].PhysicalMin);
 			GAMEPAD_DATA->raw->axisNegativeComponent[i] = ((GAMEPAD_DATA->raw->valueCaps[i].PhysicalMax - GAMEPAD_DATA->raw->valueCaps[i].PhysicalMin) >> 1) - GAMEPAD_DATA->raw->valueCaps[i].PhysicalMin;
 		}
 
@@ -353,11 +353,11 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		HidP_GetUsageValue(HidP_Input, GAMEPAD_DATA->raw->valueCaps[i].UsagePage, 0, GAMEPAD_DATA->raw->valueCaps[i].NotRange.Usage, &newInt, GAMEPAD_DATA->raw->preparsedData, raw->data.hid.bRawData, raw->data.hid.dwSizeHid);
 		if(GAMEPAD_DATA->raw->valueCaps[i].Range.UsageMin != HID_USAGE_GENERIC_HATSWITCH) {
 			newInt = (int)((newInt - GAMEPAD_DATA->raw->axisNegativeComponent[i]) * GAMEPAD_DATA->raw->axisFactor[i]);
-			if(newInt < GAMEPAD_AXIS_MIN) {
-				newInt = GAMEPAD_AXIS_MIN;
+			if(newInt < CC_GAMEPAD_AXIS_MIN) {
+				newInt = CC_GAMEPAD_AXIS_MIN;
 			}
-			else if(newInt > GAMEPAD_AXIS_MAX) {
-				newInt = GAMEPAD_AXIS_MAX;
+			else if(newInt > CC_GAMEPAD_AXIS_MAX) {
+				newInt = CC_GAMEPAD_AXIS_MAX;
 			}
 		}
 
