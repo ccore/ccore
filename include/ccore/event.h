@@ -55,7 +55,7 @@ typedef enum {
 	CC_EVENT_WINDOW_RESIZE,
 #if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 	// Gamepad event, see gamepad.h for specifics
-	CC_EVENT_GAMEPAD,
+	CC_EVENT_GAMEPAD
 #endif
 } ccEventType;
 

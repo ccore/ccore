@@ -112,7 +112,6 @@ void testWindow(int *test)
 	ccWindowClipboardSet("ccore test");
 	err();
 	ccWindowSetWindowed();
-	ccWindowResizeMove((ccRect){ 100, 100, 100, 100 });
 	err();
 	iconData = iconGetData();
 	ccWindowIconSet(iconGetSize(), iconData);
@@ -121,6 +120,8 @@ void testWindow(int *test)
 	ccWindowMouseSetPosition((ccPoint){0, 0});
 	err();
 	ccWindowMouseSetCursor(CC_CURSOR_NONE);
+	ccTimeDelay(500);
+	ccWindowMouseSetCursor(CC_CURSOR_ARROW);
 	err();
 
 	quit = false;
