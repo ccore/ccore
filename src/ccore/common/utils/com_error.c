@@ -89,7 +89,7 @@ const char *ccErrorString(ccError error)
 			// Gamepad related
 		case CC_ERROR_GAMEPAD_NONE:
 			return "No gamepad could be found";
-		case CC_ERROR__CC_GAMEPAD_DATA:
+		case CC_ERROR_GAMEPAD_DATA:
 			return "The gamepad could not be read";
 		case CC_ERROR_GAMEPAD_HAPTICNONE:
 			return "This haptic motor is not accessible";
