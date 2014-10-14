@@ -16,16 +16,16 @@
 #include "win_gamepad.h"
 
 #if defined CC_USE_ALL || defined CC_USE_GAMEPAD
-#define NRAWINPUTDEVICES 3
-#define RAWINPUT_GAMEPAD 2
-#define RAWINPUT_GAMEPADCOUNT 1
+#define _CC_NRAWINPUTDEVICES 3
+#define _CC_RAWINPUT_GAMEPAD 2
+#define _CC_RAWINPUT_GAMEPADCOUNT 1
 #else
-#define NRAWINPUTDEVICES 2
-#define RAWINPUT_GAMEPADCOUNT 0
+#define _CC_NRAWINPUTDEVICES 2
+#define _CC_RAWINPUT_GAMEPADCOUNT 0
 #endif
 
-#define RAWINPUT_KEYBOARD 0
-#define RAWINPUT_MOUSE 1
+#define _CC_RAWINPUT_KEYBOARD 0
+#define _CC_RAWINPUT_MOUSE 1
 
 typedef struct {
 	HDC hdc;
@@ -33,7 +33,7 @@ typedef struct {
 	HWND winHandle;
 	HGLRC renderContext;
 	LONG style;
-	RAWINPUTDEVICE rid[NRAWINPUTDEVICES];
+	RAWINPUTDEVICE rid[_CC_NRAWINPUTDEVICES];
 	LPBYTE lpb;
 	UINT lpbSize;
 	UINT dwSize;
@@ -54,4 +54,4 @@ typedef struct {
 
 void _ccEventStackPush(ccEvent event);
 
-#define WINDOW_DATA ((ccWindow_win*)_ccWindow->data)
+#define _CC_WINDOW_DATA ((ccWindow_win*)_ccWindow->data)

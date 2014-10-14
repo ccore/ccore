@@ -58,18 +58,18 @@ ccReturn ccGamepadInitialize(void)
 	_ccGamepads->amount = 0;
 	_ccGamepads->gamepad = NULL;
 	
-	WINDOW_DATA->queryXinput = true;
+	_CC_WINDOW_DATA->queryXinput = true;
 
 	for(i = 0; i < XUSER_MAX_COUNT; i++) {
 		_CC_GAMEPADS_DATA->xInputConnected[i] = -1;
 	}
 
-	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].usUsagePage = 1;
-	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].usUsage = HID_USAGE_GENERIC_JOYSTICK;
-	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].dwFlags = 0;
-	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].hwndTarget = WINDOW_DATA->winHandle;
+	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_GAMEPAD].usUsagePage = 1;
+	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_GAMEPAD].usUsage = HID_USAGE_GENERIC_JOYSTICK;
+	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_GAMEPAD].dwFlags = 0;
+	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_GAMEPAD].hwndTarget = _CC_WINDOW_DATA->winHandle;
 
-	if(RegisterRawInputDevices(&WINDOW_DATA->rid[RAWINPUT_GAMEPAD], RAWINPUT_GAMEPADCOUNT, sizeof(RAWINPUTDEVICE)) == TRUE) {
+	if(RegisterRawInputDevices(&_CC_WINDOW_DATA->rid[_CC_RAWINPUT_GAMEPAD], _CC_RAWINPUT_GAMEPADCOUNT, sizeof(RAWINPUTDEVICE)) == TRUE) {
 		return CC_SUCCESS;
 	}
 	else{
@@ -82,12 +82,12 @@ ccReturn ccGamepadFree(void)
 {
 	ccAssert(_ccGamepads != NULL);
 	
-	WINDOW_DATA->queryXinput = false;
+	_CC_WINDOW_DATA->queryXinput = false;
 
-	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].dwFlags = RIDEV_REMOVE;
-	WINDOW_DATA->rid[RAWINPUT_GAMEPAD].hwndTarget = NULL;
+	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_GAMEPAD].dwFlags = RIDEV_REMOVE;
+	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_GAMEPAD].hwndTarget = NULL;
 	
-	RegisterRawInputDevices(&WINDOW_DATA->rid[RAWINPUT_GAMEPAD], RAWINPUT_GAMEPADCOUNT, sizeof(RAWINPUTDEVICE));
+	RegisterRawInputDevices(&_CC_WINDOW_DATA->rid[_CC_RAWINPUT_GAMEPAD], _CC_RAWINPUT_GAMEPADCOUNT, sizeof(RAWINPUTDEVICE));
 
 	if(ccGamepadGetAmount() != 0) {
 		int i;
