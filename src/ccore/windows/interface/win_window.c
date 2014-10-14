@@ -506,6 +506,11 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 	}
 }
 
+ccReturn ccWindowSetTitle(const char *title)
+{
+	SetWindowText(_CC_WINDOW_DATA->winHandle, title);
+}
+
 ccReturn ccWindowResizeMove(ccRect rect)
 {
 	return _ccWindowResizeMove(rect, true);
