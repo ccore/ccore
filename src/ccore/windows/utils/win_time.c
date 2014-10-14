@@ -6,7 +6,7 @@ static void calculateConversionFactor(void)
 {
 	LARGE_INTEGER ticksPerSecond;
 	QueryPerformanceFrequency(&ticksPerSecond);
-	_ticksToNanoSeconds = (double)(_TO_SECONDS / ticksPerSecond.QuadPart);
+	_ticksToNanoSeconds = (double)(_CC_TO_SECONDS / ticksPerSecond.QuadPart);
 }
 
 ccReturn ccTimeDelay(int ms)

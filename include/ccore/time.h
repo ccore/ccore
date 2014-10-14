@@ -26,13 +26,13 @@
 #include "core.h"
 #include "types.h"
 
-#define _TO_SECONDS 1000000000LL
-#define _TO_MILLISECONDS 1000000LL
-#define _TO_MICROSECONDS 1000LL
+#define _CC_TO_SECONDS 1000000000LL
+#define _CC_TO_MILLISECONDS 1000000LL
+#define _CC_TO_MICROSECONDS 1000LL
 
-#define ccTimeSeconds() (ccTimeNanoseconds() / _TO_SECONDS)
-#define ccTimeMilliseconds() (ccTimeNanoseconds() / _TO_MILLISECONDS)
-#define ccTimeMicroseconds() (ccTimeNanoseconds() / _TO_MICROSECONDS)
+#define ccTimeSeconds() (ccTimeNanoseconds() / _CC_TO_SECONDS)
+#define ccTimeMilliseconds() (ccTimeNanoseconds() / _CC_TO_MILLISECONDS)
+#define ccTimeMicroseconds() (ccTimeNanoseconds() / _CC_TO_MICROSECONDS)
 
 #ifdef __cplusplus
 extern "C"
