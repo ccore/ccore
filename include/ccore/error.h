@@ -62,7 +62,7 @@ typedef enum {
 
 	// Gamepad related
 	CC_ERROR_GAMEPAD_NONE, // No gamepads could be found
-	CC_ERROR_GAMEPAD_DATA, // The gamepad could not be read
+	CC_ERROR__CC_GAMEPAD_DATA, // The gamepad could not be read
 	CC_ERROR_GAMEPAD_HAPTICNONE, // This motor is not accessible
 
 	// Mouse related
