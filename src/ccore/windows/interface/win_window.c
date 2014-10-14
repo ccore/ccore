@@ -1,6 +1,6 @@
 #include "win_window.h"
 
-static LPSTR _cursor[] =
+static LPSTR _cc_cursor[] =
 {
 	IDC_ARROW,
 	IDC_CROSS,
