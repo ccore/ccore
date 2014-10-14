@@ -304,7 +304,7 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 	WINDOW_DATA->lpbSize = 0;
 	WINDOW_DATA->lpb = NULL;
 	WINDOW_DATA->flags = flags;
-	WINDOW_DATA->cursor = CC_CURSOR_ARROW;
+	WINDOW_DATA->cursor = CC_cc_cursor_ARROW;
 
 	//apply flags
 	WINDOW_DATA->style = WS_OVERLAPPEDWINDOW;
@@ -586,12 +586,12 @@ ccReturn ccWindowMouseSetPosition(ccPoint target)
 	p.y = target.y;
 
 	if(ClientToScreen(WINDOW_DATA->winHandle, &p) == 0) {
-		ccErrorPush(CC_ERROR_WINDOW_CURSOR);
+		ccErrorPush(CC_ERROR_WINDOW_cc_cursor);
 		return CC_FAIL;
 	}
 	
 	if(SetCursorPos(p.x, p.y) == 0) {
-		ccErrorPush(CC_ERROR_WINDOW_CURSOR);
+		ccErrorPush(CC_ERROR_WINDOW_cc_cursor);
 		return CC_FAIL;
 	}
 
@@ -600,15 +600,15 @@ ccReturn ccWindowMouseSetPosition(ccPoint target)
 
 ccReturn ccWindowMouseSetCursor(ccCursor cursor)
 {
-	if(cursor == CC_CURSOR_NONE) {
-		if(WINDOW_DATA->cursor != CC_CURSOR_NONE) ShowCursor(FALSE);
+	if(cursor == CC_cc_cursor_NONE) {
+		if(WINDOW_DATA->cursor != CC_cc_cursor_NONE) ShowCursor(FALSE);
 	}
 	else{
 		HCURSOR hCursor;
 
-		if(WINDOW_DATA->cursor == CC_CURSOR_NONE) ShowCursor(TRUE);
+		if(WINDOW_DATA->cursor == CC_cc_cursor_NONE) ShowCursor(TRUE);
 
-		hCursor = LoadCursor(NULL, _cursor[cursor]);
+		hCursor = LoadCursor(NULL, _cc_cursor[cursor]);
 		SetCursor(hCursor);
 	}
 
