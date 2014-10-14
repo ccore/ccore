@@ -23,6 +23,11 @@
 
 #ifdef _DEBUG
 
+// rand, srand
+#include <stdlib.h>
+// time
+#include <time.h>
+
 #include <ccore/print.h>
 #include <ccore/file.h>
 #include <ccore/time.h>
@@ -161,18 +166,16 @@ void testDisplay(int *test)
 	if(ccDisplayGetAmount() > 0){
 		display = ccDisplayGetDefault();
 		err();
-#ifndef LINUX //TODO fix bug #15
 		if(ccDisplayResolutionGetAmount(display) <= 0){
 			reportDiscrepancy("Display has no resolutions");
 		}
-		if(display->current > 0){
-			ccDisplayResolutionSet(display, display->current - 1);
-			err();
-		}else if(ccDisplayResolutionGetAmount(display) > 0){
-			ccDisplayResolutionSet(display, 1);
-			err();
-		}
-#endif
+
+		srand(time(NULL));
+		ccDisplayResolutionSet(display, rand() % ccDisplayResolutionGetAmount(display));
+
+		ccTimeDelay(5000);
+		err();
+
 		ccDisplayRevertModes();
 		err();
 	}
@@ -213,7 +216,7 @@ int main(int argc, char **argv)
 	test = 0;
 	testDefaultDirectories(&test);
 	testTime(&test);
-	//testDisplay(&test);
+	testDisplay(&test);
 	testWindow(&test);
 	testGamepad(&test);
 

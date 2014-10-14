@@ -28,7 +28,5 @@ else:
     if(env['test']=='yes' or env['test']=='all' or env['test']=='feature'):
     	env.Append(CCFLAGS=['-D_DEBUG'])
         env.Program(target='bin/test', source=['test/test.c', 'test/icon.c'], LIBS=[staticLibrary, libs], LIBPATH=libpaths)
-        Command("bin/emptyfile.txt", "test/emptyfile.txt", Copy("$TARGET", "$SOURCE"))
-        Command("bin/10bytesfile.txt", "test/10bytesfile.txt", Copy("$TARGET", "$SOURCE"))	
 
 Help(opts.GenerateHelpText(env))
