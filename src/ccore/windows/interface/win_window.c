@@ -394,17 +394,19 @@ ccReturn ccWindowFree(void)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowSetWindowed(ccRect rect)
+ccReturn ccWindowSetWindowed(ccRect *rect)
 {
-	ccAssert(_ccWindow != NULL);
-
 	SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, WINDOW_DATA->style | WS_CAPTION);
 	if(ShowWindow(WINDOW_DATA->winHandle, SW_SHOW) == FALSE) {
 		ccErrorPush(CC_ERROR_WINDOW_MODE);
 		return CC_FAIL;
 	}
 	
-	return ccWindowResizeMove(rect);
+	if(rect == NULL){
+		return CC_SUCCESS;
+	}else{
+		return ccWindowResizeMove(*rect);
+	}
 }
 
 ccReturn ccWindowSetMaximized(void)

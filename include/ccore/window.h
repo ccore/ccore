@@ -79,9 +79,10 @@ bool ccWindowEventPoll(void); // Poll an event from the events that currently ne
 ccReturn ccWindowResizeMove(ccRect rect);
 ccReturn ccWindowSetCentered(void);
 
-ccReturn ccWindowSetWindowed(ccRect rect);
+ccReturn ccWindowSetWindowed(ccRect *rect);
 ccReturn ccWindowSetMaximized(void);
 ccReturn ccWindowSetFullscreen(int displayCount, ...);
+ccReturn ccWindowSetTitle(const char *title);
 
 ccReturn ccWindowSetBlink(void);
 ccReturn ccWindowIconSet(ccPoint size, unsigned long *icon);
