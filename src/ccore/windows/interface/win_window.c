@@ -379,7 +379,7 @@ ccReturn ccWindowFree(void)
 		return CC_FAIL;
 	}
 
-	if(UnregisterClass(_CC_WINDOW_DATA->winClass, NULL) == FALSE) {
+	if(UnregisterClass((LPCSTR)_CC_WINDOW_DATA->winClass, NULL) == FALSE) {
 		ccErrorPush(CC_ERROR_WINDOW_DESTROY);
 		return CC_FAIL;
 	}
