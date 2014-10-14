@@ -82,6 +82,7 @@ ccReturn ccWindowSetCentered(void);
 ccReturn ccWindowSetWindowed(ccRect *rect);
 ccReturn ccWindowSetMaximized(void);
 ccReturn ccWindowSetFullscreen(int displayCount, ...);
+ccReturn ccWindowSetTitle(const char *title);
 
 ccReturn ccWindowSetBlink(void);
 ccReturn ccWindowIconSet(ccPoint size, unsigned long *icon);
