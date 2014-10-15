@@ -104,7 +104,7 @@ static void processRid(HRAWINPUT rawInput)
 
 	if(raw->header.dwType == RIM_TYPEMOUSE) {
 		USHORT buttonFlags = raw->data.mouse.usButtonFlags;
-		
+
 		if(buttonFlags == 0) {
 			_ccWindow->event.type = CC_EVENT_MOUSE_MOVE;
 			_ccWindow->event.mouseDelta.x = raw->data.mouse.lLastX;

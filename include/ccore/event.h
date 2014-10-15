@@ -64,7 +64,9 @@ typedef enum {
 	CC_MOUSE_BUTTON_NONE,
 	CC_MOUSE_BUTTON_LEFT,
 	CC_MOUSE_BUTTON_MIDDLE,
-	CC_MOUSE_BUTTON_RIGHT
+	CC_MOUSE_BUTTON_RIGHT,
+	CC_MOUSE_BUTTON_PREVIOUS,
+	CC_MOUSE_BUTTON_NEXT
 } ccMouseButtonType;
 
 // The event structure used by ccWindow, set by the call ccPollEvent
