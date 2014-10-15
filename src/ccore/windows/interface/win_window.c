@@ -508,7 +508,12 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 
 ccReturn ccWindowSetTitle(const char *title)
 {
-	return SetWindowText(_CC_WINDOW_DATA->winHandle, title) == TRUE?CC_SUCCESS:CC_FAIL;
+	int wstrSize = MultiByteToWideChar(CP_UTF8, 0, title, -1, NULL, 0);
+	wchar_t *wstr = malloc(wstrSize);
+	printf("Size %d to %d\n", strlen(title), wstrSize);
+	MultiByteToWideChar(CP_UTF8, 0, title, strlen(title), wstr, wstrSize);
+
+	return SetWindowText(_CC_WINDOW_DATA->winHandle, wstr) == TRUE?CC_SUCCESS:CC_FAIL;
 }
 
 ccReturn ccWindowResizeMove(ccRect rect)

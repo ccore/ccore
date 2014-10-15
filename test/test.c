@@ -1,4 +1,4 @@
-//__________________________________________________________________________________//
+﻿//__________________________________________________________________________________//
 //                               ______                                             //
 //                              /  ___ /__  _ __ ___                                //
 //                             /  / __/ _ \| '__/ _ \                               //
@@ -133,7 +133,7 @@ void testWindow(int *test)
 	ccTimeDelay(500);
 	ccWindowMouseSetCursor(CC_CURSOR_ARROW);
 	err();
-	ccWindowSetTitle("ccore changed title");
+	ccWindowSetTitle("òèçùà12345");
 	err();
 
 	quit = false;
