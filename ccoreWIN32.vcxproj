@@ -34,7 +34,6 @@
     <ClInclude Include="include\ccore\time.h" />
     <ClInclude Include="include\ccore\types.h" />
     <ClInclude Include="include\ccore\window.h" />
-    <ClInclude Include="include\GL\wglew.h" />
     <ClInclude Include="src\ccore\windows\interface\win_display.h" />
     <ClInclude Include="src\ccore\windows\interface\win_gamepad.h" />
     <ClInclude Include="src\ccore\windows\interface\win_opengl.h" />
@@ -60,13 +59,11 @@
     <ClCompile Include="src\ccore\windows\interface\win_opengl.c" />
     <ClCompile Include="src\ccore\windows\interface\win_window.c" />
     <ClCompile Include="src\ccore\windows\utils\win_file.c" />
+    <ClCompile Include="src\ccore\windows\utils\win_sysinfo.c" />
     <ClCompile Include="src\ccore\windows\utils\win_thread.c" />
     <ClCompile Include="src\ccore\windows\utils\win_time.c" />
     <ClCompile Include="test\icon.c" />
     <ClCompile Include="test\test.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\ccore\windows\utils\win_sysinfo.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E3B9EEBD-534A-442C-B3E4-A5FE4BEC3A3C}</ProjectGuid>

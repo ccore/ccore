@@ -8,6 +8,8 @@ ccReturn ccSysinfoInitialize(void)
 
 	ccMalloc(_ccSysinfo, sizeof(ccSysinfo));
 
+	GetPhysicallyInstalledSystemMemory(&_ccSysinfo->ramTotal);
+
 	return CC_SUCCESS;
 }
 
