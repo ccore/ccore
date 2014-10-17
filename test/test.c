@@ -35,6 +35,7 @@
 #include <ccore/gamepad.h>
 #include <ccore/window.h>
 #include <ccore/display.h>
+#include <ccore/sysinfo.h>
 
 #include "icon.h"
 
@@ -181,7 +182,7 @@ void testDisplay(int *test)
 			reportDiscrepancy("Display has no resolutions");
 		}
 
-		srand(time(NULL));
+		srand((unsigned int)time(NULL));
 		ccDisplayResolutionSet(display, rand() % ccDisplayResolutionGetAmount(display));
 
 		ccTimeDelay(5000);
@@ -218,6 +219,18 @@ void testDefaultDirectories(int *test)
 	ccPrintf("Passed\n");
 }
 
+void testSysinfo(int *test)
+{
+	ccPrintf("Test %d: Retrieving system info", ++(*test));
+
+	ccSysinfoInitialize();
+	err();
+
+	ccPrintf("Installed RAM: %dMb\n", ccSysinfoGetRam());
+
+	ccSysinfoFree();
+}
+
 int main(int argc, char **argv)
 {
 	int test;
@@ -226,10 +239,11 @@ int main(int argc, char **argv)
 	
 	test = 0;
 	testDefaultDirectories(&test);
-	//testTime(&test);
+	testTime(&test);
 	//testDisplay(&test);
 	testWindow(&test);
 	testGamepad(&test);
+	testSysinfo(&test);
 
 	ccFree();
 

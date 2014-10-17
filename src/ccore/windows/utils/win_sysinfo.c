@@ -2,9 +2,16 @@
 
 #include "win_sysinfo.h"
 
-ccSysinfo ccSysinfoGet(void)
+ccReturn ccSysinfoInitialize(void)
 {
 
+}
+
+void ccSysinfoFree(void)
+{
+	ccAssert(_ccSysinfo != NULL);
+
+	free(_ccSysinfo);
 }
 
 #endif

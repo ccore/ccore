@@ -17,7 +17,12 @@
 //      this program. If not, see <http://opensource.org/licenses/>.                //
 //__________________________________________________________________________________//
 
+#pragma once
+
 #if defined CC_USE_ALL || defined CC_USE_SYSINFO
+
+#include "types.h"
+#include "error.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -25,10 +30,15 @@ extern "C"
 #endif
 
 typedef struct {
-	unsigned long ramMB;
+	unsigned long ram;
 } ccSysinfo;
 
-ccSysinfo ccSysinfoGet(void);
+ccSysinfo *_ccSysinfo;
+
+#define ccSysinfoGetRam() _ccSysinfo->ram
+
+ccReturn ccSysinfoInitialize(void);
+void ccSysinfoFree(void);
 
 #ifdef __cplusplus
 }

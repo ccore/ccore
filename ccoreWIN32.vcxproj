@@ -29,6 +29,7 @@
     <ClInclude Include="include\ccore\opengl.h" />
     <ClInclude Include="include\ccore\print.h" />
     <ClInclude Include="include\ccore\string.h" />
+    <ClInclude Include="include\ccore\sysinfo.h" />
     <ClInclude Include="include\ccore\thread.h" />
     <ClInclude Include="include\ccore\time.h" />
     <ClInclude Include="include\ccore\types.h" />
@@ -39,6 +40,7 @@
     <ClInclude Include="src\ccore\windows\interface\win_opengl.h" />
     <ClInclude Include="src\ccore\windows\interface\win_window.h" />
     <ClInclude Include="src\ccore\windows\utils\win_file.h" />
+    <ClInclude Include="src\ccore\windows\utils\win_sysinfo.h" />
     <ClInclude Include="src\ccore\windows\utils\win_thread.h" />
     <ClInclude Include="src\ccore\windows\utils\win_time.h" />
     <ClInclude Include="test\icon.h" />
@@ -61,6 +63,9 @@
     <ClCompile Include="src\ccore\windows\utils\win_time.c" />
     <ClCompile Include="test\icon.c" />
     <ClCompile Include="test\test.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\ccore\windows\utils\win_sysinfo.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E3B9EEBD-534A-442C-B3E4-A5FE4BEC3A3C}</ProjectGuid>
@@ -128,7 +133,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;CC_USE_GAMEPAD;CC_USE_FILE;CC_USE_THREAD;CC_USE_TIME;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;CC_USE_GAMEPAD;CC_USE_FILE;CC_USE_THREAD;CC_USE_TIME;CC_USE_SYSINFO;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <CompileAs>CompileAsC</CompileAs>
