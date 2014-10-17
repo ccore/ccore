@@ -8,11 +8,15 @@ ccReturn ccSysinfoInitialize(void)
 
 	ccMalloc(_ccSysinfo, sizeof(ccSysinfo));
 
-	GetPhysicallyInstalledSystemMemory(&_ccSysinfo->ramTotal);
+	if(GetPhysicallyInstalledSystemMemory(&_ccSysinfo->ramTotal) == FALSE) goto fail;
 
-	_ccSysinfo->ramTotal *= 1000UL;
+	_ccSysinfo->ramTotal *= _CC_SYSINFO_WINKB;
 
 	return CC_SUCCESS;
+
+fail:
+	free(_ccSysinfo);
+	return CC_FAIL;
 }
 
 #endif

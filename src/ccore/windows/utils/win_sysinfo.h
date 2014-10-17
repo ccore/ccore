@@ -9,4 +9,6 @@
 
 #include <ccore/assert.h>
 
+#define _CC_SYSINFO_WINKB 1024
+
 #endif
