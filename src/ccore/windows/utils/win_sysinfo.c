@@ -25,8 +25,6 @@ ccReturn ccSysinfoInitialize(void)
 
 	_ccSysinfo->fileMaxOpen = _getmaxstdio();
 
-	_ccSysinfo->stringMaxLength = MAX_PATH;
-
 	return CC_SUCCESS;
 
 fail:

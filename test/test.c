@@ -235,8 +235,6 @@ void testSysinfo(int *test)
 
 	ccPrintf("\tMax file open:\t%d\n", ccSysinfoGetFileMaxOpen());
 
-	ccPrintf("\tMax string:\t%d\n", ccSysinfoGetStringMaxLength());
-
 	ccSysinfoFree();
 	err();
 
