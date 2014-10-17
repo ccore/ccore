@@ -36,7 +36,6 @@ extern "C"
 
 typedef struct {
 	uint_fast64_t ramTotal;
-	uint_fast64_t ramUsable;
 
 	unsigned int processorCount;
 
@@ -45,14 +44,10 @@ typedef struct {
 
 ccSysinfo *_ccSysinfo;
 
-#define ccSysinfoGetRamTotal() _ccSysinfo->ramTotal
-#define ccSysinfoGetRamUsable() _ccSysinfo->ramUsable
-
 #define ccSysinfoGetProcessorCount() _ccSysinfo->processorCount
-
 #define ccSysinfoGetFileMaxOpen() _ccSysinfo->fileMaxOpen
-#define ccSysinfoGetStringMaxLength() _ccSysinfo->stringMaxLength
 
+#define ccSysinfoGetRamTotal() _ccSysinfo->ramTotal
 uint_fast64_t ccSysinfoGetRamAvailable(void);
 
 ccReturn ccSysinfoInitialize(void);
