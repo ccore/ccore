@@ -39,6 +39,8 @@ typedef struct {
 ccSysinfo *_ccSysinfo;
 
 #define ccSysinfoGetRam() _ccSysinfo->ram
+#define ccSysinfoGetPageSize() _ccSysinfo->pageSize
+#define ccSysinfoGetPageCount() _ccSysinfo->pageCount
 
 ccReturn ccSysinfoInitialize(void);
 void ccSysinfoFree(void);
