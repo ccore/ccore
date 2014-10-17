@@ -229,9 +229,13 @@ void testSysinfo(int *test)
 	ccPrintf("\tInstalled RAM:\t%lld\n", ccSysinfoGetRamTotal());
 	ccPrintf("\tAvailable RAM:\t%lld\n", ccSysinfoGetRamUsable());
 
+	ccPrintf("\tFree RAM:\t%lld\n", ccSysinfoGetRamAvailable());
+
 	ccPrintf("\tProcessors:\t%d\n", ccSysinfoGetProcessorCount());
 
-	ccPrintf("\tFree RAM:\t%lld\n", ccSysinfoGetRamAvailable());
+	ccPrintf("\tMax file open:\t%d\n", ccSysinfoGetFileMaxOpen());
+
+	ccPrintf("\tMax string:\t%d\n", ccSysinfoGetStringMaxLength());
 
 	ccSysinfoFree();
 	err();

@@ -40,8 +40,9 @@ typedef struct {
 
 	unsigned int processorCount;
 
-	unsigned long fileMaxOpen;
-	unsigned long stringMaxLength;
+	unsigned int fileMaxOpen;
+
+	unsigned int stringMaxLength;
 } ccSysinfo;
 
 ccSysinfo *_ccSysinfo;

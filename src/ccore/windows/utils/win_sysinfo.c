@@ -23,6 +23,9 @@ ccReturn ccSysinfoInitialize(void)
 	GetSystemInfo(&sysinfo);
 	_ccSysinfo->processorCount = sysinfo.dwNumberOfProcessors;
 
+	_ccSysinfo->fileMaxOpen = _getmaxstdio();
+
+	_ccSysinfo->stringMaxLength = MAX_PATH;
 
 	return CC_SUCCESS;
 
