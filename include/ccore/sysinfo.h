@@ -36,7 +36,6 @@ extern "C"
 
 typedef struct {
 	uint_fast64_t ramTotal;
-	uint_fast64_t ramUsable;
 
 	unsigned int processorCount;
 
@@ -46,7 +45,6 @@ typedef struct {
 ccSysinfo *_ccSysinfo;
 
 #define ccSysinfoGetRamTotal() _ccSysinfo->ramTotal
-#define ccSysinfoGetRamUsable() _ccSysinfo->ramUsable
 
 #define ccSysinfoGetProcessorCount() _ccSysinfo->processorCount
 
