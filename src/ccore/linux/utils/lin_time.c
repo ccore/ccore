@@ -2,7 +2,7 @@
 
 ccReturn ccTimeDelay(int ms)
 {
-	usleep(ms * _TO_MICROSECONDS);
+	usleep(ms * _CC_TO_MICROSECONDS);
 
 	return CC_SUCCESS;
 }
@@ -13,5 +13,5 @@ uint64_t ccTimeNanoseconds(void)
 
 	clock_gettime(CLOCK_REALTIME, &time);
 
-	return (uint64_t)(time.tv_nsec + time.tv_sec * _TO_SECONDS);
+	return (uint64_t)(time.tv_nsec + time.tv_sec * _CC_TO_SECONDS);
 }

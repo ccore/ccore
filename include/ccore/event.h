@@ -3,7 +3,7 @@
 //                              /  ___ /__  _ __ ___                                //
 //                             /  / __/ _ \| '__/ _ \                               //
 //                            |  | (_| (_) | | |  __/                               //
-//                             \  \___\___/|_|  \___| 1.0                           //
+//                             \  \___\___/|_|  \___| 1.1                           //
 //                              \______\                                            //
 //                                                                                  //
 //             Copyright (C) 2014 \ Job Talle (job@ccore.org)                       //
@@ -53,9 +53,9 @@ typedef enum {
 	CC_EVENT_WINDOW_QUIT,
 	// Window has resized, new dimensions are stored in the window struct before the event fires
 	CC_EVENT_WINDOW_RESIZE,
-#ifdef CC_USE_GAMEPAD
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 	// Gamepad event, see gamepad.h for specifics
-	CC_EVENT_GAMEPAD,
+	CC_EVENT_GAMEPAD
 #endif
 } ccEventType;
 
@@ -64,7 +64,9 @@ typedef enum {
 	CC_MOUSE_BUTTON_NONE,
 	CC_MOUSE_BUTTON_LEFT,
 	CC_MOUSE_BUTTON_MIDDLE,
-	CC_MOUSE_BUTTON_RIGHT
+	CC_MOUSE_BUTTON_RIGHT,
+	CC_MOUSE_BUTTON_PREVIOUS,
+	CC_MOUSE_BUTTON_NEXT
 } ccMouseButtonType;
 
 // The event structure used by ccWindow, set by the call ccPollEvent
@@ -77,7 +79,7 @@ typedef struct {
 		ccPoint mouseDelta;
 		unsigned int keyCode;
 		double scrollDelta;
-#ifdef CC_USE_GAMEPAD
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 		ccGamepadEvent gamepadEvent;
 #endif
 	};

@@ -3,7 +3,11 @@
 #include <stdlib.h>
 #include <Windows.h>
 #include <string.h>
+
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
+
 #include <hidsdi.h>
+#endif
 #include <stdint.h>
 
 #include <ccore/window.h>
@@ -15,17 +19,18 @@
 #include "../utils/win_file.h"
 #include "win_gamepad.h"
 
-#ifdef CC_USE_GAMEPAD
-#define NRAWINPUTDEVICES 3
-#define RAWINPUT_GAMEPAD 2
-#define RAWINPUT_GAMEPADCOUNT 1
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
+
+#define _CC_NRAWINPUTDEVICES 3
+#define _CC_RAWINPUT_GAMEPAD 2
+#define _CC_RAWINPUT_GAMEPADCOUNT 1
 #else
-#define NRAWINPUTDEVICES 2
-#define RAWINPUT_GAMEPADCOUNT 0
+#define _CC_NRAWINPUTDEVICES 2
+#define _CC_RAWINPUT_GAMEPADCOUNT 0
 #endif
 
-#define RAWINPUT_KEYBOARD 0
-#define RAWINPUT_MOUSE 1
+#define _CC_RAWINPUT_KEYBOARD 0
+#define _CC_RAWINPUT_MOUSE 1
 
 typedef struct {
 	HDC hdc;
@@ -33,11 +38,12 @@ typedef struct {
 	HWND winHandle;
 	HGLRC renderContext;
 	LONG style;
-	RAWINPUTDEVICE rid[NRAWINPUTDEVICES];
+	RAWINPUTDEVICE rid[_CC_NRAWINPUTDEVICES];
 	LPBYTE lpb;
 	UINT lpbSize;
 	UINT dwSize;
-#ifdef CC_USE_GAMEPAD
+	ATOM winClass;
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 	bool queryXinput;
 #endif
 
@@ -53,4 +59,4 @@ typedef struct {
 
 void _ccEventStackPush(ccEvent event);
 
-#define WINDOW_DATA ((ccWindow_win*)_ccWindow->data)
+#define _CC_WINDOW_DATA ((ccWindow_win*)_ccWindow->data)

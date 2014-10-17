@@ -3,7 +3,7 @@
 //                              /  ___ /__  _ __ ___                                //
 //                             /  / __/ _ \| '__/ _ \                               //
 //                            |  | (_| (_) | | |  __/                               //
-//                             \  \___\___/|_|  \___| 1.0                           //
+//                             \  \___\___/|_|  \___| 1.1                           //
 //                              \______\                                            //
 //                                                                                  //
 //             Copyright (C) 2014 \ Job Talle (job@ccore.org)                       //
@@ -19,20 +19,20 @@
 
 #pragma once
 
-#ifdef CC_USE_TIME
+#if defined CC_USE_ALL || defined CC_USE_TIME
 
 #include <stdint.h>
 
 #include "core.h"
 #include "types.h"
 
-#define _TO_SECONDS 1000000000LL
-#define _TO_MILLISECONDS 1000000LL
-#define _TO_MICROSECONDS 1000LL
+#define _CC_TO_SECONDS 1000000000LL
+#define _CC_TO_MILLISECONDS 1000000LL
+#define _CC_TO_MICROSECONDS 1000LL
 
-#define ccTimeSeconds() (ccTimeNanoseconds() / _TO_SECONDS)
-#define ccTimeMilliseconds() (ccTimeNanoseconds() / _TO_MILLISECONDS)
-#define ccTimeMicroseconds() (ccTimeNanoseconds() / _TO_MICROSECONDS)
+#define ccTimeSeconds() (ccTimeNanoseconds() / _CC_TO_SECONDS)
+#define ccTimeMilliseconds() (ccTimeNanoseconds() / _CC_TO_MILLISECONDS)
+#define ccTimeMicroseconds() (ccTimeNanoseconds() / _CC_TO_MICROSECONDS)
 
 #ifdef __cplusplus
 extern "C"
@@ -46,4 +46,6 @@ uint64_t ccTimeNanoseconds(void);
 }
 #endif
 
+#elif defined __GNUC__
+#error "The CC_USE_TIME or the CC_USE_ALL flag must be set"
 #endif

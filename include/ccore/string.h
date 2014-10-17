@@ -3,7 +3,7 @@
 //                              /  ___ /__  _ __ ___                                //
 //                             /  / __/ _ \| '__/ _ \                               //
 //                            |  | (_| (_) | | |  __/                               //
-//                             \  \___\___/|_|  \___| 1.0                           //
+//                             \  \___\___/|_|  \___| 1.1                           //
 //                              \______\                                            //
 //                                                                                  //
 //             Copyright (C) 2014 \ Job Talle (job@ccore.org)                       //
@@ -22,6 +22,8 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "core.h"
 
 #include "types.h"
 

@@ -3,7 +3,7 @@
 //                              /  ___ /__  _ __ ___                                //
 //                             /  / __/ _ \| '__/ _ \                               //
 //                            |  | (_| (_) | | |  __/                               //
-//                             \  \___\___/|_|  \___| 1.0                           //
+//                             \  \___\___/|_|  \___| 1.1                           //
 //                              \______\                                            //
 //                                                                                  //
 //             Copyright (C) 2014 \ Job Talle (job@ccore.org)                       //
@@ -64,7 +64,7 @@ ccDisplays *_ccDisplays;
 
 #define ccDisplayResolutionGetCurrent(display) (&display->resolution[display->current])
 #define ccDisplayResolutionGet(display, index) (&display->resolution[index])
-#define ccDisplayResolutionGetAmount(display) display->amount
+#define ccDisplayResolutionGetAmount(display) (display->amount)
 
 // Display
 ccReturn ccDisplayInitialize(void); // Get all displays currently connected and active

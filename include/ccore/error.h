@@ -3,7 +3,7 @@
 //                              /  ___ /__  _ __ ___                                //
 //                             /  / __/ _ \| '__/ _ \                               //
 //                            |  | (_| (_) | | |  __/                               //
-//                             \  \___\___/|_|  \___| 1.0                           //
+//                             \  \___\___/|_|  \___| 1.1                           //
 //                              \______\                                            //
 //                                                                                  //
 //             Copyright (C) 2014 \ Job Talle (job@ccore.org)                       //
@@ -20,6 +20,8 @@
 #pragma once
 
 #include <stdlib.h>
+
+#include "core.h"
 
 #include "print.h"
 
@@ -50,7 +52,6 @@ typedef enum {
 	// OpenGL related
 	CC_ERROR_GL_VERSION, // The target OpenGL version is not supported
 	CC_ERROR_GL_CONTEXT, // OpenGL context creation failed
-	CC_ERROR_GL_GLEWINIT, // GLEW could not initialize
 	CC_ERROR_GL_BUFFERSWAP, // The buffers couldn't swap
 
 	// Thread related
@@ -104,8 +105,7 @@ typedef enum {
 	} \
 
 const char *ccErrorString(ccError error);
-void _ccErrorPush(ccError error, char *file, int line);
-#define ccErrorPush(error) _ccErrorPush(error, __FILE__, __LINE__)
+void ccErrorPush(ccError error);
 ccError ccErrorPop(void);
 
 void _ccErrorFree(void);

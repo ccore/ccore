@@ -1,14 +1,13 @@
 #include "win_opengl.h"
 
-ccReturn ccGLContextBind(int glVersionMajor, int glVersionMinor)
+ccReturn ccGLContextBind(void)
 {
 	int pixelFormatIndex;
-	int glVerMajor, glVerMinor;
 
 	ccAssert(ccWindowExists());
 
-	WINDOW_DATA->hdc = GetDC(WINDOW_DATA->winHandle);
-	if(WINDOW_DATA->hdc == NULL) {
+	_CC_WINDOW_DATA->hdc = GetDC(_CC_WINDOW_DATA->winHandle);
+	if(_CC_WINDOW_DATA->hdc == NULL) {
 		ccErrorPush(CC_ERROR_GL_CONTEXT);
 		return CC_FAIL;
 	}
@@ -24,40 +23,26 @@ ccReturn ccGLContextBind(int glVersionMajor, int glVersionMinor)
 		0, 0, 0, 0, 0, 0, 0
 	};
 
-	pixelFormatIndex = ChoosePixelFormat(WINDOW_DATA->hdc, &pfd);
+	pixelFormatIndex = ChoosePixelFormat(_CC_WINDOW_DATA->hdc, &pfd);
 	if(pixelFormatIndex == 0) {
 		ccErrorPush(CC_ERROR_GL_CONTEXT);
 		return CC_FAIL;
 	}
 
-	if(SetPixelFormat(WINDOW_DATA->hdc, pixelFormatIndex, &pfd) == FALSE) {
+	if(SetPixelFormat(_CC_WINDOW_DATA->hdc, pixelFormatIndex, &pfd) == FALSE) {
 		ccErrorPush(CC_ERROR_GL_CONTEXT);
 		return CC_FAIL;
 	}
 
-	WINDOW_DATA->renderContext = wglCreateContext(WINDOW_DATA->hdc);
-	if(WINDOW_DATA->renderContext == NULL) {
+	_CC_WINDOW_DATA->renderContext = wglCreateContext(_CC_WINDOW_DATA->hdc);
+	if(_CC_WINDOW_DATA->renderContext == NULL) {
 		ccErrorPush(CC_ERROR_GL_CONTEXT);
 		return CC_FAIL;
 	}
 
 	//Make window the current context
-	if(wglMakeCurrent(WINDOW_DATA->hdc, WINDOW_DATA->renderContext) == FALSE) {
+	if(wglMakeCurrent(_CC_WINDOW_DATA->hdc, _CC_WINDOW_DATA->renderContext) == FALSE) {
 		ccErrorPush(CC_ERROR_GL_CONTEXT);
-		return CC_FAIL;
-	}
-
-	//Version check
-	glGetIntegerv(GL_MAJOR_VERSION, &glVerMajor);
-	glGetIntegerv(GL_MINOR_VERSION, &glVerMinor);
-	if(glVerMajor < glVersionMajor || (glVerMajor == glVersionMajor && glVerMinor < glVersionMinor)) {
-		ccErrorPush(CC_ERROR_GL_VERSION);
-		return CC_FAIL;
-	}
-
-	//Fetch extentions after context creation
-	if(glewInit() != GLEW_OK) {
-		ccErrorPush(CC_ERROR_GL_GLEWINIT);
 		return CC_FAIL;
 	}
 
@@ -68,8 +53,8 @@ ccReturn ccGLContextFree(void)
 {
 	ccAssert(_ccWindow != NULL);
 
-	wglDeleteContext(WINDOW_DATA->renderContext);
-	WINDOW_DATA->renderContext = NULL;
+	wglDeleteContext(_CC_WINDOW_DATA->renderContext);
+	_CC_WINDOW_DATA->renderContext = NULL;
 
 	return CC_SUCCESS;
 }
@@ -77,7 +62,7 @@ ccReturn ccGLContextFree(void)
 ccReturn ccGLBuffersSwap(void)
 {
 	ccAssert(_ccWindow != NULL);
-	if(SwapBuffers(WINDOW_DATA->hdc) == TRUE) {
+	if(SwapBuffers(_CC_WINDOW_DATA->hdc) == TRUE) {
 		return CC_SUCCESS;
 	}
 	else{
@@ -88,5 +73,5 @@ ccReturn ccGLBuffersSwap(void)
 
 bool ccGLContextIsActive(void)
 {
-	return WINDOW_DATA->renderContext != NULL;
+	return _CC_WINDOW_DATA->renderContext != NULL;
 }

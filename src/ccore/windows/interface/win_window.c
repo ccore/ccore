@@ -1,6 +1,6 @@
 #include "win_window.h"
 
-static LPSTR _cursor[] =
+static LPSTR _cc_cursor[] =
 {
 	IDC_ARROW,
 	IDC_CROSS,
@@ -13,24 +13,26 @@ static LPSTR _cursor[] =
 	IDC_HELP
 };
 
+#define _CC_WINDOW_CLASS_NAME "ccWindow"
+
 void _ccEventStackPush(ccEvent event)
 {
-	WINDOW_DATA->eventStackPos++;
+	_CC_WINDOW_DATA->eventStackPos++;
 	
-	if(WINDOW_DATA->eventStackPos >= WINDOW_DATA->eventStackSize) {
-		WINDOW_DATA->eventStackSize++;
-		WINDOW_DATA->eventStack = realloc(WINDOW_DATA->eventStack, sizeof(ccEvent)*WINDOW_DATA->eventStackSize);
+	if(_CC_WINDOW_DATA->eventStackPos >= _CC_WINDOW_DATA->eventStackSize) {
+		_CC_WINDOW_DATA->eventStackSize++;
+		_CC_WINDOW_DATA->eventStack = realloc(_CC_WINDOW_DATA->eventStack, sizeof(ccEvent)*_CC_WINDOW_DATA->eventStackSize);
 	}
 	
-	WINDOW_DATA->eventStack[WINDOW_DATA->eventStackPos] = event;
+	_CC_WINDOW_DATA->eventStack[_CC_WINDOW_DATA->eventStackPos] = event;
 }
 
 static void updateWindowDisplay(void)
 {
 	RECT winRect;
-	GetClientRect(WINDOW_DATA->winHandle, &winRect);
-	ClientToScreen(WINDOW_DATA->winHandle, (LPPOINT)&winRect.left);
-	ClientToScreen(WINDOW_DATA->winHandle, (LPPOINT)&winRect.right);
+	GetClientRect(_CC_WINDOW_DATA->winHandle, &winRect);
+	ClientToScreen(_CC_WINDOW_DATA->winHandle, (LPPOINT)&winRect.left);
+	ClientToScreen(_CC_WINDOW_DATA->winHandle, (LPPOINT)&winRect.right);
 
 	_ccWindow->rect.x = winRect.left;
 	_ccWindow->rect.y = winRect.top;
@@ -43,7 +45,7 @@ static void updateWindowResolution(void)
 	RECT winRect;
 	ccEvent resizeEvent;
 	
-	if(GetClientRect(WINDOW_DATA->winHandle, &winRect) == 0) {
+	if(GetClientRect(_CC_WINDOW_DATA->winHandle, &winRect) == 0) {
 		ccErrorPush(CC_ERROR_WINDOW_MODE);
 		return;
 	}
@@ -61,48 +63,48 @@ static void updateWindowResolution(void)
 
 static bool initializeRawInput(void)
 {
-	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].usUsagePage = 1;
-	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].usUsage = HID_USAGE_GENERIC_KEYBOARD;
-	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].dwFlags = RIDEV_NOLEGACY;
-	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].hwndTarget = WINDOW_DATA->winHandle;
+	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_KEYBOARD].usUsagePage = 1;
+	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_KEYBOARD].usUsage = HID_USAGE_GENERIC_KEYBOARD;
+	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_KEYBOARD].dwFlags = RIDEV_NOLEGACY;
+	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_KEYBOARD].hwndTarget = _CC_WINDOW_DATA->winHandle;
 
-	WINDOW_DATA->rid[RAWINPUT_MOUSE].usUsagePage = 1;
-	WINDOW_DATA->rid[RAWINPUT_MOUSE].usUsage = HID_USAGE_GENERIC_MOUSE;
-	WINDOW_DATA->rid[RAWINPUT_MOUSE].dwFlags = 0;
-	WINDOW_DATA->rid[RAWINPUT_MOUSE].hwndTarget = WINDOW_DATA->winHandle;
+	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_MOUSE].usUsagePage = 1;
+	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_MOUSE].usUsage = HID_USAGE_GENERIC_MOUSE;
+	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_MOUSE].dwFlags = 0;
+	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_MOUSE].hwndTarget = _CC_WINDOW_DATA->winHandle;
 
-	return RegisterRawInputDevices(WINDOW_DATA->rid, NRAWINPUTDEVICES - RAWINPUT_GAMEPADCOUNT, sizeof(RAWINPUTDEVICE));
+	return RegisterRawInputDevices(_CC_WINDOW_DATA->rid, _CC_NRAWINPUTDEVICES - _CC_RAWINPUT_GAMEPADCOUNT, sizeof(RAWINPUTDEVICE));
 }
 
 static bool freeRawInput(void)
 {
-	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].dwFlags = RIDEV_REMOVE;
-	WINDOW_DATA->rid[RAWINPUT_KEYBOARD].hwndTarget = NULL;
+	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_KEYBOARD].dwFlags = RIDEV_REMOVE;
+	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_KEYBOARD].hwndTarget = NULL;
 
-	WINDOW_DATA->rid[RAWINPUT_MOUSE].dwFlags = RIDEV_REMOVE;
-	WINDOW_DATA->rid[RAWINPUT_MOUSE].hwndTarget = NULL;
+	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_MOUSE].dwFlags = RIDEV_REMOVE;
+	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_MOUSE].hwndTarget = NULL;
 
-	return RegisterRawInputDevices(WINDOW_DATA->rid, NRAWINPUTDEVICES - 1, sizeof(RAWINPUTDEVICE));
+	return RegisterRawInputDevices(_CC_WINDOW_DATA->rid, _CC_NRAWINPUTDEVICES - 1, sizeof(RAWINPUTDEVICE));
 }
 
 static void processRid(HRAWINPUT rawInput)
 {
 	RAWINPUT* raw;
 
-	GetRawInputData(rawInput, RID_INPUT, NULL, &WINDOW_DATA->dwSize, sizeof(RAWINPUTHEADER));
+	GetRawInputData(rawInput, RID_INPUT, NULL, &_CC_WINDOW_DATA->dwSize, sizeof(RAWINPUTHEADER));
 
-	if(WINDOW_DATA->dwSize > WINDOW_DATA->lpbSize) {
-		WINDOW_DATA->lpb = realloc(WINDOW_DATA->lpb, WINDOW_DATA->dwSize);
-		WINDOW_DATA->lpbSize = WINDOW_DATA->dwSize;
+	if(_CC_WINDOW_DATA->dwSize > _CC_WINDOW_DATA->lpbSize) {
+		_CC_WINDOW_DATA->lpb = realloc(_CC_WINDOW_DATA->lpb, _CC_WINDOW_DATA->dwSize);
+		_CC_WINDOW_DATA->lpbSize = _CC_WINDOW_DATA->dwSize;
 	}
 
-	GetRawInputData(rawInput, RID_INPUT, WINDOW_DATA->lpb, &WINDOW_DATA->dwSize, sizeof(RAWINPUTHEADER));
+	GetRawInputData(rawInput, RID_INPUT, _CC_WINDOW_DATA->lpb, &_CC_WINDOW_DATA->dwSize, sizeof(RAWINPUTHEADER));
 
-	raw = (RAWINPUT*)WINDOW_DATA->lpb;
+	raw = (RAWINPUT*)_CC_WINDOW_DATA->lpb;
 
 	if(raw->header.dwType == RIM_TYPEMOUSE) {
 		USHORT buttonFlags = raw->data.mouse.usButtonFlags;
-		
+
 		if(buttonFlags == 0) {
 			_ccWindow->event.type = CC_EVENT_MOUSE_MOVE;
 			_ccWindow->event.mouseDelta.x = raw->data.mouse.lLastX;
@@ -136,6 +138,22 @@ static void processRid(HRAWINPUT rawInput)
 			_ccWindow->event.type = CC_EVENT_MOUSE_UP;
 			_ccWindow->event.mouseButton = CC_MOUSE_BUTTON_MIDDLE;
 		}
+		else if(buttonFlags & RI_MOUSE_BUTTON_4_DOWN) {
+			_ccWindow->event.type = CC_EVENT_MOUSE_DOWN;
+			_ccWindow->event.mouseButton = CC_MOUSE_BUTTON_PREVIOUS;
+		}
+		else if(buttonFlags & RI_MOUSE_BUTTON_4_UP) {
+			_ccWindow->event.type = CC_EVENT_MOUSE_UP;
+			_ccWindow->event.mouseButton = CC_MOUSE_BUTTON_PREVIOUS;
+		}
+		else if(buttonFlags & RI_MOUSE_BUTTON_5_DOWN) {
+			_ccWindow->event.type = CC_EVENT_MOUSE_DOWN;
+			_ccWindow->event.mouseButton = CC_MOUSE_BUTTON_NEXT;
+		}
+		else if(buttonFlags & RI_MOUSE_BUTTON_5_UP) {
+			_ccWindow->event.type = CC_EVENT_MOUSE_UP;
+			_ccWindow->event.mouseButton = CC_MOUSE_BUTTON_NEXT;
+		}
 	}
 	else if(raw->header.dwType == RIM_TYPEKEYBOARD)
 	{
@@ -157,7 +175,7 @@ static void processRid(HRAWINPUT rawInput)
 		_ccWindow->event.type = raw->data.keyboard.Message == WM_KEYDOWN?CC_EVENT_KEY_DOWN:CC_EVENT_KEY_UP;
 		_ccWindow->event.keyCode = vkCode;
 	}
-#ifdef CC_USE_GAMEPAD
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 	else if(raw->header.dwType == RIM_TYPEHID)
 	{
 		_generateGamepadEvents(raw);
@@ -201,7 +219,7 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 		break;
 	case WM_SYSCOMMAND:
 	{
-		LONG style = GetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE);
+		LONG style = GetWindowLongPtr(_CC_WINDOW_DATA->winHandle, GWL_STYLE);
 		if(((wParam & 0xFFF0) == SC_MOVE) && (style & WS_MAXIMIZE) && !(style & WS_MAXIMIZEBOX)) return 0;
 		return DefWindowProc(winHandle, message, wParam, lParam);
 	}
@@ -217,7 +235,6 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 static bool regHinstance(HINSTANCE instanceHandle)
 {
 	WNDCLASSEX winClass;
-
 	winClass.cbSize = sizeof(WNDCLASSEX);
 	winClass.style = CS_OWNDC;
 	winClass.lpfnWndProc = wndProc;
@@ -228,10 +245,10 @@ static bool regHinstance(HINSTANCE instanceHandle)
 	winClass.hCursor = LoadCursor(NULL, IDC_ARROW);
 	winClass.hbrBackground = NULL;
 	winClass.lpszMenuName = NULL;
-	winClass.lpszClassName = "ccWindow";
+	winClass.lpszClassName = _CC_WINDOW_CLASS_NAME;
 	winClass.hIconSm = NULL;
 
-	if(RegisterClassEx(&winClass) == 0) {
+	if((_CC_WINDOW_DATA->winClass = RegisterClassEx(&winClass)) == 0) {
 		ccErrorPush(CC_ERROR_WINDOW_CREATE);
 		return false;
 	}
@@ -246,26 +263,26 @@ bool ccWindowEventPoll(void)
 	
 	if(canPollInput) {
 		canPollInput = false;
-#ifdef CC_USE_GAMEPAD
-		if(WINDOW_DATA->queryXinput) _queryXinput();
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
+		if(_CC_WINDOW_DATA->queryXinput) _queryXinput();
 #endif
 	}
 
-	if(WINDOW_DATA->eventStackPos != -1) {
+	if(_CC_WINDOW_DATA->eventStackPos != -1) {
 
-		_ccWindow->event = WINDOW_DATA->eventStack[WINDOW_DATA->eventStackIndex];
+		_ccWindow->event = _CC_WINDOW_DATA->eventStack[_CC_WINDOW_DATA->eventStackIndex];
 
-		WINDOW_DATA->eventStackIndex++;
-		WINDOW_DATA->eventStackPos--;
+		_CC_WINDOW_DATA->eventStackIndex++;
+		_CC_WINDOW_DATA->eventStackPos--;
 
-		if(WINDOW_DATA->eventStackPos == -1) WINDOW_DATA->eventStackIndex = 0;
+		if(_CC_WINDOW_DATA->eventStackPos == -1) _CC_WINDOW_DATA->eventStackIndex = 0;
 
 		return true;
 	}
 	
-	if(PeekMessage(&WINDOW_DATA->msg, NULL, 0, 0, PM_REMOVE)){
-		TranslateMessage(&WINDOW_DATA->msg);
-		DispatchMessage(&WINDOW_DATA->msg);
+	if(PeekMessage(&_CC_WINDOW_DATA->msg, NULL, 0, 0, PM_REMOVE)){
+		TranslateMessage(&_CC_WINDOW_DATA->msg);
+		DispatchMessage(&_CC_WINDOW_DATA->msg);
 		return true;
 	}
 
@@ -291,41 +308,41 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 	_ccWindow->supportsRawInput = true; // Raw input is always supported on windows
 	_ccWindow->rect = rect;
 	ccMalloc(_ccWindow->data, sizeof(ccWindow_win));
-
-	WINDOW_DATA->eventStackSize = 0;
-	WINDOW_DATA->eventStackPos = -1;
-	WINDOW_DATA->eventStackIndex = 0;
-	WINDOW_DATA->eventStack = NULL;
-#ifdef CC_USE_GAMEPAD
-	WINDOW_DATA->queryXinput = false;
+	
+	_CC_WINDOW_DATA->eventStackSize = 0;
+	_CC_WINDOW_DATA->eventStackPos = -1;
+	_CC_WINDOW_DATA->eventStackIndex = 0;
+	_CC_WINDOW_DATA->eventStack = NULL;
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
+	_CC_WINDOW_DATA->queryXinput = false;
 #endif
-	WINDOW_DATA->renderContext = NULL;
-	WINDOW_DATA->lpbSize = 0;
-	WINDOW_DATA->lpb = NULL;
-	WINDOW_DATA->flags = flags;
-	WINDOW_DATA->cursor = CC_CURSOR_ARROW;
+	_CC_WINDOW_DATA->renderContext = NULL;
+	_CC_WINDOW_DATA->lpbSize = 0;
+	_CC_WINDOW_DATA->lpb = NULL;
+	_CC_WINDOW_DATA->flags = flags;
+	_CC_WINDOW_DATA->cursor = CC_CURSOR_ARROW;
 
 	//apply flags
-	WINDOW_DATA->style = WS_OVERLAPPEDWINDOW;
-	if(flags & CC_WINDOW_FLAG_NORESIZE) WINDOW_DATA->style &= ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
-	if(flags & CC_WINDOW_FLAG_NOBUTTONS) WINDOW_DATA->style &= ~WS_SYSMENU;
+	_CC_WINDOW_DATA->style = WS_OVERLAPPEDWINDOW;
+	if(flags & CC_WINDOW_FLAG_NORESIZE) _CC_WINDOW_DATA->style &= ~WS_MAXIMIZEBOX & ~WS_THICKFRAME;
+	if(flags & CC_WINDOW_FLAG_NOBUTTONS) _CC_WINDOW_DATA->style &= ~WS_SYSMENU;
 
 	windowRect.left = rect.x;
 	windowRect.top = rect.y;
 	windowRect.right = rect.x + rect.width;
 	windowRect.bottom = rect.y + rect.height;
-	if(AdjustWindowRectEx(&windowRect, WINDOW_DATA->style, FALSE, WS_EX_APPWINDOW) == FALSE) {
+	if(AdjustWindowRectEx(&windowRect, _CC_WINDOW_DATA->style, FALSE, WS_EX_APPWINDOW) == FALSE) {
 		ccErrorPush(CC_ERROR_WINDOW_CREATE);
 		return CC_FAIL;
 	}
 	
 	if(!regHinstance(moduleHandle)) return CC_FAIL;
 
-	WINDOW_DATA->winHandle = CreateWindowEx(
+	_CC_WINDOW_DATA->winHandle = CreateWindowEx(
 		WS_EX_APPWINDOW,
-		"ccWindow",
+		_CC_WINDOW_CLASS_NAME,
 		title,
-		WINDOW_DATA->style,
+		_CC_WINDOW_DATA->style,
 		windowRect.left, windowRect.top,
 		windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
 		NULL,
@@ -333,9 +350,9 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 		moduleHandle,
 		NULL);
 
-	WINDOW_DATA->style |= WS_VISIBLE;
+	_CC_WINDOW_DATA->style |= WS_VISIBLE;
 	
-	if(ShowWindow(WINDOW_DATA->winHandle, SW_SHOW) != 0) {
+	if(ShowWindow(_CC_WINDOW_DATA->winHandle, SW_SHOW) != 0) {
 		ccErrorPush(CC_ERROR_WINDOW_CREATE);
 		return CC_FAIL;
 	}
@@ -348,12 +365,12 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 	if(flags & CC_WINDOW_FLAG_ALWAYSONTOP) {
 		RECT rect;
 
-		if(GetWindowRect(WINDOW_DATA->winHandle, &rect) == FALSE) {
+		if(GetWindowRect(_CC_WINDOW_DATA->winHandle, &rect) == FALSE) {
 			ccErrorPush(CC_ERROR_WINDOW_CREATE);
 			return CC_FAIL;
 		}
 
-		if(SetWindowPos(WINDOW_DATA->winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW) == FALSE) {
+		if(SetWindowPos(_CC_WINDOW_DATA->winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW) == FALSE) {
 			ccErrorPush(CC_ERROR_WINDOW_CREATE);
 			return CC_FAIL;
 		}
@@ -371,13 +388,19 @@ ccReturn ccWindowFree(void)
 		return CC_FAIL;
 	}
 
-	if(WINDOW_DATA->lpbSize != 0) free(WINDOW_DATA->lpb);
+	if(_CC_WINDOW_DATA->lpbSize != 0) free(_CC_WINDOW_DATA->lpb);
 
-	if(DestroyWindow(WINDOW_DATA->winHandle) == FALSE) {
+	if(DestroyWindow(_CC_WINDOW_DATA->winHandle) == FALSE) {
 		ccErrorPush(CC_ERROR_WINDOW_DESTROY);
 		return CC_FAIL;
 	}
-	if(WINDOW_DATA->eventStackSize != 0) free(WINDOW_DATA->eventStack);
+
+	if(UnregisterClass((LPCSTR)_CC_WINDOW_DATA->winClass, NULL) == FALSE) {
+		ccErrorPush(CC_ERROR_WINDOW_DESTROY);
+		return CC_FAIL;
+	}
+
+	if(_CC_WINDOW_DATA->eventStackSize != 0) free(_CC_WINDOW_DATA->eventStack);
 
 	free(_ccWindow->data);
 	free(_ccWindow);
@@ -387,35 +410,37 @@ ccReturn ccWindowFree(void)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowSetWindowed(void)
+ccReturn ccWindowSetWindowed(ccRect *rect)
 {
-	ccAssert(_ccWindow != NULL);
-
-	SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, WINDOW_DATA->style | WS_CAPTION);
-	if(ShowWindow(WINDOW_DATA->winHandle, SW_SHOW) == FALSE) {
+	SetWindowLongPtr(_CC_WINDOW_DATA->winHandle, GWL_STYLE, _CC_WINDOW_DATA->style | WS_CAPTION);
+	if(ShowWindow(_CC_WINDOW_DATA->winHandle, SW_SHOW) == FALSE) {
 		ccErrorPush(CC_ERROR_WINDOW_MODE);
 		return CC_FAIL;
 	}
 	
-	return ccWindowResizeMove(ccDisplayGetRect(_ccWindow->display));
+	if(rect == NULL){
+		return CC_SUCCESS;
+	}else{
+		return ccWindowResizeMove(*rect);
+	}
 }
 
 ccReturn ccWindowSetMaximized(void)
 {
 	ccAssert(_ccWindow != NULL);
 
-	if(SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, WINDOW_DATA->style | WS_CAPTION | WS_MAXIMIZEBOX) == 0) {
+	if(SetWindowLongPtr(_CC_WINDOW_DATA->winHandle, GWL_STYLE, _CC_WINDOW_DATA->style | WS_CAPTION | WS_MAXIMIZEBOX) == 0) {
 		ccErrorPush(CC_ERROR_WINDOW_MODE);
 		return CC_FAIL;
 	}
 
-	if(ShowWindow(WINDOW_DATA->winHandle, SW_MAXIMIZE) == FALSE) {
+	if(ShowWindow(_CC_WINDOW_DATA->winHandle, SW_MAXIMIZE) == FALSE) {
 		ccErrorPush(CC_ERROR_WINDOW_MODE);
 		return CC_FAIL;
 	}
 
-	if(WINDOW_DATA->flags & CC_WINDOW_FLAG_NORESIZE) {
-		if(SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, GetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE) &~WS_MAXIMIZEBOX) == 0) {
+	if(_CC_WINDOW_DATA->flags & CC_WINDOW_FLAG_NORESIZE) {
+		if(SetWindowLongPtr(_CC_WINDOW_DATA->winHandle, GWL_STYLE, GetWindowLongPtr(_CC_WINDOW_DATA->winHandle, GWL_STYLE) &~WS_MAXIMIZEBOX) == 0) {
 			ccErrorPush(CC_ERROR_WINDOW_MODE);
 			return CC_FAIL;
 		}
@@ -436,18 +461,18 @@ static ccReturn _ccWindowResizeMove(ccRect rect, bool addBorder)
 		windowRect.right = rect.x + rect.width;
 		windowRect.bottom = rect.y + rect.height;
 
-		if(AdjustWindowRectEx(&windowRect, WINDOW_DATA->style, FALSE, WS_EX_APPWINDOW) == FALSE) {
+		if(AdjustWindowRectEx(&windowRect, _CC_WINDOW_DATA->style, FALSE, WS_EX_APPWINDOW) == FALSE) {
 			ccErrorPush(CC_ERROR_WINDOW_MODE);
 			return CC_FAIL;
 		}
 
-		if(MoveWindow(WINDOW_DATA->winHandle, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, FALSE) == FALSE) {
+		if(MoveWindow(_CC_WINDOW_DATA->winHandle, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, FALSE) == FALSE) {
 			ccErrorPush(CC_ERROR_WINDOW_MODE);
 			return CC_FAIL;
 		}
 	}
 	else{
-		if(MoveWindow(WINDOW_DATA->winHandle, rect.x, rect.y, rect.width, rect.height, FALSE) == FALSE) {
+		if(MoveWindow(_CC_WINDOW_DATA->winHandle, rect.x, rect.y, rect.width, rect.height, FALSE) == FALSE) {
 			ccErrorPush(CC_ERROR_WINDOW_MODE);
 			return CC_FAIL;
 		}
@@ -460,12 +485,12 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 {
 	ccAssert(_ccWindow);
 
-	if(SetWindowLongPtr(WINDOW_DATA->winHandle, GWL_STYLE, WINDOW_DATA->style & ~(WS_CAPTION | WS_THICKFRAME)) == 0) {
+	if(SetWindowLongPtr(_CC_WINDOW_DATA->winHandle, GWL_STYLE, _CC_WINDOW_DATA->style & ~(WS_CAPTION | WS_THICKFRAME)) == 0) {
 		ccErrorPush(CC_ERROR_WINDOW_MODE);
 		return CC_FAIL;
 	}
 
-	if(ShowWindow(WINDOW_DATA->winHandle, SW_SHOW) == FALSE) {
+	if(ShowWindow(_CC_WINDOW_DATA->winHandle, SW_SHOW) == FALSE) {
 		ccErrorPush(CC_ERROR_WINDOW_MODE);
 		return CC_FAIL;
 	}
@@ -497,6 +522,11 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 	}
 }
 
+ccReturn ccWindowSetTitle(const char *title)
+{
+	return SetWindowText(_CC_WINDOW_DATA->winHandle, title) == TRUE?CC_SUCCESS:CC_FAIL;
+}
+
 ccReturn ccWindowResizeMove(ccRect rect)
 {
 	return _ccWindowResizeMove(rect, true);
@@ -508,7 +538,7 @@ ccReturn ccWindowSetCentered(void)
 
 	ccAssert(_ccWindow != NULL);
 
-	if(GetWindowRect(WINDOW_DATA->winHandle, &windowRect) == FALSE) {
+	if(GetWindowRect(_CC_WINDOW_DATA->winHandle, &windowRect) == FALSE) {
 		ccErrorPush(CC_ERROR_WINDOW_MODE);
 		return CC_FAIL;
 	}
@@ -525,7 +555,7 @@ ccReturn ccWindowSetBlink(void)
 {
 	FLASHWINFO flash;
 	flash.cbSize = sizeof(FLASHWINFO);
-	flash.hwnd = WINDOW_DATA->winHandle;
+	flash.hwnd = _CC_WINDOW_DATA->winHandle;
 	flash.dwFlags = FLASHW_TIMERNOFG | FLASHW_ALL;
 	flash.uCount = 0;
 	flash.dwTimeout = 0;
@@ -564,8 +594,8 @@ ccReturn ccWindowIconSet(ccPoint size, unsigned long *data)
 
 	icon = CreateIconFromResource(bmp, totalLen, TRUE, 0x00030000);
 
-	SendMessage(WINDOW_DATA->winHandle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
-	SendMessage(WINDOW_DATA->winHandle, WM_SETICON, ICON_BIG, (LPARAM)icon);
+	SendMessage(_CC_WINDOW_DATA->winHandle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
+	SendMessage(_CC_WINDOW_DATA->winHandle, WM_SETICON, ICON_BIG, (LPARAM)icon);
 
 	free(bmp);
 
@@ -578,7 +608,7 @@ ccReturn ccWindowMouseSetPosition(ccPoint target)
 	p.x = target.x;
 	p.y = target.y;
 
-	if(ClientToScreen(WINDOW_DATA->winHandle, &p) == 0) {
+	if(ClientToScreen(_CC_WINDOW_DATA->winHandle, &p) == 0) {
 		ccErrorPush(CC_ERROR_WINDOW_CURSOR);
 		return CC_FAIL;
 	}
@@ -594,18 +624,18 @@ ccReturn ccWindowMouseSetPosition(ccPoint target)
 ccReturn ccWindowMouseSetCursor(ccCursor cursor)
 {
 	if(cursor == CC_CURSOR_NONE) {
-		if(WINDOW_DATA->cursor != CC_CURSOR_NONE) ShowCursor(FALSE);
+		if(_CC_WINDOW_DATA->cursor != CC_CURSOR_NONE) ShowCursor(FALSE);
 	}
 	else{
 		HCURSOR hCursor;
 
-		if(WINDOW_DATA->cursor == CC_CURSOR_NONE) ShowCursor(TRUE);
+		if(_CC_WINDOW_DATA->cursor == CC_CURSOR_NONE) ShowCursor(TRUE);
 
-		hCursor = LoadCursor(NULL, _cursor[cursor]);
+		hCursor = LoadCursor(NULL, _cc_cursor[cursor]);
 		SetCursor(hCursor);
 	}
 
-	WINDOW_DATA->cursor = cursor;
+	_CC_WINDOW_DATA->cursor = cursor;
 
 	return CC_SUCCESS;
 }

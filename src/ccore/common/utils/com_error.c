@@ -4,7 +4,7 @@ static ccError *ccErrorStack;
 static int ccErrorStackIndex;
 static int ccErrorStackSize;
 
-void _ccErrorPush(ccError error, char *file, int line)
+void ccErrorPush(ccError error)
 {
 	if(ccErrorStackSize <= ccErrorStackIndex) {
 		ccErrorStackSize++;
@@ -12,8 +12,6 @@ void _ccErrorPush(ccError error, char *file, int line)
 	}
 	ccErrorStack[ccErrorStackIndex] = error;
 	ccErrorStackIndex++;
-
-	ccPrintf("File \"%s\", line %d:\n\tPushed error: \"%s\"\n", file, line, ccErrorString(error));
 }
 
 ccError ccErrorPop(void)
@@ -73,8 +71,6 @@ const char *ccErrorString(ccError error)
 			return "The current OpenGL version is not supported";
 		case CC_ERROR_GL_CONTEXT:
 			return "The openGL context could not be created";
-		case CC_ERROR_GL_GLEWINIT:
-			return "GLEW could not be initialized";
 		case CC_ERROR_GL_BUFFERSWAP:
 			return "Failed to swap the buffers";
 

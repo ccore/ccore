@@ -1,7 +1,0 @@
-F = Go full screen on the current display
-W = Go back to windowed mode
-M = Maximize the window
-C = Center the window
-X = Go full screen on the first two displays (if possible)
-R = Change the resolution of the current window to a random one
-N = Revert all changed resolutions

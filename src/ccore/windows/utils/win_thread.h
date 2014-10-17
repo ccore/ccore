@@ -1,11 +1,11 @@
 #pragma once
 
-#ifdef CC_USE_THREAD
+#if defined CC_USE_ALL || defined CC_USE_THREAD
 
 #include <Windows.h>
 
 #include <ccore/thread.h>
 
-#define _CRITICAL_SECTION_SPIN_COUNT 400
+#define _CC_CRITICAL_SECTION_SPIN_COUNT 400
 
 #endif

@@ -1,6 +1,6 @@
 #include "win_thread.h"
 
-#ifdef CC_USE_THREAD
+#if defined CC_USE_ALL || defined CC_USE_THREAD
 
 ccReturn ccThreadStart(ccThread *thread, void *function, void *data)
 {
@@ -41,7 +41,7 @@ bool ccThreadFinished(ccThread *thread)
 
 ccReturn ccThreadMutexCreate(ccMutex *mutex)
 {
-	if(!InitializeCriticalSectionAndSpinCount(mutex, _CRITICAL_SECTION_SPIN_COUNT)) {
+	if(!InitializeCriticalSectionAndSpinCount(mutex, _CC_CRITICAL_SECTION_SPIN_COUNT)) {
 		ccErrorPush(CC_ERROR_THREAD_MUTEXCREATE);
 		return CC_FAIL;
 	}

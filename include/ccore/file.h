@@ -3,7 +3,7 @@
 //                              /  ___ /__  _ __ ___                                //
 //                             /  / __/ _ \| '__/ _ \                               //
 //                            |  | (_| (_) | | |  __/                               //
-//                             \  \___\___/|_|  \___| 1.0                           //
+//                             \  \___\___/|_|  \___| 1.1                           //
 //                              \______\                                            //
 //                                                                                  //
 //             Copyright (C) 2014 \ Job Talle (job@ccore.org)                       //
@@ -19,7 +19,7 @@
 
 #pragma once
 
-#ifdef CC_USE_FILE
+#if defined CC_USE_ALL || defined CC_USE_FILE
 
 #include <stdint.h>
 #include <sys/stat.h>
@@ -52,4 +52,6 @@ void _ccFileFree(void);
 }
 #endif
 
+#elif defined __GNUC__
+#error "The CC_USE_FILE or the CC_USE_ALL flag must be set"
 #endif

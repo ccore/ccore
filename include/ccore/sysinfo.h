@@ -19,57 +19,43 @@
 
 #pragma once
 
-#if defined CC_USE_ALL || defined CC_USE_THREAD
+#if defined CC_USE_ALL || defined CC_USE_SYSINFO
+
+#include <stdint.h>
 
 #include "core.h"
 
 #include "types.h"
 #include "error.h"
+#include "assert.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-#ifdef WINDOWS
+typedef struct {
+	uint_fast64_t ramTotal;
 
-#include <windows.h>
+	unsigned int processorCount;
 
-#define ccThreadFunction(name) DWORD WINAPI name(LPVOID lpParam)
-#define ccThreadData ((void*)lpParam)
+	unsigned int fileMaxOpen;
+} ccSysinfo;
 
-#define ccThreadReturn() return 0;
+ccSysinfo *_ccSysinfo;
 
-typedef HANDLE ccThread;
-typedef CRITICAL_SECTION ccMutex;
+#define ccSysinfoGetProcessorCount() _ccSysinfo->processorCount
+#define ccSysinfoGetFileMaxOpen() _ccSysinfo->fileMaxOpen
 
-#elif defined LINUX
+#define ccSysinfoGetRamTotal() _ccSysinfo->ramTotal
 
-#include <pthread.h>
-
-#define ccThreadFunction(name) void* name(void *arg)
-#define ccThreadData arg
-
-#define ccThreadReturn() return 0;
-
-typedef pthread_t ccThread;
-typedef pthread_mutex_t ccMutex;
-
-#endif
-
-ccReturn ccThreadStart(ccThread *thread, void *function, void *data);
-ccReturn ccThreadJoin(ccThread *thread);
-bool ccThreadFinished(ccThread *thread);
-
-ccReturn ccThreadMutexCreate(ccMutex *mutex);
-ccReturn ccThreadMutexJoin(ccMutex *mutex);
-ccReturn ccThreadMutexRelease(ccMutex *mutex);
-ccReturn ccThreadMutexFree(ccMutex *mutex);
+ccReturn ccSysinfoInitialize(void);
+void ccSysinfoFree(void);
 
 #ifdef __cplusplus
 }
 #endif
 
 #elif defined __GNUC__
-#error "The CC_USE_THREAD or the CC_USE_ALL flag must be set"
+#error "The CC_USE_SYSINFO or the CC_USE_ALL flag must be set"
 #endif

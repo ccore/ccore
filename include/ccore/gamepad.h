@@ -3,7 +3,7 @@
 //                              /  ___ /__  _ __ ___                                //
 //                             /  / __/ _ \| '__/ _ \                               //
 //                            |  | (_| (_) | | |  __/                               //
-//                             \  \___\___/|_|  \___| 1.0                           //
+//                             \  \___\___/|_|  \___| 1.1                           //
 //                              \______\                                            //
 //                                                                                  //
 //             Copyright (C) 2014 \ Job Talle (job@ccore.org)                       //
@@ -17,7 +17,7 @@
 //      this program. If not, see <http://opensource.org/licenses/>.                //
 //__________________________________________________________________________________//
 
-#ifdef CC_USE_GAMEPAD
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 
 #pragma once
 
@@ -32,11 +32,11 @@ extern "C"
 {
 #endif
 
-#define GAMEPAD_AXIS_MIN SHRT_MIN
-#define GAMEPAD_AXIS_MAX SHRT_MAX
+#define CC_GAMEPAD_AXIS_MIN SHRT_MIN
+#define CC_GAMEPAD_AXIS_MAX SHRT_MAX
 
-#define GAMEPAD_OUTPUT_VALUE_MIN 0
-#define GAMEPAD_OUTPUT_VALUE_MAX USHRT_MAX
+#define CC_GAMEPAD_OUTPUT_VALUE_MIN 0
+#define CC_GAMEPAD_OUTPUT_VALUE_MAX USHRT_MAX
 
 typedef enum {
 	CC_GAMEPAD_UNHANDLED = 0,
@@ -79,7 +79,7 @@ typedef struct {
 
 ccGamepads *_ccGamepads;
 
-#define ccGamepadCount() _ccGamepads->amount
+#define ccGamepadGetAmount() _ccGamepads->amount
 #define ccGamepadGet(index) (&_ccGamepads->gamepad[index])
 
 ccReturn ccGamepadInitialize(void); // Initializes gamepad input
@@ -90,4 +90,6 @@ ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force);
 }
 #endif
 
+#elif defined __GNUC__
+#error "The CC_USE_GAMEPAD or the CC_USE_ALL flag must be set"
 #endif

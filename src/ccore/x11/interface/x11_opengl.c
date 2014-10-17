@@ -11,7 +11,7 @@ static int attrList[] =
 	None
 };
 
-ccReturn ccGLContextBind(int glVersionMajor, int glVersionMinor)
+ccReturn ccGLContextBind(void)
 {
 	XVisualInfo *visual;
 
@@ -28,11 +28,6 @@ ccReturn ccGLContextBind(int glVersionMajor, int glVersionMinor)
 
 	XWINDATA->XContext = glXCreateContext(XWINDATA->XDisplay, visual, NULL, GL_TRUE);
 	glXMakeCurrent(XWINDATA->XDisplay, XWINDATA->XWindow, XWINDATA->XContext);
-
-	if(CC_UNLIKELY(glewInit() != GLEW_OK)){
-		ccErrorPush(CC_ERROR_GL_GLEWINIT);
-		return CC_FAIL;
-	}
 
 	return CC_SUCCESS;
 }

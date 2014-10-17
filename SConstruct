@@ -2,7 +2,7 @@ import os
 
 env=Environment(CC='gcc', CCFLAGS='-Iinclude/')
 
-sources=[Glob('lib/*/*.c'), Glob('src/ccore/linux/*/*.c'), Glob('src/ccore/common/*/*.c'), Glob('src/ccore/x11/*/*.c')]
+sources=[Glob('src/ccore/linux/*/*.c'), Glob('src/ccore/common/*/*.c'), Glob('src/ccore/x11/*/*.c')]
 libs=['X11', 'Xrandr', 'Xinerama', 'Xi', 'GL', 'GLU', 'pthread']
 libpaths=['/usr/lib', '/usr/local/lib', '.']
 
@@ -11,11 +11,7 @@ opts.Add('target', 'Compile Target (debug/release/install)', 'debug', allowed_va
 opts.Add('test', 'Create test files in the bin folder', 'no', allowed_values=('yes', 'feature', 'no'))
 opts.Update(env)
 
-env.Append(CCFLAGS=['-DCC_USE_GAMEPAD'])
-env.Append(CCFLAGS=['-DCC_USE_NET'])
-env.Append(CCFLAGS=['-DCC_USE_TIME'])
-env.Append(CCFLAGS=['-DCC_USE_THREAD'])
-env.Append(CCFLAGS=['-DCC_USE_FILE'])
+env.Append(CCFLAGS=['-DCC_USE_ALL'])
 
 if(env['target']=='debug'):
     env.Append(CCFLAGS=['-D_DEBUG'])
@@ -30,8 +26,7 @@ if(env['target']=='install'):
 else:
     staticLibrary=env.Library(target='lib/ccore', source=sources, LIBS=libs, LIBPATH=libpaths)
     if(env['test']=='yes' or env['test']=='all' or env['test']=='feature'):
-        env.Program(target='bin/featuretest', source=['test/featuretest.c', 'test/tga.c', 'test/icon.c'], LIBS=[staticLibrary, libs], LIBPATH=libpaths)
-        Command("bin/commands.tga", "test/commands.tga", Copy("$TARGET", "$SOURCE"))
-        Command("bin/logo.tga", "test/logo.tga", Copy("$TARGET", "$SOURCE"))
+    	env.Append(CCFLAGS=['-D_DEBUG'])
+        env.Program(target='bin/test', source=['test/test.c', 'test/icon.c'], LIBS=[staticLibrary, libs], LIBPATH=libpaths)
 
 Help(opts.GenerateHelpText(env))

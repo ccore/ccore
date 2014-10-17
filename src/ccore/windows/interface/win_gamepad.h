@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef CC_USE_GAMEPAD
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 
 #pragma comment(lib, "hid.lib")
 #pragma comment(lib, "XInput9_1_0.lib")
@@ -15,21 +15,21 @@
 
 #include "win_window.h"
 
-#define GAMEPAD_MAXBUTTONS 128
+#define _CC_GAMEPAD_MAXBUTTONS 128
 
-#define GAMEPAD_XINPUT_BUTTONCOUNT 14
-#define GAMEPAD_XINPUT_AXISCOUNT 6
+#define _CC_GAMEPAD_XINPUT_BUTTONCOUNT 14
+#define _CC_GAMEPAD_XINPUT_AXISCOUNT 6
 
-#define GAMEPAD_XINPUT_ILEFTTRIGGER 0
-#define GAMEPAD_XINPUT_IRIGHTTRIGGER 1
-#define GAMEPAD_XINPUT_ITHUMBLX 2
-#define GAMEPAD_XINPUT_ITHUMBLY 3
-#define GAMEPAD_XINPUT_ITHUMBRX 4
-#define GAMEPAD_XINPUT_ITHUMBRY 5
+#define _CC_GAMEPAD_XINPUT_ILEFTTRIGGER 0
+#define _CC_GAMEPAD_XINPUT_IRIGHTTRIGGER 1
+#define _CC_GAMEPAD_XINPUT_ITHUMBLX 2
+#define _CC_GAMEPAD_XINPUT_ITHUMBLY 3
+#define _CC_GAMEPAD_XINPUT_ITHUMBRX 4
+#define _CC_GAMEPAD_XINPUT_ITHUMBRY 5
 
-#define GAMEPAD_XINPUT_HAPTICAMOUNT 2
+#define _CC_GAMEPAD_XINPUT_HAPTICAMOUNT 2
 
-#define GAMEPAD_XINPUT_TRIGGER_FACTOR (SHRT_MAX / CHAR_MAX)
+#define _CC_GAMEPAD_XINPUT_TRIGGER_FACTOR (SHRT_MAX / CHAR_MAX)
 
 void _generateGamepadEvents(RAWINPUT *raw);
 void _queryXinput();
@@ -59,11 +59,11 @@ typedef struct {
 } ccGamepad_win;
 
 typedef struct {
-	USAGE usage[GAMEPAD_MAXBUTTONS];
+	USAGE usage[_CC_GAMEPAD_MAXBUTTONS];
 	int xInputConnected[XUSER_MAX_COUNT];
 } ccGamepads_win;
 
-#define GAMEPAD_DATA ((ccGamepad_win*)currentGamepad->data)
-#define GAMEPADS_DATA ((ccGamepads_win*)_ccGamepads->data)
+#define _CC_GAMEPAD_DATA ((ccGamepad_win*)currentGamepad->data)
+#define _CC_GAMEPADS_DATA ((ccGamepads_win*)_ccGamepads->data)
 
 #endif CC_USE_GAMEPAD

@@ -226,7 +226,9 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 
 ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 {
-	Atom DELETE;
+	Atom DELETE, WM_WINDOW_TYPE, WM_WINDOW_TYPE_DIALOG;
+
+	ccAssert(rect.width > 0 && rect.height > 0);
 
 	if(CC_UNLIKELY(_ccWindow != NULL)){
 		ccErrorPush(CC_ERROR_WINDOW_CREATE);
@@ -249,7 +251,11 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 
 	XWINDATA->XScreen = DefaultScreen(XWINDATA->XDisplay);
 
+	WM_WINDOW_TYPE = XInternAtom(XWINDATA->XDisplay, "_NET_WM_WINDOW_TYPE", False);
+	WM_WINDOW_TYPE_DIALOG = XInternAtom(XWINDATA->XDisplay, "_NET_WM_WINDOW_TYPE_DOCK", False);
 	XWINDATA->WM_ICON = XInternAtom(XWINDATA->XDisplay, "_NET_WM_ICON", False);
+	XWINDATA->WM_NAME = XInternAtom(XWINDATA->XDisplay, "_NET_WM_NAME", False);
+	XWINDATA->WM_ICON_NAME = XInternAtom(XWINDATA->XDisplay, "_NET_WM_ICON_NAME", False);
 	XWINDATA->CLIPBOARD = XInternAtom(XWINDATA->XDisplay, "CLIPBOARD", False);
 	XWINDATA->INCR = XInternAtom(XWINDATA->XDisplay, "INCR", False);
 	XWINDATA->TARGETS = XInternAtom(XWINDATA->XDisplay, "TARGETS", False);
@@ -268,6 +274,10 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	XWINDATA->resizable = true;
 	if(flags & CC_WINDOW_FLAG_NORESIZE){
 		setResizable(false);
+	}
+
+	if(flags & CC_WINDOW_FLAG_NOBUTTONS){
+		XChangeProperty(XWINDATA->XDisplay, XWINDATA->XWindow, WM_WINDOW_TYPE, XA_ATOM, 32, PropModeReplace, (unsigned char*)&WM_WINDOW_TYPE_DIALOG, 1);
 	}
 
 	XMapWindow(XWINDATA->XDisplay, XWINDATA->XWindow);
@@ -295,6 +305,7 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	XWINDATA->XCursor = 0;
 	XWINDATA->XEmptyCursorImage = XCreateBitmapFromData(XWINDATA->XDisplay, XWINDATA->XWindow, emptyCursorData, 8, 8);
 	XWINDATA->XClipString = NULL;
+	XWINDATA->XContext = NULL;
 	XWINDATA->XClipStringLength = 0;
 
 	return CC_SUCCESS;
@@ -331,7 +342,7 @@ bool ccWindowEventPoll(void)
 
 	_ccWindow->event.type = CC_EVENT_SKIP;
 
-#ifdef CC_USE_GAMEPAD
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 	if(_ccGamepads != NULL){
 		gamepadEvent = ccGamepadEventPoll();
 		if(gamepadEvent.type != CC_GAMEPAD_UNHANDLED){
@@ -482,7 +493,7 @@ bool ccWindowEventPoll(void)
 	return true;
 }
 
-ccReturn ccWindowSetWindowed(void)
+ccReturn ccWindowSetWindowed(ccRect *rect)
 {	
 	ccAssert(_ccWindow);
 
@@ -491,14 +502,18 @@ ccReturn ccWindowSetWindowed(void)
 	setWindowState("_NET_WM_STATE_MAXIMIZED_VERT", false);
 	setWindowState("_NET_WM_STATE_MAXIMIZED_HORZ", false);
 
-	return CC_SUCCESS;
+	if(rect == NULL){
+		return CC_SUCCESS;
+	}else{
+		return ccWindowResizeMove(*rect);
+	}
 }
 
 ccReturn ccWindowSetMaximized(void)
 {
 	ccAssert(_ccWindow);
 
-	ccWindowSetWindowed();
+	ccWindowSetWindowed(NULL);
 
 	setWindowState("_NET_WM_STATE_MAXIMIZED_VERT", true);
 	setWindowState("_NET_WM_STATE_MAXIMIZED_HORZ", true);
@@ -567,6 +582,7 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 ccReturn ccWindowResizeMove(ccRect rect)
 {
 	ccAssert(_ccWindow);
+	ccAssert(rect.width > 0 && rect.height > 0);
 
 	setResizable(true);
 	XMoveResizeWindow(XWINDATA->XDisplay, XWINDATA->XWindow, rect.x, rect.y, rect.width, rect.height);
@@ -609,6 +625,27 @@ ccReturn ccWindowSetBlink(void)
 	ccAssert(_ccWindow);
 
 	return setWindowState("_NET_WM_STATE_DEMANDS_ATTENTION", true);
+}
+
+ccReturn ccWindowSetTitle(const char *title)
+{
+	char *titleCopy;
+	XTextProperty titleProperty;
+
+	titleCopy = strdup(title);
+	if(!XStringListToTextProperty(&titleCopy, 1, &titleProperty)){
+		ccErrorPush(CC_ERROR_WINDOW_MODE);
+		return CC_FAIL;
+	}
+	free(titleCopy);
+
+	XSetTextProperty(XWINDATA->XDisplay, XWINDATA->XWindow, &titleProperty, XWINDATA->WM_NAME); 
+	XSetTextProperty(XWINDATA->XDisplay, XWINDATA->XWindow, &titleProperty, XWINDATA->WM_ICON_NAME); 
+	XSetWMName(XWINDATA->XDisplay, XWINDATA->XWindow, &titleProperty); 
+	XSetWMIconName(XWINDATA->XDisplay, XWINDATA->XWindow, &titleProperty); 
+	XFree(titleProperty.value);
+
+	return CC_SUCCESS;
 }
 
 ccReturn ccWindowIconSet(ccPoint size, unsigned long *icon)
@@ -675,6 +712,11 @@ ccReturn ccWindowMouseSetCursor(ccCursor cursor)
 ccReturn ccWindowClipboardSet(const char *text)
 {
 	ccAssert(_ccWindow);
+
+	if(text == NULL){
+		return CC_FAIL;
+	}
+
 
 	if(XWINDATA->CLIPBOARD != None && XGetSelectionOwner(XWINDATA->XDisplay, XWINDATA->CLIPBOARD) != XWINDATA->XWindow){
 		XSetSelectionOwner(XWINDATA->XDisplay, XWINDATA->CLIPBOARD, XWINDATA->XWindow, CurrentTime);

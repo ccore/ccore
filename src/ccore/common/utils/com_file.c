@@ -1,6 +1,6 @@
 #include <ccore/file.h>
 
-#ifdef CC_USE_FILE
+#if defined CC_USE_ALL || defined CC_USE_FILE
 
 #ifdef WINDOWS
 

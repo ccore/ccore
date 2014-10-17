@@ -19,27 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="lib\glew\glew.c" />
-    <ClCompile Include="src\ccore\common\interface\com_display.c" />
-    <ClCompile Include="src\ccore\common\interface\com_event.c" />
-    <ClCompile Include="src\ccore\common\interface\com_window.c" />
-    <ClCompile Include="src\ccore\common\utils\com_core.c" />
-    <ClCompile Include="src\ccore\common\utils\com_error.c" />
-    <ClCompile Include="src\ccore\common\utils\com_file.c" />
-    <ClCompile Include="src\ccore\common\utils\com_rect.c" />
-    <ClCompile Include="src\ccore\common\utils\com_string.c" />
-    <ClCompile Include="src\ccore\windows\interface\win_display.c" />
-    <ClCompile Include="src\ccore\windows\interface\win_gamepad.c" />
-    <ClCompile Include="src\ccore\windows\interface\win_opengl.c" />
-    <ClCompile Include="src\ccore\windows\interface\win_window.c" />
-    <ClCompile Include="src\ccore\windows\utils\win_file.c" />
-    <ClCompile Include="src\ccore\windows\utils\win_thread.c" />
-    <ClCompile Include="src\ccore\windows\utils\win_time.c" />
-    <ClCompile Include="test\featuretest.c" />
-    <ClCompile Include="test\icon.c" />
-    <ClCompile Include="test\tga.c" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="include\ccore\assert.h" />
     <ClInclude Include="include\ccore\core.h" />
     <ClInclude Include="include\ccore\display.h" />
@@ -50,22 +29,41 @@
     <ClInclude Include="include\ccore\opengl.h" />
     <ClInclude Include="include\ccore\print.h" />
     <ClInclude Include="include\ccore\string.h" />
+    <ClInclude Include="include\ccore\sysinfo.h" />
     <ClInclude Include="include\ccore\thread.h" />
     <ClInclude Include="include\ccore\time.h" />
     <ClInclude Include="include\ccore\types.h" />
     <ClInclude Include="include\ccore\window.h" />
-    <ClInclude Include="lib\glew\GL\glew.h" />
-    <ClInclude Include="lib\glew\GL\glxew.h" />
-    <ClInclude Include="lib\glew\GL\wglew.h" />
     <ClInclude Include="src\ccore\windows\interface\win_display.h" />
     <ClInclude Include="src\ccore\windows\interface\win_gamepad.h" />
     <ClInclude Include="src\ccore\windows\interface\win_opengl.h" />
     <ClInclude Include="src\ccore\windows\interface\win_window.h" />
     <ClInclude Include="src\ccore\windows\utils\win_file.h" />
+    <ClInclude Include="src\ccore\windows\utils\win_sysinfo.h" />
     <ClInclude Include="src\ccore\windows\utils\win_thread.h" />
     <ClInclude Include="src\ccore\windows\utils\win_time.h" />
     <ClInclude Include="test\icon.h" />
-    <ClInclude Include="test\tga.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\ccore\common\interface\com_display.c" />
+    <ClCompile Include="src\ccore\common\interface\com_event.c" />
+    <ClCompile Include="src\ccore\common\interface\com_window.c" />
+    <ClCompile Include="src\ccore\common\utils\com_core.c" />
+    <ClCompile Include="src\ccore\common\utils\com_error.c" />
+    <ClCompile Include="src\ccore\common\utils\com_file.c" />
+    <ClCompile Include="src\ccore\common\utils\com_rect.c" />
+    <ClCompile Include="src\ccore\common\utils\com_string.c" />
+    <ClCompile Include="src\ccore\common\utils\com_sysinfo.c" />
+    <ClCompile Include="src\ccore\windows\interface\win_display.c" />
+    <ClCompile Include="src\ccore\windows\interface\win_gamepad.c" />
+    <ClCompile Include="src\ccore\windows\interface\win_opengl.c" />
+    <ClCompile Include="src\ccore\windows\interface\win_window.c" />
+    <ClCompile Include="src\ccore\windows\utils\win_file.c" />
+    <ClCompile Include="src\ccore\windows\utils\win_sysinfo.c" />
+    <ClCompile Include="src\ccore\windows\utils\win_thread.c" />
+    <ClCompile Include="src\ccore\windows\utils\win_time.c" />
+    <ClCompile Include="test\icon.c" />
+    <ClCompile Include="test\test.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E3B9EEBD-534A-442C-B3E4-A5FE4BEC3A3C}</ProjectGuid>
@@ -133,7 +131,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;CC_USE_GAMEPAD;CC_USE_FILE;CC_USE_THREAD;CC_USE_TIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;CC_USE_GAMEPAD;CC_USE_FILE;CC_USE_THREAD;CC_USE_TIME;CC_USE_SYSINFO;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <CompileAs>CompileAsC</CompileAs>

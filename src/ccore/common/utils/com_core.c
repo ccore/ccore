@@ -1,42 +1,55 @@
 #include <ccore/core.h>
 
-#ifdef CC_USE_GAMEPAD
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 #include <ccore/gamepad.h>
 #endif
 #include <ccore/display.h>
 #include <ccore/window.h>
 #include <ccore/opengl.h>
-#ifdef CC_USE_FILE
+#if defined CC_USE_ALL || defined CC_USE_FILE
 #include <ccore/file.h>
+#endif
+#if defined CC_USE_ALL || defined CC_USE_SYSINFO
+#include <ccore/sysinfo.h>
 #endif
 
 void ccInitialize(void)
 {
-#ifdef CC_USE_GAMEPAD
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 	_ccGamepads = NULL;
 #endif
 	_ccDisplays = NULL;
 	_ccWindow = NULL;
+#if defined CC_USE_ALL || defined CC_USE_SYSINFO
+	_ccSysinfo = NULL;
+#endif
 }
 
 void ccFree(void)
 {
 	_ccErrorFree();
 
-#ifdef CC_USE_FILE
+#if defined CC_USE_ALL || defined CC_USE_FILE
 	_ccFileFree();
 #endif
 
-#ifdef CC_USE_GAMEPAD
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 	if(_ccGamepads != NULL) {
 		ccGamepadFree();
 	}
 #endif
 	if(_ccWindow != NULL) {
-		if(ccGLContextIsActive()) ccGLContextFree();
+		if(ccGLContextIsActive()){
+			ccGLContextFree();
+		}
 		ccWindowFree();
 	}
-	if(_ccDisplays != NULL){
+	if(_ccDisplays != NULL) {
 		ccDisplayFree();
 	}
+#if defined CC_USE_ALL || defined CC_USE_SYSINFO
+	if(_ccSysinfo != NULL) {
+		ccSysinfoFree();
+	}
+#endif
 }

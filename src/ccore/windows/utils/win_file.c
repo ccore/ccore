@@ -1,4 +1,4 @@
-#ifdef CC_USE_FILE
+#if defined CC_USE_ALL || defined CC_USE_FILE
 
 #include "win_file.h"
 

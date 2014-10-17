@@ -3,7 +3,7 @@
 //                              /  ___ /__  _ __ ___                                //
 //                             /  / __/ _ \| '__/ _ \                               //
 //                            |  | (_| (_) | | |  __/                               //
-//                             \  \___\___/|_|  \___| 1.0                           //
+//                             \  \___\___/|_|  \___| 1.1                           //
 //                              \______\                                            //
 //                                                                                  //
 //             Copyright (C) 2014 \ Job Talle (job@ccore.org)                       //
@@ -16,6 +16,8 @@
 //      You should have received a copy of the 3-clause BSD License along with      //
 //      this program. If not, see <http://opensource.org/licenses/>.                //
 //__________________________________________________________________________________//
+
+#pragma once
 
 #include "core.h"
 

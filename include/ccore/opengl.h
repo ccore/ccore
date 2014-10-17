@@ -3,7 +3,7 @@
 //                              /  ___ /__  _ __ ___                                //
 //                             /  / __/ _ \| '__/ _ \                               //
 //                            |  | (_| (_) | | |  __/                               //
-//                             \  \___\___/|_|  \___| 1.0                           //
+//                             \  \___\___/|_|  \___| 1.1                           //
 //                              \______\                                            //
 //                                                                                  //
 //             Copyright (C) 2014 \ Job Talle (job@ccore.org)                       //
@@ -25,18 +25,12 @@
 #include "error.h"
 #include "types.h"
 
-#ifdef LINUX
-#include "../../lib/glew/GL/glew.h"
-#elif defined WINDOWS
-#include "../../lib/glew/GL/glew.h"
-#endif
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 // opengl
-ccReturn ccGLContextBind(int glVersionMajor, int glVersionMinor); // Bind the openGl context to window
+ccReturn ccGLContextBind(void); // Bind the openGl context to window
 ccReturn ccGLContextFree(void); // Free context
 ccReturn ccGLBuffersSwap(void); // Swap the buffers
 bool ccGLContextIsActive(void);

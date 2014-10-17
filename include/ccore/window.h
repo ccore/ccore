@@ -3,7 +3,7 @@
 //                              /  ___ /__  _ __ ___                                //
 //                             /  / __/ _ \| '__/ _ \                               //
 //                            |  | (_| (_) | | |  __/                               //
-//                             \  \___\___/|_|  \___| 1.0                           //
+//                             \  \___\___/|_|  \___| 1.1                           //
 //                              \______\                                            //
 //                                                                                  //
 //             Copyright (C) 2014 \ Job Talle (job@ccore.org)                       //
@@ -79,9 +79,10 @@ bool ccWindowEventPoll(void); // Poll an event from the events that currently ne
 ccReturn ccWindowResizeMove(ccRect rect);
 ccReturn ccWindowSetCentered(void);
 
-ccReturn ccWindowSetWindowed(void);
+ccReturn ccWindowSetWindowed(ccRect *rect);
 ccReturn ccWindowSetMaximized(void);
 ccReturn ccWindowSetFullscreen(int displayCount, ...);
+ccReturn ccWindowSetTitle(const char *title);
 
 ccReturn ccWindowSetBlink(void);
 ccReturn ccWindowIconSet(ccPoint size, unsigned long *icon);

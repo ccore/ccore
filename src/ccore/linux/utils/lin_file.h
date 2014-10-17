@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef CC_USE_FILE
+#if defined CC_USE_ALL || defined CC_USE_FILE
 
 #include <stdlib.h>
 #include <string.h>

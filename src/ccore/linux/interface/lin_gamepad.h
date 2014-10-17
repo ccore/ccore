@@ -1,5 +1,5 @@
 #pragma once
-#ifdef CC_USE_GAMEPAD
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 
 #include <errno.h>
 #include <dirent.h>

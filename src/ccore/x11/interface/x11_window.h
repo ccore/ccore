@@ -16,9 +16,7 @@
 #include <GL/glx.h>
 
 #include <ccore/window.h>
-#define CC_IGNORE_INCLUDE
 #include <ccore/gamepad.h>
-#undef CC_IGNORE_INCLUDE
 
 #include <ccore/types.h>
 #include <ccore/event.h>
@@ -40,7 +38,7 @@ typedef struct {
 	Pixmap XEmptyCursorImage;
 	char *XClipString;
 	size_t XClipStringLength;
-	Atom CCORE_SELECTION, WM_ICON, CLIPBOARD, INCR, TARGETS, MULTIPLE, UTF8_STRING, COMPOUND_STRING;
+	Atom CCORE_SELECTION, WM_ICON, WM_ICON_NAME, WM_NAME, CLIPBOARD, INCR, TARGETS, MULTIPLE, UTF8_STRING, COMPOUND_STRING;
 	int XScreen, windowFlags, XInputOpcode;
 	bool resizable;
 } ccWindow_x11;
