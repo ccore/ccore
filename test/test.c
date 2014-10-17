@@ -228,6 +228,9 @@ void testSysinfo(int *test)
 
 	ccPrintf("\tInstalled RAM:\t%lld\n", ccSysinfoGetRamTotal());
 	ccPrintf("\tAvailable RAM:\t%lld\n", ccSysinfoGetRamUsable());
+
+	ccPrintf("\tProcessors:\t%d\n", ccSysinfoGetProcessorCount());
+
 	ccPrintf("\tFree RAM:\t%lld\n", ccSysinfoGetRamAvailable());
 
 	ccSysinfoFree();

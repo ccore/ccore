@@ -8,6 +8,7 @@
 
 ccReturn ccSysinfoInitialize(void)
 {
+	SYSTEM_INFO sysinfo;
 	_CC_GETMEMSTAT;
 
 	ccAssert(_ccSysinfo == NULL);
@@ -16,8 +17,12 @@ ccReturn ccSysinfoInitialize(void)
 
 	if(GetPhysicallyInstalledSystemMemory(&_ccSysinfo->ramTotal) == FALSE) goto fail;
 	_ccSysinfo->ramTotal <<= 10;
-
+	
 	_ccSysinfo->ramUsable = memstat.ullTotalPhys;
+
+	GetSystemInfo(&sysinfo);
+	_ccSysinfo->processorCount = sysinfo.dwNumberOfProcessors;
+
 
 	return CC_SUCCESS;
 
