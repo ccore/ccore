@@ -3,7 +3,9 @@
 #include <stdlib.h>
 #include <Windows.h>
 #include <string.h>
+
 #if defined CC_USE_ALL || defined CC_USE_GAMEPAD
+
 #include <hidsdi.h>
 #endif
 #include <stdint.h>
@@ -18,6 +20,7 @@
 #include "win_gamepad.h"
 
 #if defined CC_USE_ALL || defined CC_USE_GAMEPAD
+
 #define _CC_NRAWINPUTDEVICES 3
 #define _CC_RAWINPUT_GAMEPAD 2
 #define _CC_RAWINPUT_GAMEPADCOUNT 1
