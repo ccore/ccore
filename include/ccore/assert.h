@@ -17,6 +17,8 @@
 //      this program. If not, see <http://opensource.org/licenses/>.                //
 //__________________________________________________________________________________//
 
+#pragma once
+
 #include "core.h"
 
 // ccAssert translates to assert when debugging, it is ignored otherwise.

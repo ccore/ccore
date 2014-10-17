@@ -21,6 +21,8 @@
 
 #if defined CC_USE_ALL || defined CC_USE_SYSINFO
 
+#include "core.h"
+
 #include "types.h"
 #include "error.h"
 #include "assert.h"

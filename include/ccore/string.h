@@ -23,6 +23,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "core.h"
+
 #include "types.h"
 
 #ifdef __cplusplus

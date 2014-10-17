@@ -21,6 +21,8 @@
 
 #include <stdlib.h>
 
+#include "core.h"
+
 #include "print.h"
 
 #ifdef __cplusplus

@@ -28,6 +28,7 @@
 // time
 #include <time.h>
 
+#include <ccore/sysinfo.h>
 #include <ccore/print.h>
 #include <ccore/file.h>
 #include <ccore/time.h>
@@ -35,7 +36,6 @@
 #include <ccore/gamepad.h>
 #include <ccore/window.h>
 #include <ccore/display.h>
-#include <ccore/sysinfo.h>
 
 #include "icon.h"
 

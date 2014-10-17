@@ -21,6 +21,8 @@
 
 #include <stdlib.h>
 
+#include "core.h"
+
 #ifdef __cplusplus
 extern "C"
 {

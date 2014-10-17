@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include "core.h"
+
 #ifdef _DEBUG
 #include <stdio.h>
 #define ccPrintf printf
