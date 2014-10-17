@@ -127,6 +127,7 @@ void testWindow(int *test)
 	ccWindowIconSet(iconGetSize(), iconData);
 	free(iconData);
 	err();
+	ccTimeDelay(1000);
 	ccWindowMouseSetPosition((ccPoint){0, 0});
 	err();
 	ccWindowMouseSetCursor(CC_CURSOR_NONE);
@@ -227,8 +228,6 @@ void testSysinfo(int *test)
 	err();
 
 	ccPrintf("\tInstalled RAM:\t%lld\n", ccSysinfoGetRamTotal());
-
-	ccPrintf("\tFree RAM:\t%lld\n", ccSysinfoGetRamAvailable());
 
 	ccPrintf("\tProcessors:\t%d\n", ccSysinfoGetProcessorCount());
 

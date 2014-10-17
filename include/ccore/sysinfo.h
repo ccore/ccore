@@ -48,7 +48,6 @@ ccSysinfo *_ccSysinfo;
 #define ccSysinfoGetFileMaxOpen() _ccSysinfo->fileMaxOpen
 
 #define ccSysinfoGetRamTotal() _ccSysinfo->ramTotal
-uint_fast64_t ccSysinfoGetRamAvailable(void);
 
 ccReturn ccSysinfoInitialize(void);
 void ccSysinfoFree(void);
