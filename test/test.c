@@ -226,8 +226,9 @@ void testSysinfo(int *test)
 	ccSysinfoInitialize();
 	err();
 
-	ccPrintf("\tInstalled RAM: %lld\n", ccSysinfoGetRamTotal());
-	//ccPrintf("\tAvailable RAM: %lld\n", ccSysinfoGetRamAvailable());
+	ccPrintf("\tInstalled RAM:\t%lld\n", ccSysinfoGetRamTotal());
+	ccPrintf("\tAvailable RAM:\t%lld\n", ccSysinfoGetRamUsable());
+	ccPrintf("\tFree RAM:\t%lld\n", ccSysinfoGetRamAvailable());
 
 	ccSysinfoFree();
 	err();

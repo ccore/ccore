@@ -25,7 +25,7 @@ ccReturn ccSysinfoInitialize(void)
 	return CC_SUCCESS;
 }
 
-unsigned long ccSysinfoGetRamAvailable()
+uint_fast64_t ccSysinfoGetRamAvailable();
 {
 	struct sysinfo memInfo;
 
