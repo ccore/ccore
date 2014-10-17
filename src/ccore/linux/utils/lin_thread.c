@@ -1,5 +1,7 @@
 #include "lin_thread.h"
 
+#if defined CC_USE_ALL || defined CC_USE_THREAD
+
 ccReturn ccThreadStart(ccThread *thread, void *function, void *data)
 {
 	if(CC_UNLIKELY(pthread_create(thread, NULL, function, data) != 0)) {
@@ -68,3 +70,5 @@ ccReturn ccThreadMutexFree(ccMutex *mutex)
 
 	return CC_SUCCESS;
 }
+
+#endif
