@@ -32,11 +32,15 @@ extern "C"
 
 typedef struct {
 	unsigned long ram;
+	unsigned long pageSize;
+	unsigned long pageCount;
 } ccSysinfo;
 
 ccSysinfo *_ccSysinfo;
 
 #define ccSysinfoGetRam() _ccSysinfo->ram
+#define ccSysinfoGetPageSize() _ccSysinfo->pageSize
+#define ccSysinfoGetPageCount() _ccSysinfo->pageCount
 
 ccReturn ccSysinfoInitialize(void);
 void ccSysinfoFree(void);
