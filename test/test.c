@@ -148,6 +148,11 @@ void testWindow(int *test)
 					ccWindowSetBlink();
 					err();
 					break;
+				case CC_EVENT_MOUSE_DOWN:
+					switch(ccWindowEventGet().mouseButton) {
+					case CC_MOUSE_BUTTON_PREVIOUS: printf("Previous\n"); break;
+					case CC_MOUSE_BUTTON_NEXT: printf("Next\n"); break;
+					}
 			}
 		}
 	}

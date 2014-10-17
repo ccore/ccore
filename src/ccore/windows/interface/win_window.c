@@ -141,7 +141,6 @@ static void processRid(HRAWINPUT rawInput)
 		else if(buttonFlags & RI_MOUSE_BUTTON_4_DOWN) {
 			_ccWindow->event.type = CC_EVENT_MOUSE_DOWN;
 			_ccWindow->event.mouseButton = CC_MOUSE_BUTTON_PREVIOUS;
-			printf("Previous\n");
 		}
 		else if(buttonFlags & RI_MOUSE_BUTTON_4_UP) {
 			_ccWindow->event.type = CC_EVENT_MOUSE_UP;
@@ -150,7 +149,6 @@ static void processRid(HRAWINPUT rawInput)
 		else if(buttonFlags & RI_MOUSE_BUTTON_5_DOWN) {
 			_ccWindow->event.type = CC_EVENT_MOUSE_DOWN;
 			_ccWindow->event.mouseButton = CC_MOUSE_BUTTON_NEXT;
-			printf("Next\n");
 		}
 		else if(buttonFlags & RI_MOUSE_BUTTON_5_UP) {
 			_ccWindow->event.type = CC_EVENT_MOUSE_UP;
