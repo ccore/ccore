@@ -251,9 +251,9 @@ int main(int argc, char **argv)
 	testSysinfo(&test);
 	testDefaultDirectories(&test);
 	testTime(&test);
-	//testDisplay(&test);
-	//testWindow(&test);
-	//testGamepad(&test);
+	testDisplay(&test);
+	testWindow(&test);
+	testGamepad(&test);
 
 	ccFree();
 
