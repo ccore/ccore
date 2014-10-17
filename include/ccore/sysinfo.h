@@ -33,16 +33,23 @@ extern "C"
 #endif
 
 typedef struct {
-	unsigned long ram;
+	unsigned long ramTotal;
 	unsigned long pageSize;
-	unsigned long pageCount;
+	unsigned long pageTotalCount;
+	unsigned long fileMaxOpen;
+	unsigned long stringMaxLength;
 } ccSysinfo;
 
 ccSysinfo *_ccSysinfo;
 
-#define ccSysinfoGetRam() _ccSysinfo->ram
+#define ccSysinfoGetRamTotal() _ccSysinfo->ramTotal
 #define ccSysinfoGetPageSize() _ccSysinfo->pageSize
-#define ccSysinfoGetPageCount() _ccSysinfo->pageCount
+#define ccSysinfoGetPageTotalCount() _ccSysinfo->pageTotalCount
+#define ccSysinfoGetFileMaxOpen() _ccSysinfo->fileMaxOpen
+#define ccSysinfoGetStringMaxLength() _ccSysinfo->stringMaxLength
+
+unsigned long ccSysInfoGetRamAvailable();
+unsigned long ccSysInfoGetPageAvailableCount();
 
 ccReturn ccSysinfoInitialize(void);
 void ccSysinfoFree(void);

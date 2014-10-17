@@ -221,12 +221,12 @@ void testDefaultDirectories(int *test)
 
 void testSysinfo(int *test)
 {
-	ccPrintf("Test %d: Retrieving system info", ++(*test));
+	ccPrintf("Test %d: Retrieving system info\n", ++(*test));
 
 	ccSysinfoInitialize();
 	err();
 
-	ccPrintf("Installed RAM: %dMb\n", ccSysinfoGetRam());
+	ccPrintf("Installed RAM: %dMb\n", ccSysinfoGetRamTotal());
 
 	ccSysinfoFree();
 }
@@ -242,7 +242,7 @@ int main(int argc, char **argv)
 	testDefaultDirectories(&test);
 	testTime(&test);
 	//testDisplay(&test);
-	testWindow(&test);
+	//testWindow(&test);
 	testGamepad(&test);
 
 	ccFree();

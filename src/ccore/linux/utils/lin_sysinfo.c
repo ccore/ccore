@@ -8,11 +8,26 @@ ccReturn ccSysinfoInitialize(void)
 
 	ccMalloc(_ccSysinfo, sizeof(ccSysinfo));
 
-	_ccSysinfo->pageCount = sysconf(_SC_PHYS_PAGES);
+	_ccSysinfo->pageTotalCount = sysconf(_SC_PHYS_PAGES);
 	_ccSysinfo->pageSize = sysconf(_SC_PAGESIZE);
-	_ccSysinfo->ram = _ccSysinfo->pageCount * _ccSysinfo->pageSize;
+
+	_ccSysinfo->ramTotal = _ccSysinfo->pageTotalCount * _ccSysinfo->pageSize;
+
+	_ccSysinfo->fileMaxOpen = sysconf(_SC_OPEN_MAX);
+
+	_ccSysinfo->stringMaxLength = sysconf(_SC_BC_STRING_MAX);
 
 	return CC_SUCCESS;
+}
+
+unsigned long ccSysInfoGetRamAvailable()
+{
+	return _ccSysinfo->pageSize * sysconf(_SC_AVPHYS_PAGES);
+}
+
+unsigned long ccSysInfoGetPageAvailableCount()
+{
+	return sysconf(_SC_AVPHYS_PAGES);
 }
 
 #endif
