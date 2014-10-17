@@ -35,9 +35,9 @@ extern "C"
 #endif
 
 typedef struct {
-	uint_least64_t ramTotal;
-	uint_least64_t pageSize;
-	uint_least64_t pageTotalCount;
+	uint_fast64_t ramTotal;
+	uint_fast64_t pageSize;
+	uint_fast64_t pageTotalCount;
 	unsigned int processorTotalCount;
 
 	unsigned long fileMaxOpen;

@@ -7,9 +7,10 @@ ccReturn ccSysinfoInitialize(void)
 	ccAssert(_ccSysinfo == NULL);
 
 	ccMalloc(_ccSysinfo, sizeof(ccSysinfo));
-	printf("-----%d\n", sizeof(unsigned long long));
+
 	GetPhysicallyInstalledSystemMemory(&_ccSysinfo->ramTotal);
-	_ccSysinfo->ramTotal *= 1000;
+
+	_ccSysinfo->ramTotal *= 1000UL;
 
 	return CC_SUCCESS;
 }
