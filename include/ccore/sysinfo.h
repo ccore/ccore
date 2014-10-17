@@ -37,6 +37,7 @@ typedef struct {
 	unsigned long pageSize;
 	unsigned long pageTotalCount;
 	unsigned long fileMaxOpen;
+	unsigned long stringMaxLength;
 } ccSysinfo;
 
 ccSysinfo *_ccSysinfo;
@@ -45,6 +46,7 @@ ccSysinfo *_ccSysinfo;
 #define ccSysinfoGetPageSize() _ccSysinfo->pageSize
 #define ccSysinfoGetPageTotalCount() _ccSysinfo->pageTotalCount
 #define ccSysinfoGetFileMaxOpen() _ccSysinfo->fileMaxOpen
+#define ccSysinfoGetStringMaxLength() _ccSysinfo->stringMaxLength
 
 unsigned long ccSysInfoGetRamAvailable();
 unsigned long ccSysInfoGetPageAvailableCount();

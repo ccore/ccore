@@ -15,12 +15,14 @@ ccReturn ccSysinfoInitialize(void)
 
 	_ccSysinfo->fileMaxOpen = sysconf(_SC_OPEN_MAX);
 
+	_ccSysinfo->stringMaxLength = sysconf(_SC_BC_STRING_MAX);
+
 	return CC_SUCCESS;
 }
 
 unsigned long ccSysInfoGetRamAvailable()
 {
-	return _ccSysInfo->pageSize * sysconf(_SC_AVPHYS_PAGES);
+	return _ccSysinfo->pageSize * sysconf(_SC_AVPHYS_PAGES);
 }
 
 unsigned long ccSysInfoGetPageAvailableCount()
