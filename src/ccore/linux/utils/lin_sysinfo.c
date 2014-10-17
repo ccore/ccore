@@ -18,10 +18,6 @@ ccReturn ccSysinfoInitialize(void)
 
 	_ccSysinfo->processorTotalCount = sysconf(_SC_NPROCESSORS_CONF);
 
-	_ccSysinfo->fileMaxOpen = sysconf(_SC_OPEN_MAX);
-
-	_ccSysinfo->stringMaxLength = sysconf(_SC_BC_STRING_MAX);
-
 	return CC_SUCCESS;
 }
 
@@ -32,16 +28,6 @@ uint_fast64_t ccSysinfoGetRamAvailable();
 	sysinfo(&memInfo);
 
 	return memInfo.freeram;
-}
-
-unsigned long ccSysinfoGetPageAvailableCount()
-{
-	return sysconf(_SC_AVPHYS_PAGES);
-}
-
-unsigned int ccSysinfoGetProcessorAvailableCount()
-{
-	return sysconf(_SC_NPROCESSORS_ONLN);
 }
 
 #endif

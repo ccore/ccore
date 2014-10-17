@@ -54,7 +54,6 @@ ccSysinfo *_ccSysinfo;
 #define ccSysinfoGetStringMaxLength() _ccSysinfo->stringMaxLength
 
 uint_fast64_t ccSysinfoGetRamAvailable();
-unsigned int ccSysinfoGetProcessorAvailableCount();
 
 ccReturn ccSysinfoInitialize(void);
 void ccSysinfoFree(void);
