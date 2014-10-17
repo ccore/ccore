@@ -226,9 +226,13 @@ void testSysinfo(int *test)
 	ccSysinfoInitialize();
 	err();
 
-	ccPrintf("Installed RAM: %dMb\n", ccSysinfoGetRamTotal());
+	ccPrintf("\tInstalled RAM: %ul\n", ccSysinfoGetRamTotal());
+	ccPrintf("\tAvailable RAM: %ul\n", ccSysinfoGetRamAvailable());
 
 	ccSysinfoFree();
+	err();
+
+	ccPrintf("Passed\n");
 }
 
 int main(int argc, char **argv)
