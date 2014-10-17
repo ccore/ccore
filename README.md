@@ -26,3 +26,9 @@ The features of ccore include support for the following:
 ###Documentation###
 - [How to install](../../wiki/Building-the-ccore-library)
 - [Example code](../../wiki/Examples)
+
+###Contact###
+You can contact us for any questions/suggestions at:
+- ccore.freenode.net (IRC)
+- thomas@ccore.org (mail)
+- job@ccore.org (mail)
