@@ -44,10 +44,12 @@ void ccFree(void)
 		}
 		ccWindowFree();
 	}
-	if(_ccDisplays != NULL){
+	if(_ccDisplays != NULL) {
 		ccDisplayFree();
 	}
 #if defined CC_USE_ALL || defined CC_USE_SYSINFO
-	ccSysinfoFree();
+	if(_ccSysinfo != NULL) {
+		ccSysinfoFree();
+	}
 #endif
 }

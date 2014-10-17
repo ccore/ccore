@@ -9,8 +9,9 @@ ccReturn ccSysinfoInitialize(void)
 	ccMalloc(_ccSysinfo, sizeof(ccSysinfo));
 
 	if(GetPhysicallyInstalledSystemMemory(&_ccSysinfo->ramTotal) == FALSE) goto fail;
+	_ccSysinfo->ramTotal <<= 10;
 
-	_ccSysinfo->ramTotal *= _CC_SYSINFO_WINKB;
+
 
 	return CC_SUCCESS;
 
