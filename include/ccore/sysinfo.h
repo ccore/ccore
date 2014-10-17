@@ -32,6 +32,8 @@ extern "C"
 
 typedef struct {
 	unsigned long ram;
+	unsigned long pageSize;
+	unsigned long pageCount;
 } ccSysinfo;
 
 ccSysinfo *_ccSysinfo;
