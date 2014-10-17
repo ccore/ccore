@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/param.h>
+#include <sys/sysinfo.h>
 
 #include <ccore/sysinfo.h>
 
