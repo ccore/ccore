@@ -238,12 +238,12 @@ int main(int argc, char **argv)
 	ccInitialize();
 	
 	test = 0;
+	testSysinfo(&test);
 	testDefaultDirectories(&test);
 	testTime(&test);
 	//testDisplay(&test);
 	testWindow(&test);
 	testGamepad(&test);
-	testSysinfo(&test);
 
 	ccFree();
 
