@@ -25,7 +25,7 @@ extern "C"
 #endif
 
 typedef struct {
-	unsigned int ramMB;
+	unsigned long ramMB;
 } ccSysinfo;
 
 ccSysinfo ccSysinfoGet(void);
