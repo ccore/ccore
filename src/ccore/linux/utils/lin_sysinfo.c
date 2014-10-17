@@ -2,4 +2,13 @@
 
 #include "lin_sysinfo.h"
 
+ccReturn ccSysinfoInitialize(void)
+{
+	ccAssert(_ccSysinfo == NULL);
+
+	ccMalloc(_ccSysinfo, sizeof(ccSysinfo));
+
+	return CC_SUCCESS;
+}
+
 #endif

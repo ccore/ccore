@@ -4,14 +4,11 @@
 
 ccReturn ccSysinfoInitialize(void)
 {
+	ccAssert(_ccSysinfo == NULL);
 
-}
+	ccMalloc(_ccSysinfo, sizeof(ccSysinfo));
 
-void ccSysinfoFree(void)
-{
-	ccAssert(_ccSysinfo != NULL);
-
-	free(_ccSysinfo);
+	return CC_SUCCESS;
 }
 
 #endif
