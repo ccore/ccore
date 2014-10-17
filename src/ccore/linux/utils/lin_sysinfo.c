@@ -12,7 +12,6 @@ static long parseLineKB(char *line)
 		line++;
 	}
 	line[i - 3] = '\0';
-	ccPrintf("%s\n\n", line);
 
 	return atoi(line);
 }
@@ -25,14 +24,13 @@ static long getKBValueFromProc(char *proc, char *value)
 	char line[128];
 
 	result = -1;
-	file = fopen("proc", "r");
+	file = fopen(proc, "r");
 	if(!file){
 		return result;
 	}
 	valueLen = strlen(value) - 1;
 	while(fgets(line, 128, file) != NULL){
 		if(strncmp(line, value, valueLen) == 0){
-			ccPrintf(line);
 			result = parseLineKB(line);
 			break;
 		}
@@ -45,7 +43,6 @@ static long getKBValueFromProc(char *proc, char *value)
 ccReturn ccSysinfoInitialize(void)
 {
 	long value;
-	struct sysinfo memInfo;
 
 	ccAssert(_ccSysinfo == NULL);
 
@@ -55,9 +52,11 @@ ccReturn ccSysinfoInitialize(void)
 	if(value == -1){
 		return CC_FAIL;
 	}
-	_ccSysinfo->ramTotal = (unsigned long)value;
+	_ccSysinfo->ramTotal = ((uint_fast64_t)value) * 1000;
 
 	_ccSysinfo->processorCount = sysconf(_SC_NPROCESSORS_CONF);
+
+	_ccSysinfo->fileMaxOpen = sysconf(_SC_OPEN_MAX);
 
 	return CC_SUCCESS;
 }

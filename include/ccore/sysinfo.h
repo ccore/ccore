@@ -44,13 +44,10 @@ typedef struct {
 
 ccSysinfo *_ccSysinfo;
 
-#define ccSysinfoGetRamTotal() _ccSysinfo->ramTotal
-
 #define ccSysinfoGetProcessorCount() _ccSysinfo->processorCount
-
 #define ccSysinfoGetFileMaxOpen() _ccSysinfo->fileMaxOpen
-#define ccSysinfoGetStringMaxLength() _ccSysinfo->stringMaxLength
 
+#define ccSysinfoGetRamTotal() _ccSysinfo->ramTotal
 uint_fast64_t ccSysinfoGetRamAvailable(void);
 
 ccReturn ccSysinfoInitialize(void);
