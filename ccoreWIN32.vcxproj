@@ -54,6 +54,7 @@
     <ClCompile Include="src\ccore\common\utils\com_file.c" />
     <ClCompile Include="src\ccore\common\utils\com_rect.c" />
     <ClCompile Include="src\ccore\common\utils\com_string.c" />
+    <ClCompile Include="src\ccore\common\utils\com_sysinfo.c" />
     <ClCompile Include="src\ccore\windows\interface\win_display.c" />
     <ClCompile Include="src\ccore\windows\interface\win_gamepad.c" />
     <ClCompile Include="src\ccore\windows\interface\win_opengl.c" />
