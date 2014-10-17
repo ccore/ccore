@@ -4,6 +4,8 @@
 
 ccReturn ccSysinfoInitialize(void)
 {
+	struct sysinfo memInfo;
+
 	ccAssert(_ccSysinfo == NULL);
 
 	ccMalloc(_ccSysinfo, sizeof(ccSysinfo));
@@ -11,7 +13,8 @@ ccReturn ccSysinfoInitialize(void)
 	_ccSysinfo->pageTotalCount = sysconf(_SC_PHYS_PAGES);
 	_ccSysinfo->pageSize = sysconf(_SC_PAGESIZE);
 
-	_ccSysinfo->ramTotal = _ccSysinfo->pageTotalCount * _ccSysinfo->pageSize;
+	sysinfo(&memInfo);
+	_ccSysinfo->ramTotal = memInfo.totalram;
 
 	_ccSysinfo->processorTotalCount = sysconf(_SC_NPROCESSORS_CONF);
 
@@ -24,7 +27,11 @@ ccReturn ccSysinfoInitialize(void)
 
 unsigned long ccSysinfoGetRamAvailable()
 {
-	return _ccSysinfo->pageSize * sysconf(_SC_AVPHYS_PAGES);
+	struct sysinfo memInfo;
+
+	sysinfo(&memInfo);
+
+	return memInfo.freeram;
 }
 
 unsigned long ccSysinfoGetPageAvailableCount()
