@@ -21,6 +21,8 @@
 
 #if defined CC_USE_ALL || defined CC_USE_SYSINFO
 
+#include <stdint.h>
+
 #include "core.h"
 
 #include "types.h"
@@ -33,9 +35,9 @@ extern "C"
 #endif
 
 typedef struct {
-	unsigned long ramTotal;
-	unsigned long pageSize;
-	unsigned long pageTotalCount;
+	uint_least64_t ramTotal;
+	uint_least64_t pageSize;
+	uint_least64_t pageTotalCount;
 	unsigned int processorTotalCount;
 
 	unsigned long fileMaxOpen;
