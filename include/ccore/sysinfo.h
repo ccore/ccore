@@ -53,7 +53,7 @@ ccSysinfo *_ccSysinfo;
 #define ccSysinfoGetFileMaxOpen() _ccSysinfo->fileMaxOpen
 #define ccSysinfoGetStringMaxLength() _ccSysinfo->stringMaxLength
 
-uint_fast64_t ccSysinfoGetRamAvailable();
+uint_fast64_t ccSysinfoGetRamAvailable(void);
 
 ccReturn ccSysinfoInitialize(void);
 void ccSysinfoFree(void);

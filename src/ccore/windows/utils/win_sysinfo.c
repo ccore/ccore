@@ -32,7 +32,7 @@ fail:
 	return CC_FAIL;
 }
 
-uint_fast64_t ccSysinfoGetRamAvailable()
+uint_fast64_t ccSysinfoGetRamAvailable(void)
 {
 	_CC_GETMEMSTAT;
 
