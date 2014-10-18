@@ -2,5 +2,8 @@ language: c
 compiler:
   - gcc
   - clang
+os:
+  - linux
+  - osx
   
 script: scons test='no'
