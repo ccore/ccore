@@ -28,6 +28,10 @@
 
 #define WINDOWS
 
+#elif defined __APPLE__
+
+#define OSX
+
 #else
 #error "OS not supported!"
 #endif
