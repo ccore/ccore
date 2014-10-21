@@ -226,7 +226,16 @@ error:
 
 ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force)
 {
-	//TODO implement haptic support
+#define BITS_TO_LONGS(x) (((x) + 8 * sizeof (unsigned long) - 1) / (8 * sizeof (unsigned long)))
+
+	struct input_event ff;
+	unsigned long features[BITS_TO_LONGS(FF_CNT)];
+
+#undef BITS_TO_LONGS
+
+	ioctl(GAMEPAD_DATA(gamepad), EVIOCGBIT(EV_FF, sizeof(features)), features);
+
+	ff.type = EV_FF;
 
 	return CC_FAIL;
 }
