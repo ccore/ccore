@@ -72,6 +72,28 @@ static bool canReadINotify(void)
 		FD_ISSET(GAMEPADS_DATA()->fd, &set);
 }
 
+static int checkHapticType(char *locName)
+{
+	int fd;
+	char dirName[30];
+	unsigned long features[1 + FF_MAX / sizeof(unsigned long)];
+
+	snprintf(dirName, 30, "/dev/input/%s", locName);
+	fd = open(dirName, O_RDWR, 0);
+	if(!fd){
+		return -1;
+	}
+
+	if(ioctl(fd, EVIOCGBIT(EV_FF, sizeof(features)), features) < 0){
+		close(fd);
+		return -1;
+	}
+
+	close(fd);
+
+	return CC_SUCCESS;
+}
+
 ccGamepadEvent ccGamepadEventPoll(void)
 {
 	struct js_event js;
@@ -81,7 +103,7 @@ ccGamepadEvent ccGamepadEventPoll(void)
 
 	while(canReadINotify()){
 		if(CC_LIKELY(read(GAMEPADS_DATA()->fd, &ne, sizeof(struct inotify_event) + 16) >= 0)){
-			if(*ne.name != 'j' || *(ne.name + 1) != 's'){
+			if(*ne.name != 'j'){
 				continue;
 			}
 
@@ -199,16 +221,25 @@ ccReturn ccGamepadInitialize(void)
 	GAMEPADS_DATA()->watch = watch;
 
 	d = opendir("/dev/input");
+	// Check for gamepads (js<x>)
 	while((dir = readdir(d)) != NULL){
-		if(*dir->d_name == 'j' && *(dir->d_name + 1) == 's'){
+		if(*dir->d_name == 'j'){
 			if(CC_UNLIKELY(createGamepad(dir->d_name, _ccGamepads->amount) == CC_FAIL)){
 				goto error;
 			}
 			_ccGamepads->amount++;
 		}
 	}
-
 	closedir(d);
+
+	d = opendir("/dev/input");
+	// Check for haptic devices (event<x>)
+	while((dir = readdir(d)) != NULL){
+		if(*dir->d_name == 'e' && checkHapticType(dir->d_name) > 0){
+		}	
+	}
+	closedir(d);
+
 	if(_ccGamepads->amount == 0){
 		ccErrorPush(CC_ERROR_GAMEPAD_NONE);
 	}else{
@@ -226,16 +257,7 @@ error:
 
 ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force)
 {
-#define BITS_TO_LONGS(x) (((x) + 8 * sizeof (unsigned long) - 1) / (8 * sizeof (unsigned long)))
 
-	struct input_event ff;
-	unsigned long features[BITS_TO_LONGS(FF_CNT)];
-
-#undef BITS_TO_LONGS
-
-	ioctl(GAMEPAD_DATA(gamepad), EVIOCGBIT(EV_FF, sizeof(features)), features);
-
-	ff.type = EV_FF;
 
 	return CC_FAIL;
 }

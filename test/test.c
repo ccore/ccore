@@ -73,6 +73,8 @@ void reportDiscrepancy(const char *where)
 
 void testGamepad(int *test)
 {
+	int i;
+
 	ccPrintf("Test %d: Gamepad\n", ++(*test));
 
 	ccGamepadInitialize();
@@ -80,6 +82,13 @@ void testGamepad(int *test)
 
 	ccPrintf("\tFound %d gamepad(s)\n", ccGamepadGetAmount());
 	err();
+	for(i = 0; i < ccGamepadGetAmount(); i++){
+		err();
+		ccGamepadOutputSet(ccGamepadGet(i), 0, 10);
+		err();
+	}
+	ccTimeDelay(500);
+
 	ccPrintf("Passed\n");
 }
 
@@ -246,11 +255,11 @@ int main(int argc, char **argv)
 	ccInitialize();
 	
 	test = 0;
-	testSysinfo(&test);
-	testDefaultDirectories(&test);
-	testTime(&test);
-	testDisplay(&test);
-	testWindow(&test);
+	//testSysinfo(&test);
+	//testDefaultDirectories(&test);
+	//testTime(&test);
+	//testDisplay(&test);
+	//testWindow(&test);
 	testGamepad(&test);
 
 	ccFree();
