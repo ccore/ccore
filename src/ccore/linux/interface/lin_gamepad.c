@@ -19,7 +19,6 @@ static ccReturn initHaptic(int joyId, char *locName)
 	struct dirent *dir;
 	char dirName[30];
 	int fd;
-	unsigned long features[1 + FF_MAX / sizeof(unsigned long)];
 
 	snprintf(dirName, 30, "/sys/class/input/%s/device", locName);
 
