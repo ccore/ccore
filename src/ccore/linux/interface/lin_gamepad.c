@@ -13,6 +13,49 @@ static int openGamepadDescriptor(char *locName)
 	return fd;
 }
 
+static ccReturn initHaptic(int joyId, char *locName)
+{
+	DIR *d;
+	struct dirent *dir;
+	char dirName[30];
+	int fd;
+	unsigned long features[1 + FF_MAX / sizeof(unsigned long)];
+
+	snprintf(dirName, 30, "/sys/class/input/%s/device", locName);
+
+	d = opendir(dirName);
+	fd = -1;
+	// Check for the haptic device (event<x>)
+	// TODO support multiple motors on one gamepad
+	while((dir = readdir(d)) != NULL){
+		if(*dir->d_name == 'e'){
+			snprintf(dirName, 30, "/dev/input/%s", dir->d_name);
+			fd = open(dirName, O_RDWR, 0);
+			if(!fd){
+				continue;
+			}
+
+			if(ioctl(fd, EVIOCGBIT(EV_FF, sizeof(features)), features) < 0){
+				fd = -1;
+				close(fd);
+				continue;
+			}
+		}	
+	}
+	closedir(d);
+
+	if(fd < 0){
+		return CC_FAIL;
+	}
+
+	//ioctl(fd, EVIOCGEFFECTS, &_ccGamepads->gamepad[joyId].outputAmount); Get the amount of effects
+	GAMEPAD_DATA(_ccGamepads->gamepad + joyId)->fffd = fd;
+
+	_ccGamepads->gamepad[joyId].outputAmount++;
+
+	return CC_SUCCESS;
+}
+
 static ccReturn createGamepad(char *locName, int i)
 {
 	char buf[64];
@@ -46,7 +89,6 @@ static ccReturn createGamepad(char *locName, int i)
 
 	ioctl(fd, JSIOCGAXES, &_ccGamepads->gamepad[i].axisAmount);
 	ioctl(fd, JSIOCGBUTTONS, &_ccGamepads->gamepad[i].buttonAmount);
-	ioctl(fd, EVIOCGEFFECTS, &_ccGamepads->gamepad[i].outputAmount);
 	ioctl(fd, JSIOCGNAME(80), _ccGamepads->gamepad[i].name);
 
 	ccCalloc(_ccGamepads->gamepad[i].axis, _ccGamepads->gamepad[i].axisAmount, sizeof(int));
@@ -54,6 +96,8 @@ static ccReturn createGamepad(char *locName, int i)
 
 	GAMEPAD_DATA(_ccGamepads->gamepad + i)->fd = fd;
 	GAMEPAD_DATA(_ccGamepads->gamepad + i)->id = atoi(locName + 2);
+
+	initHaptic(i, locName);
 
 	return CC_SUCCESS;
 }
@@ -70,28 +114,6 @@ static bool canReadINotify(void)
 
 	return select(GAMEPADS_DATA()->fd + 1, &set, NULL, NULL, &timeout) > 0 && 
 		FD_ISSET(GAMEPADS_DATA()->fd, &set);
-}
-
-static int checkHapticType(char *locName)
-{
-	int fd;
-	char dirName[30];
-	unsigned long features[1 + FF_MAX / sizeof(unsigned long)];
-
-	snprintf(dirName, 30, "/dev/input/%s", locName);
-	fd = open(dirName, O_RDWR, 0);
-	if(!fd){
-		return -1;
-	}
-
-	if(ioctl(fd, EVIOCGBIT(EV_FF, sizeof(features)), features) < 0){
-		close(fd);
-		return -1;
-	}
-
-	close(fd);
-
-	return CC_SUCCESS;
 }
 
 ccGamepadEvent ccGamepadEventPoll(void)
@@ -229,14 +251,6 @@ ccReturn ccGamepadInitialize(void)
 			}
 			_ccGamepads->amount++;
 		}
-	}
-	closedir(d);
-
-	d = opendir("/dev/input");
-	// Check for haptic devices (event<x>)
-	while((dir = readdir(d)) != NULL){
-		if(*dir->d_name == 'e' && checkHapticType(dir->d_name) > 0){
-		}	
 	}
 	closedir(d);
 
