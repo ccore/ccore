@@ -59,4 +59,24 @@ void _ccFileFree(void)
 	userDir = NULL;
 }
 
+ccFileDir ccFileDirOpen(const char *dir)
+{
+
+}
+
+ccReturn ccFileDirClose(ccFileDir dir)
+{
+
+}
+
+char *ccFileDirFind(ccFileDir dir)
+{
+
+}
+
+ccReturn ccFileDirSeek(ccFileDir dir, unsigned int pos)
+{
+
+}
+
 #endif

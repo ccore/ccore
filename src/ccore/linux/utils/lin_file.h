@@ -19,4 +19,10 @@
 #define CC_TEMP_LOCATION "/tmp/"
 #endif
 
+#define _CC_FILE_DIR_DATA(dir) ((ccFileDir_lin*)dir->data)
+
+typedef struct {
+	int nothing;
+} ccFileDir_lin;
+
 #endif

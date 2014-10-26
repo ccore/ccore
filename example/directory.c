@@ -4,7 +4,9 @@
 
 int main(int argc, char **argv)
 {
-	printf("%s\n", ccFileTempDirGet());
+	ccFileDir directory = ccFileDirOpen(ccFileDataDirGet());
+
+	printf("Listing all files in %s\n", ccFileDataDirGet());
 
 	getchar();
 
