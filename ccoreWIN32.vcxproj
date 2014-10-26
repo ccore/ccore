@@ -63,7 +63,7 @@
     <ClCompile Include="src\ccore\windows\utils\win_thread.c" />
     <ClCompile Include="src\ccore\windows\utils\win_time.c" />
     <ClCompile Include="test\icon.c" />
-    <ClCompile Include="test\test.c" />
+    <ClCompile Include="test\usingopengl.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E3B9EEBD-534A-442C-B3E4-A5FE4BEC3A3C}</ProjectGuid>

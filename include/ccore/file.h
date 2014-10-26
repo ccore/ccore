@@ -39,10 +39,20 @@ typedef struct {
 	time_t access;
 } ccFileInfo;
 
+typedef struct {
+	uint32_t position;
+} ccFileDir;
+
 // These functions can be used to get OS specific directories to store program data
 char *ccFileUserDirGet(void);
 char *ccFileDataDirGet(void);
 char *ccFileTempDirGet(void);
+
+// The directory functions can be used to read all files in a directory
+ccFileDir ccFileDirOpen(const char *dir);
+ccReturn ccFileDirClose(ccFileDir dir);
+char *ccFileDirFind(ccFileDir dir);
+ccReturn ccFileDirSeek(ccFileDir dir, unsigned int pos);
 
 ccFileInfo ccFileInfoGet(char *file); 
 
