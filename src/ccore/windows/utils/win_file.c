@@ -67,7 +67,7 @@ ccReturn ccFileDirFindFirst(ccFileDir *dir, char **filename, const char *dirPath
 	char *pathStr;
 	pathStr = ccStringConcatenate(2, dirPath, "*");
 
-	*dir = FindFirstFile("C:\\Users\\Job\\Documents\\OpenTTD\\*", &findData);
+	*dir = FindFirstFile(pathStr, &findData);
 
 	free(pathStr);
 
