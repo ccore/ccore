@@ -93,7 +93,7 @@ ccReturn ccFileDirFind(ccFileDir *dir, char **filename)
 
 ccReturn ccFileDirClose(ccFileDir *dir)
 {
-	return CC_SUCCESS;
+	return FindClose(*dir) == 0?CC_FAIL:CC_SUCCESS;
 }
 
 #endif
