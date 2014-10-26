@@ -41,6 +41,7 @@ typedef struct {
 
 typedef struct {
 	uint32_t position;
+	void *data;
 } ccFileDir;
 
 // These functions can be used to get OS specific directories to store program data
