@@ -4,9 +4,18 @@
 
 int main(int argc, char **argv)
 {
-	ccFileDir directory = ccFileDirOpen(ccFileDataDirGet());
+	ccFileDir directory;
+	char *buffer;
 
-	printf("Listing all files in %s\n", ccFileDataDirGet());
+	ccFileDirFindFirst(&directory, &buffer, "C:\\Users\\Job\\Documents\\OpenTTD\\");
+
+	while(true) {
+		ccFileDirFind(&directory, &buffer);
+
+		if(buffer == NULL) break;
+
+		printf("Found %s\n", buffer);
+	}
 
 	getchar();
 

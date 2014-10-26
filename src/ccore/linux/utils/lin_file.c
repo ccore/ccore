@@ -39,4 +39,27 @@ void _ccFileFree(void)
 
 }
 
+ccFileDir ccFileDirOpen(const char *dir)
+{
+	ccFileDir fileDir;
+	fileDir.data = malloc(sizeof(ccFileDir_lin));
+
+	return fileDir;
+}
+
+ccReturn ccFileDirClose(ccFileDir dir)
+{
+	free(dir.data);
+}
+
+char *ccFileDirFind(ccFileDir dir)
+{
+
+}
+
+ccReturn ccFileDirSeek(ccFileDir dir, unsigned int pos)
+{
+
+}
+
 #endif

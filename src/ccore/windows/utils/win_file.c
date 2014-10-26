@@ -59,24 +59,41 @@ void _ccFileFree(void)
 	userDir = NULL;
 }
 
-ccFileDir ccFileDirOpen(const char *dir)
+ccReturn ccFileDirFindFirst(ccFileDir *dir, char **filename, const char *dirPath)
 {
+	WIN32_FIND_DATA findData;
+	char *pathStr;
+	pathStr = ccStringConcatenate(2, dirPath, "*");
 
+	*dir = FindFirstFile(pathStr, &findData);
+
+	if(*dir == INVALID_HANDLE_VALUE) {
+		return CC_FAIL;
+	}
+
+	return CC_SUCCESS;
 }
 
-ccReturn ccFileDirClose(ccFileDir dir)
+ccReturn ccFileDirFind(ccFileDir *dir, char **filename)
 {
+	WIN32_FIND_DATA findData;
 
+	if(FindNextFile(*dir, &findData) == 0) {
+		if(GetLastError() == ERROR_NO_MORE_FILES) {
+			*filename = NULL;
+			return CC_SUCCESS;
+		}
+		return CC_FAIL;
+	}
+
+	*filename = findData.cFileName;
+
+	return CC_SUCCESS;
 }
 
-char *ccFileDirFind(ccFileDir dir)
+ccReturn ccFileDirClose(ccFileDir *dir)
 {
-
-}
-
-ccReturn ccFileDirSeek(ccFileDir dir, unsigned int pos)
-{
-
+	return CC_SUCCESS;
 }
 
 #endif

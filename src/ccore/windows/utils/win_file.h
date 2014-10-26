@@ -9,10 +9,4 @@
 
 #include <ccore/string.h>
 
-#define _CC_FILE_DIR_DATA(dir) ((ccFileDir_win*)dir->data)
-
-typedef struct {
-	int nothing;
-} ccFileDir_win;
-
 #endif

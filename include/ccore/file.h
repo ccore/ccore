@@ -39,10 +39,12 @@ typedef struct {
 	time_t access;
 } ccFileInfo;
 
-typedef struct {
-	uint32_t position;
-	void *data;
-} ccFileDir;
+#ifdef WINDOWS
+#include <Windows.h>
+typedef HANDLE ccFileDir;
+#elif defined LINUX
+//typedef DIR ccFileDir, probably
+#endif
 
 // These functions can be used to get OS specific directories to store program data
 char *ccFileUserDirGet(void);
@@ -50,10 +52,9 @@ char *ccFileDataDirGet(void);
 char *ccFileTempDirGet(void);
 
 // The directory functions can be used to read all files in a directory
-ccFileDir ccFileDirOpen(const char *dir);
-ccReturn ccFileDirClose(ccFileDir dir);
-char *ccFileDirFind(ccFileDir dir);
-ccReturn ccFileDirSeek(ccFileDir dir, unsigned int pos);
+ccReturn ccFileDirFindFirst(ccFileDir *dir, char **filename, const char *dirPath);
+ccReturn ccFileDirFind(ccFileDir *dir, char **filename);
+ccReturn ccFileDirClose(ccFileDir *dir);
 
 ccFileInfo ccFileInfoGet(char *file); 
 
