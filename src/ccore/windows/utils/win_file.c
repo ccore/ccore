@@ -62,14 +62,25 @@ void _ccFileFree(void)
 ccReturn ccFileDirFindFirst(ccFileDir *dir, char **filename, const char *dirPath)
 {
 	WIN32_FIND_DATA findData;
+	unsigned int strLength;
+	char *buffer;
 	char *pathStr;
 	pathStr = ccStringConcatenate(2, dirPath, "*");
 
-	*dir = FindFirstFile(pathStr, &findData);
+	*dir = FindFirstFile("C:\\Users\\Job\\Documents\\OpenTTD\\*", &findData);
+
+	free(pathStr);
 
 	if(*dir == INVALID_HANDLE_VALUE) {
 		return CC_FAIL;
 	}
+	
+	strLength = strlen(findData.cFileName);
+	buffer = malloc(strLength + 1);
+	memcpy(buffer, findData.cFileName, strLength);
+	buffer[strLength] = '\0';
+	
+	*filename = buffer;
 
 	return CC_SUCCESS;
 }
@@ -77,6 +88,8 @@ ccReturn ccFileDirFindFirst(ccFileDir *dir, char **filename, const char *dirPath
 ccReturn ccFileDirFind(ccFileDir *dir, char **filename)
 {
 	WIN32_FIND_DATA findData;
+	unsigned int strLength;
+	char *buffer;
 
 	if(FindNextFile(*dir, &findData) == 0) {
 		if(GetLastError() == ERROR_NO_MORE_FILES) {
@@ -86,7 +99,12 @@ ccReturn ccFileDirFind(ccFileDir *dir, char **filename)
 		return CC_FAIL;
 	}
 
-	*filename = findData.cFileName;
+	strLength = strlen(findData.cFileName);
+	buffer = malloc(strLength + 1);
+	memcpy(buffer, findData.cFileName, strLength);
+	buffer[strLength] = '\0';
+
+	*filename = buffer;
 
 	return CC_SUCCESS;
 }

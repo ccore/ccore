@@ -8,6 +8,7 @@ int main(int argc, char **argv)
 	char *buffer;
 
 	ccFileDirFindFirst(&directory, &buffer, "C:\\Users\\Job\\Documents\\OpenTTD\\");
+	printf("Found %s\n", buffer);
 
 	while(true) {
 		ccFileDirFind(&directory, &buffer);
