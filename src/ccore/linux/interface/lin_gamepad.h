@@ -17,7 +17,7 @@
 #include <ccore/print.h>
 
 typedef struct {
-	int id, fd, fffd;
+	int id, fd, fffd, ffid;
 } ccGamepad_lin;
 
 typedef struct {

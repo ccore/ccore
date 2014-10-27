@@ -2,6 +2,9 @@
 
 #include "lin_gamepad.h"
 
+#define _CC_TEST_BIT(nr, addr) \
+	(((1UL << ((nr) & 31)) & (((const unsigned int *) addr)[(nr) >> 5])) != 0)
+
 static int openGamepadDescriptor(char *locName)
 {
 	char dirName[30];
@@ -19,6 +22,8 @@ static ccReturn initHaptic(int joyId, char *locName)
 	struct dirent *dir;
 	char dirName[30];
 	int fd;
+	unsigned long features[1 + FF_MAX / sizeof(unsigned long)];	
+	struct ff_effect effect;
 
 	snprintf(dirName, 30, "/sys/class/input/%s/device", locName);
 
@@ -39,6 +44,14 @@ static ccReturn initHaptic(int joyId, char *locName)
 				close(fd);
 				continue;
 			}
+
+			if(!_CC_TEST_BIT(FF_RUMBLE, features)){
+				fd = -1;
+				close(fd);
+				continue;
+			}
+
+			break;
 		}	
 	}
 	closedir(d);
@@ -47,8 +60,20 @@ static ccReturn initHaptic(int joyId, char *locName)
 		return CC_FAIL;
 	}
 
-	//ioctl(fd, EVIOCGEFFECTS, &_ccGamepads->gamepad[joyId].outputAmount); Get the amount of effects
+	effect.type = FF_RUMBLE;
+	effect.u.rumble.strong_magnitude = 65535;
+	effect.u.rumble.weak_magnitude = 65535;
+	effect.replay.length = 1000;
+	effect.replay.delay = 0;
+	effect.id = -1;
+
+	if(ioctl(fd, EVIOCSFF, &effect) < 0){
+		close(fd);
+		return CC_FAIL;
+	}
+
 	GAMEPAD_DATA(_ccGamepads->gamepad + joyId)->fffd = fd;
+	GAMEPAD_DATA(_ccGamepads->gamepad + joyId)->ffid = effect.id;
 
 	_ccGamepads->gamepad[joyId].outputAmount++;
 
@@ -142,12 +167,18 @@ ccGamepadEvent ccGamepadEventPoll(void)
 				if(event.id != -1){
 					_ccGamepads->gamepad[event.id].plugged = false;
 					close(GAMEPAD_DATA(_ccGamepads->gamepad + event.id)->fd);
+
+					// Close haptic when available
+					if(GAMEPAD_DATA(_ccGamepads->gamepad + event.id)->fffd > 0){
+						ioctl(GAMEPAD_DATA(_ccGamepads->gamepad + event.id)->fffd, 
+								EVIOCRMFF, GAMEPAD_DATA(_ccGamepads->gamepad + event.id)->ffid);
+						close(GAMEPAD_DATA(_ccGamepads->gamepad + event.id)->fffd);
+					}
 				}
 
 				event.type = CC_GAMEPAD_DISCONNECT;
 				return event;
 			}else if(ne.mask & IN_ATTRIB){
-
 				if(event.id != -1){
 					if(_ccGamepads->gamepad[event.id].plugged){
 						continue;
@@ -270,7 +301,17 @@ error:
 
 ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force)
 {
+	struct input_event ffev;
 
+	ffev.type = EV_FF;
+	ffev.code = GAMEPAD_DATA(gamepad)->ffid; 
+	if(force < CC_GAMEPAD_OUTPUT_VALUE_MIN){
+		ffev.value = 0;
+	}else{
+		ffev.value = 1;
+	}
+
+	write(GAMEPAD_DATA(gamepad)->fffd, (const void*)&ffev, sizeof(ffev));
 
 	return CC_FAIL;
 }
@@ -290,6 +331,12 @@ ccReturn ccGamepadFree(void)
 		for(i = 0; i < _ccGamepads->amount; i++){
 			if(_ccGamepads->gamepad[i].plugged){
 				close(GAMEPAD_DATA(_ccGamepads->gamepad + i)->fd);
+
+				if(GAMEPAD_DATA(_ccGamepads->gamepad + i)->fffd > 0){
+					ioctl(GAMEPAD_DATA(_ccGamepads->gamepad + i)->fffd, 
+							EVIOCRMFF, GAMEPAD_DATA(_ccGamepads->gamepad + i)->ffid);
+					close(GAMEPAD_DATA(_ccGamepads->gamepad +i)->fffd);
+				}
 			}
 
 			free(_ccGamepads->gamepad[i].name);
