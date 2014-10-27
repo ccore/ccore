@@ -119,6 +119,7 @@ static ccReturn createGamepad(char *locName, int i)
 	ccCalloc(_ccGamepads->gamepad[i].button, _ccGamepads->gamepad[i].buttonAmount, sizeof(char));
 
 	GAMEPAD_DATA(_ccGamepads->gamepad + i)->fd = fd;
+	GAMEPAD_DATA(_ccGamepads->gamepad + i)->fffd = -1;
 	GAMEPAD_DATA(_ccGamepads->gamepad + i)->id = atoi(locName + 2);
 
 	initHaptic(i, locName);
@@ -303,6 +304,10 @@ ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force)
 {
 	struct input_event ffev;
 
+	if(GAMEPAD_DATA(gamepad)->fffd < 0){
+		return CC_FAIL;
+	}	
+
 	ffev.type = EV_FF;
 	ffev.code = GAMEPAD_DATA(gamepad)->ffid; 
 	if(force < CC_GAMEPAD_OUTPUT_VALUE_MIN){
@@ -313,7 +318,7 @@ ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force)
 
 	write(GAMEPAD_DATA(gamepad)->fffd, (const void*)&ffev, sizeof(ffev));
 
-	return CC_FAIL;
+	return CC_SUCCESS;
 }
 
 ccReturn ccGamepadFree(void)
