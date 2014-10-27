@@ -3,11 +3,7 @@
 #include <stdlib.h>
 #include <Windows.h>
 #include <string.h>
-
-#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
-
 #include <hidsdi.h>
-#endif
 #include <stdint.h>
 
 #include <ccore/window.h>
