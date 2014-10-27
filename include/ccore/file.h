@@ -28,6 +28,12 @@
 #include "error.h"
 #include "types.h"
 
+#ifdef WINDOWS
+#include <Windows.h>
+#elif defined LINUX
+
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -39,12 +45,14 @@ typedef struct {
 	time_t access;
 } ccFileInfo;
 
+typedef struct {
+	bool isDirectory;
 #ifdef WINDOWS
-#include <Windows.h>
-typedef HANDLE ccFileDir;
+	HANDLE handle;
 #elif defined LINUX
-//typedef DIR ccFileDir, probably
+	DIR dir;
 #endif
+} ccFileDir;
 
 // These functions can be used to get OS specific directories to store program data
 char *ccFileUserDirGet(void);

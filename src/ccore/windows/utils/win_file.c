@@ -67,11 +67,11 @@ ccReturn ccFileDirFindFirst(ccFileDir *dir, char **filename, const char *dirPath
 	char *pathStr;
 	pathStr = ccStringConcatenate(2, dirPath, "*");
 
-	*dir = FindFirstFile(pathStr, &findData);
+	dir->handle = FindFirstFile(pathStr, &findData);
 
 	free(pathStr);
 
-	if(*dir == INVALID_HANDLE_VALUE) {
+	if(dir->handle == INVALID_HANDLE_VALUE) {
 		return CC_FAIL;
 	}
 	
@@ -80,6 +80,8 @@ ccReturn ccFileDirFindFirst(ccFileDir *dir, char **filename, const char *dirPath
 	memcpy(buffer, findData.cFileName, strLength);
 	buffer[strLength] = '\0';
 	
+	dir->isDirectory = (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)?true:false;
+
 	*filename = buffer;
 
 	return CC_SUCCESS;
@@ -91,7 +93,7 @@ ccReturn ccFileDirFind(ccFileDir *dir, char **filename)
 	unsigned int strLength;
 	char *buffer;
 
-	if(FindNextFile(*dir, &findData) == 0) {
+	if(FindNextFile(dir->handle, &findData) == 0) {
 		if(GetLastError() == ERROR_NO_MORE_FILES) {
 			*filename = NULL;
 			return CC_SUCCESS;
@@ -104,6 +106,8 @@ ccReturn ccFileDirFind(ccFileDir *dir, char **filename)
 	memcpy(buffer, findData.cFileName, strLength);
 	buffer[strLength] = '\0';
 
+	dir->isDirectory = (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)?true:false;
+
 	*filename = buffer;
 
 	return CC_SUCCESS;
@@ -111,7 +115,7 @@ ccReturn ccFileDirFind(ccFileDir *dir, char **filename)
 
 ccReturn ccFileDirClose(ccFileDir *dir)
 {
-	return FindClose(*dir) == 0?CC_FAIL:CC_SUCCESS;
+	return FindClose(dir->handle) == 0?CC_FAIL:CC_SUCCESS;
 }
 
 #endif
