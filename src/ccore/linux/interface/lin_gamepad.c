@@ -63,7 +63,7 @@ static ccReturn initHaptic(int joyId, char *locName)
 	effect.type = FF_RUMBLE;
 	effect.u.rumble.strong_magnitude = 65535;
 	effect.u.rumble.weak_magnitude = 65535;
-	effect.replay.length = 1000;
+	effect.replay.length = USHRT_MAX;
 	effect.replay.delay = 0;
 	effect.id = -1;
 

@@ -87,7 +87,7 @@ void testGamepad(int *test)
 		ccGamepadOutputSet(ccGamepadGet(i), 0, 10);
 		err();
 	}
-	ccTimeDelay(500);
+	ccTimeDelay(5000);
 
 	ccPrintf("Passed\n");
 }
