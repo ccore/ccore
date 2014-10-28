@@ -46,6 +46,7 @@ typedef struct {
 } ccFileInfo;
 
 typedef struct {
+	char *name;
 	bool isDirectory;
 #ifdef WINDOWS
 	HANDLE handle;
@@ -60,8 +61,8 @@ char *ccFileDataDirGet(void);
 char *ccFileTempDirGet(void);
 
 // The directory functions can be used to read all files in a directory
-ccReturn ccFileDirFindFirst(ccFileDir *dir, char **filename, const char *dirPath);
-ccReturn ccFileDirFind(ccFileDir *dir, char **filename);
+ccReturn ccFileDirFindFirst(ccFileDir *dir, const char *dirPath);
+ccReturn ccFileDirFind(ccFileDir *dir);
 ccReturn ccFileDirClose(ccFileDir *dir);
 
 ccFileInfo ccFileInfoGet(char *file); 

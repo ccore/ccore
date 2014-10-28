@@ -59,7 +59,7 @@ void _ccFileFree(void)
 	userDir = NULL;
 }
 
-ccReturn ccFileDirFindFirst(ccFileDir *dir, char **filename, const char *dirPath)
+ccReturn ccFileDirFindFirst(ccFileDir *dir, const char *dirPath)
 {
 	WIN32_FIND_DATA findData;
 	unsigned int strLength;
@@ -82,12 +82,12 @@ ccReturn ccFileDirFindFirst(ccFileDir *dir, char **filename, const char *dirPath
 	
 	dir->isDirectory = (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)?true:false;
 
-	*filename = buffer;
+	dir->name = buffer;
 
 	return CC_SUCCESS;
 }
 
-ccReturn ccFileDirFind(ccFileDir *dir, char **filename)
+ccReturn ccFileDirFind(ccFileDir *dir)
 {
 	WIN32_FIND_DATA findData;
 	unsigned int strLength;
@@ -95,7 +95,7 @@ ccReturn ccFileDirFind(ccFileDir *dir, char **filename)
 
 	if(FindNextFile(dir->handle, &findData) == 0) {
 		if(GetLastError() == ERROR_NO_MORE_FILES) {
-			*filename = NULL;
+			dir->name = NULL;
 			return CC_SUCCESS;
 		}
 		return CC_FAIL;
@@ -108,7 +108,7 @@ ccReturn ccFileDirFind(ccFileDir *dir, char **filename)
 
 	dir->isDirectory = (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)?true:false;
 
-	*filename = buffer;
+	dir->name = buffer;
 
 	return CC_SUCCESS;
 }
