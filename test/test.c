@@ -84,7 +84,7 @@ void testGamepad(int *test)
 	err();
 	for(i = 0; i < ccGamepadGetAmount(); i++){
 		err();
-		ccGamepadOutputSet(ccGamepadGet(i), 0, 10);
+		ccGamepadOutputSet(ccGamepadGet(i), 0, CC_GAMEPAD_OUTPUT_VALUE_MAX / 2);
 		err();
 	}
 	ccTimeDelay(5000);
@@ -255,11 +255,11 @@ int main(int argc, char **argv)
 	ccInitialize();
 	
 	test = 0;
-	//testSysinfo(&test);
-	//testDefaultDirectories(&test);
-	//testTime(&test);
-	//testDisplay(&test);
-	//testWindow(&test);
+	testSysinfo(&test);
+	testDefaultDirectories(&test);
+	testTime(&test);
+	testDisplay(&test);
+	testWindow(&test);
 	testGamepad(&test);
 
 	ccFree();

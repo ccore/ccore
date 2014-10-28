@@ -310,13 +310,24 @@ ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force)
 
 	ffev.type = EV_FF;
 	ffev.code = GAMEPAD_DATA(gamepad)->ffid; 
-	if(force < CC_GAMEPAD_OUTPUT_VALUE_MIN){
+	if(force <= CC_GAMEPAD_OUTPUT_VALUE_MIN){
 		ffev.value = 0;
 	}else{
 		ffev.value = 1;
 	}
 
 	write(GAMEPAD_DATA(gamepad)->fffd, (const void*)&ffev, sizeof(ffev));
+
+	if(force > CC_GAMEPAD_OUTPUT_VALUE_MIN){
+		ffev.code = FF_GAIN;
+		if(force >= CC_GAMEPAD_OUTPUT_VALUE_MAX){
+			ffev.value = 0xFFFFUL;
+		}else{
+			ffev.value = 0xFFFFUL * force / CC_GAMEPAD_OUTPUT_VALUE_MAX;
+		}
+
+		write(GAMEPAD_DATA(gamepad)->fffd, (const void*)&ffev, sizeof(ffev));
+	}
 
 	return CC_SUCCESS;
 }
