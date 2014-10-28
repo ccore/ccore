@@ -73,6 +73,8 @@ void reportDiscrepancy(const char *where)
 
 void testGamepad(int *test)
 {
+	int i;
+
 	ccPrintf("Test %d: Gamepad\n", ++(*test));
 
 	ccGamepadInitialize();
@@ -80,6 +82,13 @@ void testGamepad(int *test)
 
 	ccPrintf("\tFound %d gamepad(s)\n", ccGamepadGetAmount());
 	err();
+	for(i = 0; i < ccGamepadGetAmount(); i++){
+		err();
+		ccGamepadOutputSet(ccGamepadGet(i), 0, CC_GAMEPAD_OUTPUT_VALUE_MAX / 2);
+		err();
+	}
+	ccTimeDelay(5000);
+
 	ccPrintf("Passed\n");
 }
 

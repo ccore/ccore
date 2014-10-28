@@ -9,6 +9,7 @@ ccore is described in detail in [the ccore wiki.](../../wiki)
 | --- | --- |
 | Master | [![Build Status](https://travis-ci.org/ccore/ccore.svg?branch=master)](https://travis-ci.org/ccore/ccore) |
 | Develop | [![Build Status](https://travis-ci.org/ccore/ccore.svg?branch=develop)](https://travis-ci.org/ccore/ccore) |
+| 1.1.x | [![Build Status](https://travis-ci.org/ccore/ccore.svg?branch=1.1.x)](https://travis-ci.org/ccore/ccore) |
 
 ###Features###
 
