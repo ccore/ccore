@@ -31,7 +31,8 @@
 #ifdef WINDOWS
 #include <Windows.h>
 #elif defined LINUX
-
+#include <sys/types.h>
+#include <dirent.h>
 #endif
 
 #ifdef __cplusplus
@@ -49,9 +50,11 @@ typedef struct {
 	char *name;
 	bool isDirectory;
 #ifdef WINDOWS
+	char *name;
 	HANDLE handle;
 #elif defined LINUX
-	DIR dir;
+	DIR *dir;
+	struct dirent *entry;
 #endif
 } ccFileDir;
 

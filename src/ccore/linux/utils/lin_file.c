@@ -39,27 +39,43 @@ void _ccFileFree(void)
 
 }
 
-ccFileDir ccFileDirOpen(const char *dir)
+ccReturn ccFileDirFindFirst(ccFileDir *dir, const char *dirPath)
 {
-	ccFileDir fileDir;
-	fileDir.data = malloc(sizeof(ccFileDir_lin));
+	dir->dir = opendir(dirPath);
+	if(!dir->dir){
+		ccErrorPush(CC_ERROR_FILE_OPEN);
+		return CC_FAIL;
+	}
 
-	return fileDir;
+	return ccFileDirFind(dir);
 }
 
-ccReturn ccFileDirClose(ccFileDir dir)
+ccReturn ccFileDirFind(ccFileDir *dir)
 {
-	free(dir.data);
+	if(CC_UNLIKELY(!dir->dir)){
+		ccErrorPush(CC_ERROR_FILE_OPEN);
+		return CC_FAIL;
+	}
+
+	if((dir->entry = readdir(dir->dir)) == NULL){
+		return CC_FAIL;
+	}
+
+	dir->name = dir->entry->d_name;
+	dir->isDirectory = dir->entry->d_type == DT_DIR;
+
+	return CC_SUCCESS;
 }
 
-char *ccFileDirFind(ccFileDir dir)
+ccReturn ccFileDirClose(ccFileDir *dir)
 {
+	if(dir->entry){
+		free(dir->entry->d_name);
+		free(dir->entry);
+	}
+	closedir(dir->dir);
 
-}
-
-ccReturn ccFileDirSeek(ccFileDir dir, unsigned int pos)
-{
-
+	return CC_SUCCESS;
 }
 
 #endif
