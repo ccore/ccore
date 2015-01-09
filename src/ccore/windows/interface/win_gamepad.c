@@ -285,9 +285,11 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		
 		currentGamepad->name = "Gamepad"; //TODO: can I fetch this?
 		currentGamepad->plugged = true; //TODO: use this properly
-		currentGamepad->outputAmount = 0;
 		_CC_GAMEPAD_DATA->raw->handle = raw->header.hDevice;
 		HidP_GetCaps(_CC_GAMEPAD_DATA->raw->preparsedData, &_CC_GAMEPAD_DATA->raw->caps);
+
+		currentGamepad->outputAmount = _CC_GAMEPAD_DATA->raw->caps.NumberOutputValueCaps;
+		currentGamepad->output = calloc(currentGamepad->outputAmount, sizeof(int));
 
 		_CC_GAMEPAD_DATA->raw->buttonCaps = malloc(sizeof(HIDP_BUTTON_CAPS)* _CC_GAMEPAD_DATA->raw->caps.NumberInputButtonCaps);
 		_CC_GAMEPAD_DATA->raw->valueCaps = malloc(sizeof(HIDP_VALUE_CAPS)* _CC_GAMEPAD_DATA->raw->caps.NumberInputValueCaps);
