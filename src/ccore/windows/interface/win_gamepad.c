@@ -299,8 +299,18 @@ void _generateGamepadEvents(RAWINPUT *raw)
 
 		GetRawInputDeviceInfo(_CC_GAMEPAD_DATA->raw->handle, RIDI_DEVICENAME, path, &length);
 
-		printf("%d\n", length);
 		printf("%s\n", path);
+
+		HANDLE hid_device = CreateFile(path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+		assert(hid_device != INVALID_HANDLE_VALUE);
+
+		uint8_t buf[32];
+		memset(buf, 0, sizeof(buf));
+		for(int I = 0; I < 32; I++) buf[I] = 255;
+		
+
+		DWORD bytes_written;
+		WriteFile(hid_device, buf, sizeof(buf), &bytes_written, NULL);
 
 		_CC_GAMEPAD_DATA->raw->buttonCaps = malloc(sizeof(HIDP_BUTTON_CAPS)* _CC_GAMEPAD_DATA->raw->caps.NumberInputButtonCaps);
 		_CC_GAMEPAD_DATA->raw->valueCaps = malloc(sizeof(HIDP_VALUE_CAPS)* _CC_GAMEPAD_DATA->raw->caps.NumberInputValueCaps);
