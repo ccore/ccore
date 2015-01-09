@@ -291,6 +291,17 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		currentGamepad->outputAmount = _CC_GAMEPAD_DATA->raw->caps.NumberOutputValueCaps;
 		currentGamepad->output = calloc(currentGamepad->outputAmount, sizeof(int));
 
+		char *path;
+		int length;
+		GetRawInputDeviceInfo(_CC_GAMEPAD_DATA->raw->handle, RIDI_DEVICENAME, NULL, &length);
+
+		path = malloc(length);
+
+		GetRawInputDeviceInfo(_CC_GAMEPAD_DATA->raw->handle, RIDI_DEVICENAME, path, &length);
+
+		printf("%d\n", length);
+		printf("%s\n", path);
+
 		_CC_GAMEPAD_DATA->raw->buttonCaps = malloc(sizeof(HIDP_BUTTON_CAPS)* _CC_GAMEPAD_DATA->raw->caps.NumberInputButtonCaps);
 		_CC_GAMEPAD_DATA->raw->valueCaps = malloc(sizeof(HIDP_VALUE_CAPS)* _CC_GAMEPAD_DATA->raw->caps.NumberInputValueCaps);
 
