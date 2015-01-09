@@ -50,7 +50,6 @@ typedef struct {
 	char *name;
 	bool isDirectory;
 #ifdef WINDOWS
-	char *name;
 	HANDLE handle;
 #elif defined LINUX
 	DIR *dir;
