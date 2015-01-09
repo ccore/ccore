@@ -15,7 +15,10 @@
 
 #include "win_window.h"
 
+#define _CC_GAMEPAD_STDNAME "Gamepad"
+
 #define _CC_GAMEPAD_MAXBUTTONS 128
+#define _CC_GAMEPAD_MAXNAME 126
 
 #define _CC_GAMEPAD_XINPUT_BUTTONCOUNT 14
 #define _CC_GAMEPAD_XINPUT_AXISCOUNT 6
