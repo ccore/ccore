@@ -13,8 +13,6 @@ static LPSTR _cc_cursor[] =
 	IDC_HELP
 };
 
-#define _CC_WINDOW_CLASS_NAME "ccWindow"
-
 void _ccEventStackPush(ccEvent event)
 {
 	_CC_WINDOW_DATA->eventStackPos++;
@@ -584,7 +582,9 @@ ccReturn ccWindowIconSet(ccPoint size, unsigned long *data)
 	};
 
 	memcpy(bmp, &header, 40);
-	// Windows flips it's icons vertical
+
+	// Windows flips it's icons vertically
+
 	y = size.y;
 	row = data;
 	while (y--){

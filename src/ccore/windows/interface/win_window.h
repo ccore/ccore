@@ -15,6 +15,8 @@
 #include "../utils/win_file.h"
 #include "win_gamepad.h"
 
+#define _CC_WINDOW_CLASS_NAME "ccWindow"
+
 #if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 
 #define _CC_NRAWINPUTDEVICES 3
