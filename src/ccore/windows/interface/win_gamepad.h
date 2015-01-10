@@ -50,6 +50,8 @@ typedef struct {
 	PHIDP_PREPARSED_DATA preparsedData;
 	HANDLE handle;
 	HANDLE comm;
+	USAGE outputUsageMin;
+	USAGE outputUsageMax;
 	int preparsedDataSize;
 	int *axisNegativeComponent;
 	double *axisFactor;
