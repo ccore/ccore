@@ -6,24 +6,17 @@
 int main(int argc, char **argv)
 {
 	ccFileDir directory;
-	char *testDir;
-	char *buffer;
 
-	testDir = ccStringConcatenate(2, ccFileDataDirGet(), "\\");
+	ccFileDirFindFirst(&directory, ccFileDataDirGet());
 
-	ccFileDirFindFirst(&directory, &buffer, testDir);
-	free(testDir);
-
-	printf("Found %s\n", buffer);
-	free(buffer);
+	printf("Found %s\n", directory.name);
 
 	while(true) {
-		ccFileDirFind(&directory, &buffer);
+		ccFileDirFind(&directory);
 
-		if(buffer == NULL) break;
+		if(directory.name == NULL) break;
 
-		printf("Found %s\n", buffer);
-		free(buffer);
+		printf("Found %s\n", directory.name);
 	}
 
 	getchar();
