@@ -1,5 +1,7 @@
 #include <ccore/sysinfo.h>
 
+#ifdef CC_USE_SYSINFO
+
 void ccSysinfoFree(void)
 {
 	ccAssert(_ccSysinfo != NULL);
@@ -8,3 +10,5 @@ void ccSysinfoFree(void)
 
 	_ccSysinfo = NULL;
 }
+
+#endif

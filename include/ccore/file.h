@@ -28,6 +28,13 @@
 #include "error.h"
 #include "types.h"
 
+#ifdef WINDOWS
+#include <Windows.h>
+#elif defined LINUX
+#include <sys/types.h>
+#include <dirent.h>
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -39,10 +46,26 @@ typedef struct {
 	time_t access;
 } ccFileInfo;
 
+typedef struct {
+	char *name;
+	bool isDirectory;
+#ifdef WINDOWS
+	HANDLE handle;
+#elif defined LINUX
+	DIR *dir;
+	struct dirent *entry;
+#endif
+} ccFileDir;
+
 // These functions can be used to get OS specific directories to store program data
 char *ccFileUserDirGet(void);
 char *ccFileDataDirGet(void);
 char *ccFileTempDirGet(void);
+
+// The directory functions can be used to read all files in a directory
+ccReturn ccFileDirFindFirst(ccFileDir *dir, const char *dirPath);
+ccReturn ccFileDirFind(ccFileDir *dir);
+ccReturn ccFileDirClose(ccFileDir *dir);
 
 ccFileInfo ccFileInfoGet(char *file); 
 

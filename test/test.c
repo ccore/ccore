@@ -66,7 +66,7 @@ void _err(int line)
 
 void reportDiscrepancy(const char *where)
 {
-	ccPrintf("\n\nDiscrepancy detected between results and expected results:\n\t\"%s\"\n", where);
+	ccPrintf("\nDiscrepancy detected between results and expected results:\n\t\"%s\"\n", where);
 	err();
 	exit(-1);
 }
@@ -217,6 +217,24 @@ void testTime(int *test)
 	ccPrintf(" - passed\n");
 }
 
+void testReadDirectories(int *test)
+{
+	ccFileDir file;
+
+	ccPrintf("Test %d: Read %s directory\n", ++(*test), ccFileTempDirGet());
+	if(ccFileDirFindFirst(&file, ccFileTempDirGet()) != CC_SUCCESS){
+		reportDiscrepancy("Temporary directory should be accesible");
+	}
+	err();
+	while(ccFileDirFind(&file) == CC_SUCCESS){
+		err();
+		ccPrintf("Found %s: %s\n", file.isDirectory ? "dir" : "file", file.name);
+	}
+	ccFileDirClose(&file);
+	err();
+	ccPrintf("Passed\n");
+}
+
 void testDefaultDirectories(int *test)
 {
 	ccPrintf("Test %d: Default directories\n", ++(*test));
@@ -257,9 +275,10 @@ int main(int argc, char **argv)
 	test = 0;
 	testSysinfo(&test);
 	testDefaultDirectories(&test);
-	testTime(&test);
-	testDisplay(&test);
-	testWindow(&test);
+	testReadDirectories(&test);
+	//testTime(&test);
+	//testDisplay(&test);
+	//testWindow(&test);
 	testGamepad(&test);
 
 	ccFree();

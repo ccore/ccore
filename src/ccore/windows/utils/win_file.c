@@ -59,4 +59,63 @@ void _ccFileFree(void)
 	userDir = NULL;
 }
 
+ccReturn ccFileDirFindFirst(ccFileDir *dir, const char *dirPath)
+{
+	WIN32_FIND_DATA findData;
+	unsigned int strLength;
+	char *buffer;
+	char *pathStr;
+	pathStr = ccStringConcatenate(2, dirPath, "*");
+
+	dir->handle = FindFirstFile(pathStr, &findData);
+
+	free(pathStr);
+
+	if(dir->handle == INVALID_HANDLE_VALUE) {
+		return CC_FAIL;
+	}
+	
+	strLength = strlen(findData.cFileName);
+	buffer = malloc(strLength + 1);
+	memcpy(buffer, findData.cFileName, strLength);
+	buffer[strLength] = '\0';
+	
+	dir->isDirectory = (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)?true:false;
+
+	dir->name = buffer;
+
+	return CC_SUCCESS;
+}
+
+ccReturn ccFileDirFind(ccFileDir *dir)
+{
+	WIN32_FIND_DATA findData;
+	unsigned int strLength;
+	char *buffer;
+
+	if(FindNextFile(dir->handle, &findData) == 0) {
+		if(GetLastError() == ERROR_NO_MORE_FILES) {
+			dir->name = NULL;
+			return CC_SUCCESS;
+		}
+		return CC_FAIL;
+	}
+
+	strLength = strlen(findData.cFileName);
+	buffer = malloc(strLength + 1);
+	memcpy(buffer, findData.cFileName, strLength);
+	buffer[strLength] = '\0';
+
+	dir->isDirectory = (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)?true:false;
+
+	dir->name = buffer;
+
+	return CC_SUCCESS;
+}
+
+ccReturn ccFileDirClose(ccFileDir *dir)
+{
+	return FindClose(dir->handle) == 0?CC_FAIL:CC_SUCCESS;
+}
+
 #endif

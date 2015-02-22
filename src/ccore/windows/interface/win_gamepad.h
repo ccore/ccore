@@ -15,7 +15,11 @@
 
 #include "win_window.h"
 
+#define _CC_GAMEPAD_STDNAME_RAW "USB gamepad"
+#define _CC_GAMEPAD_STDNAME_XINPUT "Xbox gamepad"
+
 #define _CC_GAMEPAD_MAXBUTTONS 128
+#define _CC_GAMEPAD_MAXNAME 126
 
 #define _CC_GAMEPAD_XINPUT_BUTTONCOUNT 14
 #define _CC_GAMEPAD_XINPUT_AXISCOUNT 6
@@ -45,6 +49,9 @@ typedef struct {
 	PHIDP_VALUE_CAPS valueCaps;
 	PHIDP_PREPARSED_DATA preparsedData;
 	HANDLE handle;
+	HANDLE comm;
+	USAGE outputUsageMin;
+	USAGE outputUsageMax;
 	int preparsedDataSize;
 	int *axisNegativeComponent;
 	double *axisFactor;

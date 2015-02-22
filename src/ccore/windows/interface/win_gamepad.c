@@ -22,6 +22,8 @@ static int _gamepadXinputButtons[] =
 
 ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int hapticIndex, int force)
 {	
+	int i;
+
 	ccAssert(gamepad != NULL);
 	
 	if(hapticIndex >= gamepad->outputAmount) {
@@ -29,11 +31,11 @@ ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int hapticIndex, int force)
 		return CC_FAIL;
 	}
 	
+	gamepad->output[hapticIndex] = force;
+
 	if(((ccGamepad_win*)gamepad->data)->inputType == CC_GAMEPAD_INPUT_XINPUT) {
 		XINPUT_VIBRATION vibration;
 		ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
-
-		gamepad->output[hapticIndex] = force;
 
 		vibration.wLeftMotorSpeed = (WORD)(ccGamepad_win*)gamepad->output[0];
 		vibration.wRightMotorSpeed = (WORD)(ccGamepad_win*)gamepad->output[1];
@@ -42,6 +44,20 @@ ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int hapticIndex, int force)
 			ccErrorPush(CC_ERROR_GAMEPAD_HAPTICNONE);
 			return CC_FAIL;
 		}
+	}
+	else {
+		uint8_t *buf = malloc(((ccGamepad_win*)gamepad->data)->raw->outputUsageMax + 1);
+		DWORD bytes_written;
+
+		memset(buf, 0, sizeof(buf));
+
+		for(i = 0; i < gamepad->outputAmount; i++) {
+			buf[((ccGamepad_win*)gamepad->data)->raw->outputUsageMin + i] = gamepad->output[i];
+		}
+
+		WriteFile(((ccGamepad_win*)gamepad->data)->raw->comm, buf, sizeof(buf), &bytes_written, NULL);
+
+		free(buf);
 	}
 
 	return CC_SUCCESS;
@@ -93,13 +109,17 @@ ccReturn ccGamepadFree(void)
 		int i;
 		for(i = 0; i < ccGamepadGetAmount(); i++) {
 			if(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->inputType == CC_GAMEPAD_INPUT_RAW) {
+				CloseHandle(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->comm);
+
 				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->buttonCaps);
 				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->valueCaps);
 				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->axisFactor);
 				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->axisNegativeComponent);
 				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw->preparsedData);
 				free(((ccGamepad_win*)_ccGamepads->gamepad[i].data)->raw);
+				free(_ccGamepads->gamepad[i].name);
 			}
+
 			free(_ccGamepads->gamepad[i].data);
 			free(_ccGamepads->gamepad[i].button);
 			free(_ccGamepads->gamepad[i].axis);
@@ -154,7 +174,7 @@ void _queryXinput()
 					_CC_GAMEPAD_DATA->inputType = CC_GAMEPAD_INPUT_XINPUT;
 					_CC_GAMEPAD_DATA->xinputIndex = i;
 
-					currentGamepad->name = "Xbox gamepad";
+					currentGamepad->name = _CC_GAMEPAD_STDNAME_XINPUT;
 					currentGamepad->plugged = true;
 					currentGamepad->outputAmount = _CC_GAMEPAD_XINPUT_HAPTICAMOUNT;
 					currentGamepad->buttonAmount = _CC_GAMEPAD_XINPUT_BUTTONCOUNT;
@@ -264,8 +284,12 @@ void _generateGamepadEvents(RAWINPUT *raw)
 			break;
 		}
 	}
+
 	if(currentGamepad == NULL) {
+		HIDP_VALUE_CAPS outputValueCaps;
 		USHORT capsLength;
+		char *gamepadFile;
+		int stringLength;
 
 		_ccGamepads->amount++;
 		_ccGamepads->gamepad = realloc(_ccGamepads->gamepad, ccGamepadGetAmount() * sizeof(ccGamepad));
@@ -283,11 +307,32 @@ void _generateGamepadEvents(RAWINPUT *raw)
 		_CC_GAMEPAD_DATA->raw->preparsedData = malloc(_CC_GAMEPAD_DATA->raw->preparsedDataSize);
 		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_PREPARSEDDATA, _CC_GAMEPAD_DATA->raw->preparsedData, &_CC_GAMEPAD_DATA->raw->preparsedDataSize);
 		
-		currentGamepad->name = "Gamepad"; //TODO: can I fetch this?
 		currentGamepad->plugged = true; //TODO: use this properly
-		currentGamepad->outputAmount = 0;
 		_CC_GAMEPAD_DATA->raw->handle = raw->header.hDevice;
 		HidP_GetCaps(_CC_GAMEPAD_DATA->raw->preparsedData, &_CC_GAMEPAD_DATA->raw->caps);
+
+		currentGamepad->outputAmount = _CC_GAMEPAD_DATA->raw->caps.NumberOutputValueCaps;
+		currentGamepad->output = calloc(currentGamepad->outputAmount, sizeof(int));
+
+		GetRawInputDeviceInfo(_CC_GAMEPAD_DATA->raw->handle, RIDI_DEVICENAME, NULL, &stringLength);
+
+		gamepadFile = malloc(stringLength); //TODO: use file to identify reconnecting gamepad
+		
+		GetRawInputDeviceInfo(_CC_GAMEPAD_DATA->raw->handle, RIDI_DEVICENAME, gamepadFile, &stringLength);
+
+		_CC_GAMEPAD_DATA->raw->comm = CreateFile(gamepadFile, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+
+		free(gamepadFile);
+
+		HidP_GetValueCaps(HidP_Output, &outputValueCaps, &capsLength, _CC_GAMEPAD_DATA->raw->preparsedData);
+
+		_CC_GAMEPAD_DATA->raw->outputUsageMin = outputValueCaps.Range.UsageMin;
+
+		currentGamepad->name = malloc(_CC_GAMEPAD_MAXNAME);
+		
+		if(HidD_GetProductString(_CC_GAMEPAD_DATA->raw->comm, currentGamepad->name, _CC_GAMEPAD_MAXNAME) == FALSE) {
+			memcpy(currentGamepad->name, _CC_GAMEPAD_STDNAME_RAW, sizeof(_CC_GAMEPAD_STDNAME_RAW));
+		}
 
 		_CC_GAMEPAD_DATA->raw->buttonCaps = malloc(sizeof(HIDP_BUTTON_CAPS)* _CC_GAMEPAD_DATA->raw->caps.NumberInputButtonCaps);
 		_CC_GAMEPAD_DATA->raw->valueCaps = malloc(sizeof(HIDP_VALUE_CAPS)* _CC_GAMEPAD_DATA->raw->caps.NumberInputValueCaps);
