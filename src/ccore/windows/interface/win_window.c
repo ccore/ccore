@@ -464,13 +464,13 @@ static ccReturn _ccWindowResizeMove(ccRect rect, bool addBorder)
 			return CC_FAIL;
 		}
 
-		if(MoveWindow(_CC_WINDOW_DATA->winHandle, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, FALSE) == FALSE) {
+		if(MoveWindow(_CC_WINDOW_DATA->winHandle, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, TRUE) == FALSE) {
 			ccErrorPush(CC_ERROR_WINDOW_MODE);
 			return CC_FAIL;
 		}
 	}
 	else{
-		if(MoveWindow(_CC_WINDOW_DATA->winHandle, rect.x, rect.y, rect.width, rect.height, FALSE) == FALSE) {
+		if(MoveWindow(_CC_WINDOW_DATA->winHandle, rect.x, rect.y, rect.width, rect.height, TRUE) == FALSE) {
 			ccErrorPush(CC_ERROR_WINDOW_MODE);
 			return CC_FAIL;
 		}
