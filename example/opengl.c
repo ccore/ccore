@@ -67,6 +67,9 @@ int main(int argc, char** argv)
                                 goto outputError;
                             }
                             break;
+						case CC_KEY_ESCAPE:
+							loop = false;
+							break;
                     }
 
                     break;
