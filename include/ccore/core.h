@@ -44,5 +44,14 @@
 #define CC_UNLIKELY(x) (x)
 #endif
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 void ccInitialize(void); // Initialize ccore
 void ccFree(void); // Free ccore
+
+#ifdef __cplusplus
+}
+#endif
