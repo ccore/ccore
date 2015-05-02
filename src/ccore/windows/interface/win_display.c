@@ -24,15 +24,14 @@ ccReturn ccDisplayInitialize(void)
 
 	while(EnumDisplayDevices(NULL, deviceCount, &device, 0)) {
 		displayCount = 0;
+
 		while(EnumDisplayDevices(device.DeviceName, displayCount, &display, 0)) {
-			_ccDisplays->amount++;
-
-			ccRealloc(_ccDisplays->display, sizeof(ccDisplay)*_ccDisplays->amount);
-
 			if(EnumDisplaySettings(device.DeviceName, ENUM_CURRENT_SETTINGS, &dm) == 0) {
-				ccErrorPush(CC_ERROR_DISPLAY_NONE);
-				return CC_FAIL;
+				break;
 			}
+
+			_ccDisplays->amount++;
+			ccRealloc(_ccDisplays->display, sizeof(ccDisplay)*_ccDisplays->amount);
 
 			currentDisplay = &_ccDisplays->display[_ccDisplays->amount - 1];
 
@@ -87,6 +86,7 @@ ccReturn ccDisplayInitialize(void)
 			displayCount++;
 
 		}
+
 		deviceCount++;
 	}
 
