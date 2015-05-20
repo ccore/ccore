@@ -36,6 +36,7 @@ typedef struct {
 	GLXContext XContext;
 	XID XCursor;
 	Pixmap XEmptyCursorImage;
+	XImage *XFramebuffer;
 	char *XClipString;
 	size_t XClipStringLength;
 	Atom CCORE_SELECTION, WM_ICON, WM_ICON_NAME, WM_NAME, CLIPBOARD, INCR, TARGETS, MULTIPLE, UTF8_STRING, COMPOUND_STRING;

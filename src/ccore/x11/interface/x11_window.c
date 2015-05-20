@@ -709,6 +709,26 @@ ccReturn ccWindowMouseSetCursor(ccCursor cursor)
 	return CC_SUCCESS;
 }
 
+ccReturn ccWindowFramebufferCreate(const void *pixels, ccFramebufferFormat format)
+{
+	ccAssert(_ccWindow);
+
+	XWINDATA->XFramebuffer = XCreateImage(XWINDATA->XDisplay, CopyFromParent, 3, ZPixmap, 0, (char*)pixels, _ccWindow->rect.width, _ccWindow->rect.height, 32, 0);
+
+	return CC_SUCCESS;
+}
+
+ccReturn ccWindowFramebufferFree()
+{
+	ccAssert(_ccWindow);
+
+	if(XWINDATA->XFramebuffer){
+		XDestroyImage(XWINDATA->XFramebuffer);		
+	}
+
+	return CC_SUCCESS;
+}
+
 ccReturn ccWindowClipboardSet(const char *text)
 {
 	ccAssert(_ccWindow);

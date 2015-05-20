@@ -97,7 +97,6 @@ ccReturn ccWindowMouseSetPosition(ccPoint target);
 ccReturn ccWindowMouseSetCursor(ccCursor cursor);
 
 ccReturn ccWindowFramebufferCreate(const void *pixels, ccFramebufferFormat format);
-ccReturn ccWindowFramebufferUpdate();
 ccReturn ccWindowFramebufferFree();
 
 ccReturn ccWindowClipboardSet(const char *data);
