@@ -56,6 +56,13 @@ typedef enum {
 	CC_WINDOW_FLAG_NORAWINPUT = 8
 } ccWindowFlag;
 
+typedef enum {
+	CC_FB_CHAR_RGB,
+	CC_FB_CHAR_RGBA,
+	CC_FB_INT_RGB,
+	CC_FB_INT_RGBA,
+} ccFramebufferFormat;
+
 // The window struct
 typedef struct {
 	ccRect rect;
@@ -88,6 +95,10 @@ ccReturn ccWindowSetBlink(void);
 ccReturn ccWindowIconSet(ccPoint size, unsigned long *icon);
 ccReturn ccWindowMouseSetPosition(ccPoint target);
 ccReturn ccWindowMouseSetCursor(ccCursor cursor);
+
+ccReturn ccWindowFramebufferCreate(const void *pixels, ccFramebufferFormat format);
+ccReturn ccWindowFramebufferUpdate();
+ccReturn ccWindowFramebufferFree();
 
 ccReturn ccWindowClipboardSet(const char *data);
 char *ccWindowClipboardGet(void);
