@@ -90,6 +90,4 @@ ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force);
 }
 #endif
 
-#elif defined __GNUC__
-#error "The CC_USE_GAMEPAD or the CC_USE_ALL flag must be set"
 #endif

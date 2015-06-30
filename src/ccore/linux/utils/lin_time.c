@@ -1,3 +1,5 @@
+#if defined CC_USE_ALL || defined CC_USE_TIME
+
 #include "lin_time.h"
 
 ccReturn ccTimeDelay(int ms)
@@ -15,3 +17,5 @@ uint64_t ccTimeNanoseconds(void)
 
 	return (uint64_t)(time.tv_nsec + time.tv_sec * _CC_TO_SECONDS);
 }
+
+#endif
