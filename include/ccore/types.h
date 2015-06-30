@@ -20,6 +20,7 @@
 #pragma once
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "core.h"
 
@@ -28,13 +29,8 @@ extern "C"
 {
 #endif
 
-#define true 1
-#define false 0
-
 #define CC_SUCCESS 0
 #define CC_FAIL -1
-
-typedef char bool;
 
 typedef int ccReturn;
 
