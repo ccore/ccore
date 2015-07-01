@@ -61,11 +61,6 @@ ccReturn ccSysinfoInitialize(void)
 	return CC_SUCCESS;
 }
 
-void ccSysinfoFree(void)
-{
-	free(_ccSysinfo);
-}
-
 uint_fast64_t ccSysinfoGetRamAvailable(void)
 {
 	struct sysinfo memInfo;
