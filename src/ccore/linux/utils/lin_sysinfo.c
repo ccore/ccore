@@ -72,4 +72,9 @@ uint_fast64_t ccSysinfoGetRamAvailable(void)
 	return available * memInfo.mem_unit;
 }
 
+void ccSysinfoFree(void)
+{
+	free(_ccSysinfo);
+}
+
 #endif
