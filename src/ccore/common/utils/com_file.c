@@ -12,7 +12,7 @@
 
 #endif
 
-ccFileInfo ccFileInfoGet(char *file)
+ccFileInfo ccFileInfoGet(const char *file)
 {
 	struct ccStat sb;
 	ccFileInfo info;
@@ -22,7 +22,6 @@ ccFileInfo ccFileInfoGet(char *file)
 		info.size = 0;
 		info.modified = 0;
 		return info;
-
 	}
 	
 	info.size = (uint64_t)sb.st_size;

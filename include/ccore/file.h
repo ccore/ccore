@@ -67,7 +67,7 @@ ccReturn ccFileDirFindFirst(ccFileDir *dir, const char *dirPath);
 ccReturn ccFileDirFind(ccFileDir *dir);
 ccReturn ccFileDirClose(ccFileDir *dir);
 
-ccFileInfo ccFileInfoGet(char *file); 
+ccFileInfo ccFileInfoGet(const char *file); 
 
 void _ccFileFree(void);
 
