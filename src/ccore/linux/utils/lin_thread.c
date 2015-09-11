@@ -31,7 +31,7 @@ bool ccThreadFinished(ccThread *thread)
 	}
 }
 
-ccReturn ccThreadMutexCreate(ccMutex *mutex)
+ccReturn ccThreadMutexCreate(ccMutex *mutex, unsigned int spinCount)
 {
 	if(CC_UNLIKELY(pthread_mutex_init(mutex, NULL) != 0)){
 		ccErrorPush(CC_ERROR_THREAD_MUTEXCREATE);

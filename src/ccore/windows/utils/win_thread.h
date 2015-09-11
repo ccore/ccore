@@ -6,6 +6,4 @@
 
 #include <ccore/thread.h>
 
-#define _CC_CRITICAL_SECTION_SPIN_COUNT 400
-
 #endif
