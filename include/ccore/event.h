@@ -86,6 +86,8 @@ typedef struct {
 } ccEvent;
 
 #ifdef X11
+// Regex for keysymdef to auto generate the X11 part of the definitions:
+// :%s/#define XK_\(\S*\).*/#define CC_KEY_\U\1\e KEYDEF(XK_\1, VK_\U\1)/g
 #include <X11/keysym.h>
 #define KEYDEF(x11,win) x11
 #elif defined WINDOWS
@@ -93,6 +95,7 @@ typedef struct {
 #define KEYDEF(x11,win) win
 #endif
 
+//TODO fix for windows
 #define CC_KEY_0 KEYDEF(XK_0, '0')
 #define CC_KEY_1 KEYDEF(XK_1, '1')
 #define CC_KEY_2 KEYDEF(XK_2, '2')
@@ -181,6 +184,59 @@ typedef struct {
 #define CC_KEY_UP KEYDEF(XK_Up, VK_UP)
 #define CC_KEY_RIGHT KEYDEF(XK_Right, VK_RIGHT)
 #define CC_KEY_DOWN KEYDEF(XK_Down, VK_DOWN)
+
+#define CC_KEY_SELECT KEYDEF(XK_Select, VK_SELECT)
+#define CC_KEY_PRINT KEYDEF(XK_Print, VK_PRINT)
+#define CC_KEY_EXECUTE KEYDEF(XK_Execute, VK_EXECUTE)
+#define CC_KEY_INSERT KEYDEF(XK_Insert, VK_INSERT)
+#define CC_KEY_UNDO KEYDEF(XK_Undo, VK_UNDO)
+#define CC_KEY_REDO KEYDEF(XK_Redo, VK_REDO)
+#define CC_KEY_MENU KEYDEF(XK_Menu, VK_MENU)
+#define CC_KEY_FIND KEYDEF(XK_Find, VK_FIND)
+#define CC_KEY_CANCEL KEYDEF(XK_Cancel, VK_CANCEL)
+#define CC_KEY_HELP KEYDEF(XK_Help, VK_HELP)
+#define CC_KEY_BREAK KEYDEF(XK_Break, VK_BREAK)
+#define CC_KEY_MODE_SWITCH KEYDEF(XK_Mode_switch, VK_MODE_SWITCH)
+#define CC_KEY_SCRIPT_SWITCH KEYDEF(XK_script_switch, VK_SCRIPT_SWITCH)
+#define CC_KEY_NUM_LOCK KEYDEF(XK_Num_Lock, VK_NUM_LOCK)
+
+#define CC_KEY_EXCLAM KEYDEF(XK_exclam, VK_EXCLAM)
+#define CC_KEY_QUOTEDBL KEYDEF(XK_quotedbl, VK_QUOTEDBL)
+#define CC_KEY_NUMBERSIGN KEYDEF(XK_numbersign, VK_NUMBERSIGN)
+#define CC_KEY_DOLLAR KEYDEF(XK_dollar, VK_DOLLAR)
+#define CC_KEY_PERCENT KEYDEF(XK_percent, VK_PERCENT)
+#define CC_KEY_AMPERSAND KEYDEF(XK_ampersand, VK_AMPERSAND)
+#define CC_KEY_APOSTROPHE KEYDEF(XK_apostrophe, VK_APOSTROPHE)
+#define CC_KEY_QUOTERIGHT KEYDEF(XK_quoteright, VK_QUOTERIGHT)
+#define CC_KEY_PARENLEFT KEYDEF(XK_parenleft, VK_PARENLEFT)
+#define CC_KEY_PARENRIGHT KEYDEF(XK_parenright, VK_PARENRIGHT)
+#define CC_KEY_ASTERISK KEYDEF(XK_asterisk, VK_ASTERISK)
+#define CC_KEY_PLUS KEYDEF(XK_plus, VK_PLUS)
+#define CC_KEY_COMMA KEYDEF(XK_comma, VK_COMMA)
+#define CC_KEY_MINUS KEYDEF(XK_minus, VK_MINUS)
+#define CC_KEY_PERIOD KEYDEF(XK_period, VK_PERIOD)
+#define CC_KEY_SLASH KEYDEF(XK_slash, VK_SLASH)
+
+#define CC_KEY_COLON KEYDEF(XK_colon, VK_COLON)
+#define CC_KEY_SEMICOLON KEYDEF(XK_semicolon, VK_SEMICOLON)
+#define CC_KEY_LESS KEYDEF(XK_less, VK_LESS)
+#define CC_KEY_EQUAL KEYDEF(XK_equal, VK_EQUAL)
+#define CC_KEY_GREATER KEYDEF(XK_greater, VK_GREATER)
+#define CC_KEY_QUESTION KEYDEF(XK_question, VK_QUESTION)
+#define CC_KEY_AT KEYDEF(XK_at, VK_AT)
+
+#define CC_KEY_BRACKETLEFT KEYDEF(XK_bracketleft, VK_BRACKETLEFT)
+#define CC_KEY_BACKSLASH KEYDEF(XK_backslash, VK_BACKSLASH)
+#define CC_KEY_BRACKETRIGHT KEYDEF(XK_bracketright, VK_BRACKETRIGHT)
+#define CC_KEY_ASCIICIRCUM KEYDEF(XK_asciicircum, VK_ASCIICIRCUM)
+#define CC_KEY_UNDERSCORE KEYDEF(XK_underscore, VK_UNDERSCORE)
+#define CC_KEY_GRAVE KEYDEF(XK_grave, VK_GRAVE)
+#define CC_KEY_QUOTELEFT KEYDEF(XK_quoteleft, VK_QUOTELEFT)
+
+#define CC_KEY_BRACELEFT KEYDEF(XK_braceleft, VK_BRACELEFT)
+#define CC_KEY_BAR KEYDEF(XK_bar, VK_BAR)
+#define CC_KEY_BRACERIGHT KEYDEF(XK_braceright, VK_BRACERIGHT)
+#define CC_KEY_ASCIITILDE KEYDEF(XK_asciitilde, VK_ASCIITILDE)
 
 char ccEventKeyToChar(int key);
 char *ccEventKeyToStr(int key);
