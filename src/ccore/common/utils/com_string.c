@@ -3,14 +3,14 @@
 void ccStringTrimToChar(char* str, char ch, bool includeChar)
 {
 	int i;
-	for(i = strlen(str); str[i] != ch; i--);
+	for(i = (int)strlen(str); str[i] != ch; i--);
 	str[i + includeChar] = 0;
 }
 
 void ccStringReplaceChar(char *str, char ch, char newCh)
 {
 	int i;
-	for(i = strlen(str); i >= 0; i--)
+	for(i = (int)strlen(str); i >= 0; i--)
 	{
 		if(str[i] == ch) str[i] = newCh;
 	}
@@ -31,7 +31,7 @@ char *ccStringConcatenate(int amount, ...)
 	va_start(strings, amount);
 	for(i = 0; i < amount; i++) {
 		elements[i] = va_arg(strings, char*);
-		lengths[i] = strlen(elements[i]);
+		lengths[i] = (int)strlen(elements[i]);
 		l += lengths[i];
 	}
 	va_end(strings);

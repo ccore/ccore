@@ -217,7 +217,7 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 		break;
 	case WM_SYSCOMMAND:
 	{
-		LONG style = GetWindowLongPtr(_CC_WINDOW_DATA->winHandle, GWL_STYLE);
+		LONG_PTR style = GetWindowLongPtr(_CC_WINDOW_DATA->winHandle, GWL_STYLE);
 		if(((wParam & 0xFFF0) == SC_MOVE) && (style & WS_MAXIMIZE) && !(style & WS_MAXIMIZEBOX)) return 0;
 		return DefWindowProc(winHandle, message, wParam, lParam);
 	}
@@ -645,7 +645,7 @@ ccReturn ccWindowClipboardSet(const char *data)
 	HGLOBAL clipboardData;
 	int dataLength;
 
-	dataLength = strlen(data) + 1;
+	dataLength = (int)strlen(data) + 1;
 	if(dataLength <= 0) {
 		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
 		return CC_FAIL;
