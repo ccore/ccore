@@ -75,7 +75,7 @@ ccReturn ccFileDirFindFirst(ccFileDir *dir, const char *dirPath)
 		return CC_FAIL;
 	}
 	
-	strLength = strlen(findData.cFileName);
+	strLength = (unsigned int)strlen(findData.cFileName);
 	buffer = malloc(strLength + 1);
 	memcpy(buffer, findData.cFileName, strLength);
 	buffer[strLength] = '\0';
@@ -101,7 +101,7 @@ ccReturn ccFileDirFind(ccFileDir *dir)
 		return CC_FAIL;
 	}
 
-	strLength = strlen(findData.cFileName);
+	strLength = (unsigned int)strlen(findData.cFileName);
 	buffer = malloc(strLength + 1);
 	memcpy(buffer, findData.cFileName, strLength);
 	buffer[strLength] = '\0';
