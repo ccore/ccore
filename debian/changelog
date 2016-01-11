@@ -1,5 +1,5 @@
-libccore (0.3-1) unstable; urgency=low
+libccore (1.1.3) unstable; urgency=low
 
-  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+  * Initial Release.
 
- -- Thomas Versteeg <thomasversteeg@gmx.com>  Fri, 15 Aug 2014 22:08:33 +0200
+ -- Thomas Versteeg <thomasversteeg@gmx.com>  Tue, 12 Jan 2016 00:14:10 +0700
