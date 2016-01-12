@@ -279,7 +279,7 @@ int main(int argc, char **argv)
 	//testTime(&test);
 	//testDisplay(&test);
 	//testWindow(&test);
-	testGamepad(&test);
+	//testGamepad(&test);
 
 	ccFree();
 
