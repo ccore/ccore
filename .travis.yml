@@ -5,4 +5,4 @@ compiler:
 os:
   - linux
   
-script: scons test='no'
+script: make
