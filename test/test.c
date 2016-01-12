@@ -28,6 +28,7 @@
 // time
 #include <time.h>
 
+#define CC_USE_ALL
 #include <ccore/sysinfo.h>
 #include <ccore/print.h>
 #include <ccore/file.h>

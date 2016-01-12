@@ -4,10 +4,10 @@ SOURCEDIR=.
 
 CC=gcc
 RM=rm -f
-CFLAGS=-O3 -Iinclude/ -g -Wall -DCC_USE_ALL -D_DEBUG
-LDLIBS=-lGL -lGLU -lGLEW -lm -lccore -lX11 -lXrandr -lXinerama -lXi -lpthread
+CFLAGS=-O3 -I../include/ -g -Wall -D_DEBUG -DCC_USE_ALL 
+LDLIBS=-lGL -lGLU -lGLEW -lm -lX11 -lXrandr -lXinerama -lXi -lpthread ../lib/libccore.a
 
-SRCS=$(shell find . -name '*.c')
+SRCS=$(shell find $(SOURCEDIR) -name '*.c')
 OBJS=$(subst .c,.o,$(SRCS))
 
 all: $(NAME)

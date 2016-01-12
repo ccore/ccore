@@ -12,16 +12,13 @@ LDLIBS=-lGL -lGLU -lGLEW -lm
 
 SRCS=$(filter-out $(wildcard ./$(SOURCEDIR)/windows/*/*.c), $(wildcard ./$(SOURCEDIR)/*/*/*.c))
 OBJS=$(subst .c,.o,$(SRCS))
+LIBFILE=lib$(NAME).a
 
 all: $(NAME)
 
-.PHONY: test
-test:
-	cd $(TESTDIR) && make && ./test
-
 .PHONY: $(NAME)
 $(NAME): $(OBJS)
-	$(AR) $(LIBDIR)/lib$(NAME).a
+	$(AR) $(LIBDIR)/lib$(NAME).a $(OBJS)
 
 .PHONY: clean
 clean:
