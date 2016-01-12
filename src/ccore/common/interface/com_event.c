@@ -14,6 +14,22 @@ char ccEventKeyToChar(int key)
 		return 'a' + (key - CC_KEY_A);
 	}
 
+	if(key >= CC_KEY_EXCLAM && key <= CC_KEY_SLASH){
+		return '!' + (key - CC_KEY_EXCLAM);
+	}
+	
+	if(key >= CC_KEY_COLON && key <= CC_KEY_AT){
+		return ':' + (key - CC_KEY_COLON);
+	}
+	
+	if(key >= CC_KEY_BRACKETLEFT && key <= CC_KEY_QUOTELEFT){
+		return '[' + (key - CC_KEY_BRACKETLEFT);
+	}
+	
+	if(key >= CC_KEY_BRACELEFT && key <= CC_KEY_ASCIITILDE){
+		return '{' + (key - CC_KEY_BRACELEFT);
+	}
+
 	switch(key){
 		case CC_KEY_TAB:
 			return '\t';

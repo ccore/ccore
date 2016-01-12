@@ -61,7 +61,7 @@ ccReturn ccThreadStart(ccThread *thread, void *function, void *data);
 ccReturn ccThreadJoin(ccThread *thread);
 bool ccThreadFinished(ccThread *thread);
 
-ccReturn ccThreadMutexCreate(ccMutex *mutex);
+ccReturn ccThreadMutexCreate(ccMutex *mutex, unsigned int spinCount);
 ccReturn ccThreadMutexJoin(ccMutex *mutex);
 ccReturn ccThreadMutexRelease(ccMutex *mutex);
 ccReturn ccThreadMutexFree(ccMutex *mutex);
@@ -70,6 +70,4 @@ ccReturn ccThreadMutexFree(ccMutex *mutex);
 }
 #endif
 
-#elif defined __GNUC__
-#error "The CC_USE_THREAD or the CC_USE_ALL flag must be set"
 #endif

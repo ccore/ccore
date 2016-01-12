@@ -56,6 +56,4 @@ void ccSysinfoFree(void);
 }
 #endif
 
-#elif defined __GNUC__
-#error "The CC_USE_SYSINFO or the CC_USE_ALL flag must be set"
 #endif

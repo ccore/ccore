@@ -39,9 +39,9 @@ bool ccThreadFinished(ccThread *thread)
 	return false;
 }
 
-ccReturn ccThreadMutexCreate(ccMutex *mutex)
+ccReturn ccThreadMutexCreate(ccMutex *mutex, unsigned int spinCount)
 {
-	if(!InitializeCriticalSectionAndSpinCount(mutex, _CC_CRITICAL_SECTION_SPIN_COUNT)) {
+	if(!InitializeCriticalSectionAndSpinCount(mutex, spinCount)) {
 		ccErrorPush(CC_ERROR_THREAD_MUTEXCREATE);
 		return CC_FAIL;
 	}

@@ -28,6 +28,7 @@
 // time
 #include <time.h>
 
+#define CC_USE_ALL
 #include <ccore/sysinfo.h>
 #include <ccore/print.h>
 #include <ccore/file.h>
@@ -279,7 +280,7 @@ int main(int argc, char **argv)
 	//testTime(&test);
 	//testDisplay(&test);
 	//testWindow(&test);
-	testGamepad(&test);
+	//testGamepad(&test);
 
 	ccFree();
 

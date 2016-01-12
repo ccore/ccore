@@ -67,7 +67,7 @@ ccReturn ccFileDirFindFirst(ccFileDir *dir, const char *dirPath);
 ccReturn ccFileDirFind(ccFileDir *dir);
 ccReturn ccFileDirClose(ccFileDir *dir);
 
-ccFileInfo ccFileInfoGet(char *file); 
+ccFileInfo ccFileInfoGet(const char *file); 
 
 void _ccFileFree(void);
 
@@ -75,6 +75,4 @@ void _ccFileFree(void);
 }
 #endif
 
-#elif defined __GNUC__
-#error "The CC_USE_FILE or the CC_USE_ALL flag must be set"
 #endif

@@ -58,6 +58,7 @@ ccReturn ccFileDirFind(ccFileDir *dir)
 	}
 
 	if((dir->entry = readdir(dir->dir)) == NULL){
+		dir->name = NULL;
 		return CC_FAIL;
 	}
 
