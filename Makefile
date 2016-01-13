@@ -21,6 +21,7 @@ all: $(NAME)
 
 .PHONY: $(NAME)
 $(NAME): $(OBJS)
+	mkdir -p $(LIBDIR)
 	@$(AR) $(LIBDIR)/lib$(NAME).a $(OBJS)
 
 .PHONY: test
