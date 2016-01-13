@@ -2,7 +2,6 @@ NAME=test
 
 SOURCEDIR=.
 
-CC=gcc
 RM=rm -f
 CFLAGS=-I$(INCDIR) -g -Wall -D_DEBUG -DCC_USE_ALL 
 LDLIBS=-L$(LIBDIR) -l$(LIBNAME) -lGL -lGLU -lGLEW -lm -lX11 -lXrandr -lXinerama -lXi -lpthread

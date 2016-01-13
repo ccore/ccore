@@ -7,7 +7,6 @@ LIBDIR=lib
 INCDIR=include
 TESTDIR=test
 
-CC=gcc
 RM=rm -f
 AR=ar rcs
 CFLAGS=-I$(INCDIR) -O3 -DCC_USE_ALL
