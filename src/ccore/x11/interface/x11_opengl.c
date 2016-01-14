@@ -13,14 +13,12 @@ static int attrList[] =
 
 ccReturn ccGLContextBind(void)
 {
-	XVisualInfo *visual;
-
 	if(CC_UNLIKELY(_ccWindow == NULL)){
 		ccErrorPush(CC_ERROR_WINDOW_NONE);
 		return CC_FAIL;
 	}
 
-	visual = glXChooseVisual(XWINDATA->XDisplay, XWINDATA->XScreen, attrList);
+	XVisualInfo *visual = glXChooseVisual(XWINDATA->XDisplay, XWINDATA->XScreen, attrList);
 	if(CC_UNLIKELY(!visual)){
 		ccErrorPush(CC_ERROR_GL_CONTEXT);
 		return CC_FAIL;
