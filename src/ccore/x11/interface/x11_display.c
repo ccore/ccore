@@ -1,5 +1,7 @@
 #include "x11_display.h"
 
+#include <stdio.h>
+
 static ccReturn ccXFindDisplaysXinerama(Display *display, char *displayName)
 {
 	int eventBase, errorBase;

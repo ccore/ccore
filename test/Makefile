@@ -14,6 +14,7 @@ all: $(NAME)
 .PHONY: $(NAME)
 $(NAME): $(OBJS) .depend
 	$(CC) $(LDFLAGS) -o $(NAME) $(OBJS) $(LDLIBS)
+	./$(NAME)
 
 .PHONY: clean
 clean:

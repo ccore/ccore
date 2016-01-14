@@ -28,7 +28,6 @@
 // time
 #include <time.h>
 
-#define CC_USE_ALL
 #include <ccore/sysinfo.h>
 #include <ccore/print.h>
 #include <ccore/file.h>
@@ -162,9 +161,18 @@ void testWindow(int *test)
 					break;
 				case CC_EVENT_MOUSE_DOWN:
 					switch(ccWindowEventGet().mouseButton) {
-					case CC_MOUSE_BUTTON_PREVIOUS: printf("Previous\n"); break;
-					case CC_MOUSE_BUTTON_NEXT: printf("Next\n"); break;
+						case CC_MOUSE_BUTTON_PREVIOUS: 
+							printf("Previous\n"); 
+							break;
+						case CC_MOUSE_BUTTON_NEXT: 
+							printf("Next\n"); 
+							break;
+						default:
+							break;
 					}
+					break;
+				default: 
+					break;
 			}
 		}
 	}
@@ -255,7 +263,7 @@ void testSysinfo(int *test)
 	ccSysinfoInitialize();
 	err();
 
-	ccPrintf("\tInstalled RAM:\t%lld\n", ccSysinfoGetRamTotal());
+	ccPrintf("\tInstalled RAM:\t%lld\n", (long long int)ccSysinfoGetRamTotal());
 
 	ccPrintf("\tProcessors:\t%d\n", ccSysinfoGetProcessorCount());
 
@@ -280,7 +288,7 @@ int main(int argc, char **argv)
 	//testTime(&test);
 	//testDisplay(&test);
 	//testWindow(&test);
-	//testGamepad(&test);
+	testGamepad(&test);
 
 	ccFree();
 
