@@ -20,4 +20,4 @@ typedef struct {
 	RRMode XOldMode;
 } ccDisplay_x11;
 
-#define DISPLAY_DATA(display) ((ccDisplay_x11*)display->data)
+#define DISPLAY_DATA(display) ((ccDisplay_x11 *)display->data)

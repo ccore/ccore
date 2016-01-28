@@ -1,7 +1,7 @@
 Source: libccore
 Priority: optional
 Maintainer: Thomas Versteeg <thomasversteeg@gmx.com>
-Build-Depends: debhelper (>= 9) | scons
+Build-Depends: debhelper (>= 9)
 Standards-Version: 3.9.6
 Section: libs
 Homepage: http://github.com/ccore/ccore
@@ -17,7 +17,7 @@ Description: ccore header files
 
 Package: libccore
 Architecture: any
-Depends: libglu1-mesa | x11-common ${shlibs:Depends}, ${misc:Depends}
+Depends: libglu1-mesa, x11-common, ${shlibs:Depends}, ${misc:Depends}
 Description: A cross platform low level game development library
  ccore is a light weight low level library to facilitate cross platform software development in C/C++. ccore is focused on but not exclusively aimed at game development.
  It provides the user with basic functionality while leaving high level implementations up to the user.
