@@ -10,7 +10,7 @@ INCDIR=include
 TESTDIR=test
 
 RM=rm -f
-DYNAR=$(CC) -shared -Wl,-soname,$(LIBFILE).$(VERSIONMAYOR) -o
+DYNAR=$(CC) -shared -Wl,-soname,$(LIBNAME).$(VERSIONMAYOR).$(VERSIONMINOR) -o
 #STATAR=ar rcs
 CFLAGS:=-I$(INCDIR) -fPIC -O3 -DCC_USE_ALL
 LDLIBS=-lGL -lGLU -lGLEW -lm
@@ -46,8 +46,8 @@ install:
 	cp -R $(INCDIR)/* $(IINCDIR)
 	mkdir -p $(ILIBDIR)
 	cp $(LIBFILE).$(VERSIONMAYOR).$(VERSIONMINOR) $(ILIBDIR)
-	ln -sf $(ILIBFILE).$(VERSIONMAYOR).$(VERSIONMINOR) $(ILIBFILE).$(VERSIONMAYOR)
-	ln -sf $(ILIBFILE).$(VERSIONMAYOR) $(ILIBFILE)
+	ln -sf $(LIBNAME).$(VERSIONMAYOR).$(VERSIONMINOR) $(ILIBFILE).$(VERSIONMAYOR)
+	ln -sf $(LIBNAME).$(VERSIONMAYOR) $(ILIBFILE)
 
 .PHONY: dist-clean
 dist-clean: clean
