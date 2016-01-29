@@ -1,5 +1,5 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: libccore
+Upstream-Name: ccore
 Source: http://github.com/ccore/ccore
 
 Files: *

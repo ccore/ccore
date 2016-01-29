@@ -1,4 +1,4 @@
-Source: libccore
+Source: libccore1
 Priority: optional
 Maintainer: Thomas Versteeg <thomasversteeg@gmx.com>
 Build-Depends: debhelper (>= 9), build-essential
