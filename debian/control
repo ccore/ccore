@@ -7,6 +7,17 @@ Section: libs
 Homepage: http://github.com/ccore/ccore
 #Vcs-Git: git://anonscm.debian.org/collab-maint/ccore.git
 #Vcs-Browser: https://anonscm.debian.org/gitweb/?p=collab-maint/ccore.git;a=summary
+ 
+Package: libccore1-dbg
+Section: debug
+Architecture: any
+Depends: libccore1-dev
+Priority: extra
+Description: Debug symbols for the ccore library
+ ccore is an low-level abstraction library for writing multimedia
+ applications, with a focus on games.
+ .
+ This package contains the debug symbols.
 
 Package: libccore1-dev
 Section: libdevel

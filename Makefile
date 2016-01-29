@@ -9,21 +9,23 @@ INCDIR=include
 TESTDIR=test
 
 RM=rm -f
-DYNAR=$(CC) -shared -Wl,-soname,$(DLIBNAME).$(VERSIONMAYOR) -o
-STATAR=ar rcs
-CFLAGS:=-I$(INCDIR) -fPIC -O3 -DCC_USE_ALL
+CFLAGS:=-I$(INCDIR) -g -fPIC -O3 -DCC_USE_ALL
 LDLIBS=-lGL -lGLU -lGLEW -lm
 
 SRCS:=$(filter-out $(wildcard ./$(SOURCEDIR)/windows/*/*.c), $(wildcard ./$(SOURCEDIR)/*/*/*.c))
 OBJS:=$(subst .c,.o,$(SRCS))
+MAKEFILEDIR:=$(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+
 DLIBNAME:=lib$(NAME).so
 DLIBFILE:=$(LIBDIR)/$(DLIBNAME)
 SLIBNAME:=lib$(NAME).a
 SLIBFILE:=$(LIBDIR)/$(SLIBNAME)
-MAKEFILEDIR:=$(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 ILIBDIR:=$(DESTDIR)/usr/lib
 IDLIBFILE:=$(ILIBDIR)/$(DLIBNAME)
 IINCDIR:=$(DESTDIR)/usr/include
+
+DYNAR:=$(CC) $(LDFLAGS) -g -shared -Wl,-soname,$(DLIBNAME).$(VERSIONMAYOR) -o
+STATAR:=ar rcs
 
 all: $(DLIBFILE).$(VERSIONMAYOR) $(SLIBFILE)
 
