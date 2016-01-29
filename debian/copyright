@@ -1,10 +1,10 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: libccore
-Source: <url://example.com>
+Source: http://github.com/ccore/ccore
 
 Files: *
-Copyright: <years> <put author's name and email here>
-           <years> <likewise for another author>
+Copyright: 2014-2016 Thomas Versteeg, thomasversteeg@gmx.com
+           2014-2016 Job Talle, job@ccore.com
 License: BSD-3-Clause
 
 Files: debian/*
@@ -36,7 +36,3 @@ License: BSD-3-Clause
  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Please also look if there are files or directories which have a
-# different copyright/license attached and list them here.
-# Please avoid picking licenses with terms that are more restrictive than the
-# packaged work, as it may make Debian's contributions unacceptable upstream.

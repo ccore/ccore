@@ -8,19 +8,19 @@ Homepage: http://github.com/ccore/ccore
 #Vcs-Git: git://anonscm.debian.org/collab-maint/ccore.git
 #Vcs-Browser: https://anonscm.debian.org/gitweb/?p=collab-maint/ccore.git;a=summary
 
-Package: libccore-dev
+Package: libccore1-dev
 Section: libdevel
 Architecture: any
-Depends: libccore (= ${binary:Version}), ${misc:Depends}
+Depends: libccore1 (= ${binary:Version}), ${misc:Depends}
 Description: Development files for the ccore library
  ccore is an low-level abstraction library for writing multimedia
  applications, with a focus on games.
  .
  This package contains the static library, headers and documentation.
 
-Package: libccore
+Package: libccore1
 Architecture: any
-Depends: libglu1-mesa, x11-common, ${shlibs:Depends}, ${misc:Depends}
+Depends: libc6-dev, libglu1-mesa-dev, libx11-dev, libxrandr-dev, libxrender-dev, libglew-dev, libxinerama-dev, libxi-dev, ${shlibs:Depends}, ${misc:Depends}
 Description: Shared library files for the ccore library
  ccore is an low-level abstraction library for writing multimedia
  applications, with a focus on games.
