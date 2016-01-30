@@ -1,25 +1,21 @@
-Source: libccore1
+Source: ccore
 Priority: optional
 Maintainer: Thomas Versteeg <thomasversteeg@gmx.com>
 Build-Depends: debhelper (>= 9), build-essential
 Standards-Version: 3.9.6
 Section: libs
 Homepage: http://github.com/ccore/ccore
-#Vcs-Git: git://anonscm.debian.org/collab-maint/ccore.git
-#Vcs-Browser: https://anonscm.debian.org/gitweb/?p=collab-maint/ccore.git;a=summary
- 
-Package: libccore1-dbg
-Section: debug
+
+Package: libccore1
 Architecture: any
-Depends: libccore1-dev
-Priority: extra
-Description: Debug symbols for the ccore library
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Shared library files for the ccore library
  ccore is an low-level abstraction library for writing multimedia
  applications, with a focus on games.
  .
- This package contains the debug symbols.
+ This package contains the dynamic library.
 
-Package: libccore1-dev
+Package: libccore-dev
 Section: libdevel
 Architecture: any
 Depends: libccore1 (= ${binary:Version}), ${misc:Depends}
@@ -28,12 +24,14 @@ Description: Development files for the ccore library
  applications, with a focus on games.
  .
  This package contains the static library, headers and documentation.
-
-Package: libccore1
+ 
+Package: libccore1-dbg
 Architecture: any
-Depends: libc6-dev, libglu1-mesa-dev, libx11-dev, libxrandr-dev, libxrender-dev, libglew-dev, libxinerama-dev, libxi-dev, ${shlibs:Depends}, ${misc:Depends}
-Description: Shared library files for the ccore library
+Section: debug
+Priority: extra
+Depends: libccore1 (= ${binary:Version}), ${misc:Depends}
+Description: Debug symbols for the ccore library
  ccore is an low-level abstraction library for writing multimedia
  applications, with a focus on games.
  .
- This package contains the dynamic library.
+ This package contains the debug symbols.

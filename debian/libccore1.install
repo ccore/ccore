@@ -1,1 +1,1 @@
-usr/lib/libccore.so.1
+lib/lib*.so.* usr/lib
