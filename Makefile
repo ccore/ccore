@@ -1,5 +1,6 @@
 # Generic makefile for static libraries
 
+# Custom variables
 NAME=ccore
 VERSIONMAYOR=1
 
@@ -10,9 +11,10 @@ TESTDIR=test
 
 RM=rm -f
 CFLAGS:=-I$(INCDIR) -g -fPIC -O3 -DCC_USE_ALL
-LDLIBS=-lGL -lGLU -lGLEW -lm
-
+LDLIBS=-lGL -lX11 -lXrandr -lXinerama -lXi -lpthread
 SRCS:=$(filter-out $(wildcard ./$(SOURCEDIR)/windows/*/*.c), $(wildcard ./$(SOURCEDIR)/*/*/*.c))
+
+# Generated
 OBJS:=$(subst .c,.o,$(SRCS))
 MAKEFILEDIR:=$(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
@@ -24,7 +26,7 @@ ILIBDIR:=$(DESTDIR)/usr/lib
 ILIBFILE:=$(ILIBDIR)/$(DLIBNAME)
 IINCDIR:=$(DESTDIR)/usr/include
 
-DYNAR:=$(CC) $(LDFLAGS) -g -shared -Wl,-soname,$(DLIBNAME).$(VERSIONMAYOR) -o
+DYNAR:=$(CC) $(LDFLAGS) -g -shared -Wl,-soname,$(DLIBNAME).$(VERSIONMAYOR) $(LDLIBS) -o
 STATAR:=ar rcs
 
 all: $(DLIBFILE).$(VERSIONMAYOR) $(SLIBFILE)
@@ -45,6 +47,7 @@ test: $(DLIBFILE).$(VERSIONMAYOR)
 .PHONY: clean
 clean:
 	$(RM) $(OBJS) $(DLIBFILE).$(VERSIONMAYOR) $(DLIBFILE)
+	@(cd $(TESTDIR); $(MAKE) clean)
 
 .PHONY: install
 install:
@@ -58,6 +61,7 @@ install:
 .PHONY: dist-clean
 dist-clean: clean
 	$(RM) *~ .depend
+	@(cd $(TESTDIR); $(MAKE) dist-clean)
 
 .depend: $(SRCS)
 	$(RM) ./.depend

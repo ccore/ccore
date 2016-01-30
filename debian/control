@@ -1,14 +1,32 @@
 Source: ccore
 Priority: optional
 Maintainer: Thomas Versteeg <thomasversteeg@gmx.com>
-Build-Depends: debhelper (>= 9), build-essential
+Build-Depends: 
+ debhelper (>= 9),
+ build-essential,
+ libgl1-mesa-dev,
+ libglu1-mesa-dev,
+ libx11-dev,
+ libxcursor-dev,
+ libxext-dev,
+ libxi-dev,
+ libxinerama-dev,
+ libxrandr-dev
 Standards-Version: 3.9.6
 Section: libs
 Homepage: http://github.com/ccore/ccore
 
 Package: libccore1
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends:
+ libx11-6,
+ x11-common,
+ xserver-xorg,
+ libgl1-mesa-dri,
+ libglu1-mesa,
+ libxinerama1,
+ ${shlibs:Depends},
+ ${misc:Depends}
 Description: Shared library files for the ccore library
  ccore is an low-level abstraction library for writing multimedia
  applications, with a focus on games.
@@ -18,7 +36,17 @@ Description: Shared library files for the ccore library
 Package: libccore-dev
 Section: libdevel
 Architecture: any
-Depends: libccore1 (= ${binary:Version}), ${misc:Depends}
+Depends: 
+ libgl1-mesa-dev,
+ libglu1-mesa-dev,
+ libx11-dev,
+ libxcursor-dev,
+ libxext-dev,
+ libxi-dev,
+ libxinerama-dev,
+ libxrandr-dev,
+ libccore1 (= ${binary:Version}), 
+ ${misc:Depends}
 Description: Development files for the ccore library
  ccore is an low-level abstraction library for writing multimedia
  applications, with a focus on games.
