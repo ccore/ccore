@@ -145,7 +145,7 @@ ccReturn ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
 		return CC_FAIL;
 	}
 
-	display->current = resolutionIndex;
+	display->current = (unsigned short)resolutionIndex;
 
 	return CC_SUCCESS;
 }

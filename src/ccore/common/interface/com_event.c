@@ -3,31 +3,31 @@
 char ccEventKeyToChar(int key)
 {
 	if(key >= CC_KEY_0 && key <= CC_KEY_9){
-		return '0' + (key - CC_KEY_0);
+		return '0' + (char)(key - CC_KEY_0);
 	}
 
 	if(key >= CC_KEY_NUM0 && key <= CC_KEY_NUM9){
-		return '0' + (key - CC_KEY_NUM0);
+		return '0' + (char)(key - CC_KEY_NUM0);
 	}
 
 	if(key >= CC_KEY_A && key <= CC_KEY_Z){
-		return 'a' + (key - CC_KEY_A);
+		return 'a' + (char)(key - CC_KEY_A);
 	}
 
 	if(key >= CC_KEY_EXCLAM && key <= CC_KEY_SLASH){
-		return '!' + (key - CC_KEY_EXCLAM);
+		return '!' + (char)(key - CC_KEY_EXCLAM);
 	}
 	
 	if(key >= CC_KEY_COLON && key <= CC_KEY_AT){
-		return ':' + (key - CC_KEY_COLON);
+		return ':' + (char)(key - CC_KEY_COLON);
 	}
 	
 	if(key >= CC_KEY_BRACKETLEFT && key <= CC_KEY_QUOTELEFT){
-		return '[' + (key - CC_KEY_BRACKETLEFT);
+		return '[' + (char)(key - CC_KEY_BRACKETLEFT);
 	}
 	
 	if(key >= CC_KEY_BRACELEFT && key <= CC_KEY_ASCIITILDE){
-		return '{' + (key - CC_KEY_BRACELEFT);
+		return '{' + (char)(key - CC_KEY_BRACELEFT);
 	}
 
 	switch(key){
