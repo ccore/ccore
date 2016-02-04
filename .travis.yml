@@ -9,5 +9,10 @@ addons:
   apt:
     packages:
     - libglew-dev
+    - libglu1-mesa-dev
+    - libx11-dev
+    - libxrandr-dev
+    - libxinerama-dev
+    - libxi-dev
   
 script: make test
