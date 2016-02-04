@@ -50,7 +50,7 @@ clean:
 	@(cd $(TESTDIR); $(MAKE) clean)
 
 .PHONY: install
-install:
+install: $(DLIBFILE).$(VERSIONMAYOR) $(SLIBFILE)
 	mkdir -p $(IINCDIR)
 	cp -R $(INCDIR)/* $(IINCDIR)
 	mkdir -p $(ILIBDIR)
