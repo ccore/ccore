@@ -204,6 +204,8 @@ void testDisplay(int *test)
 		srand((unsigned int)time(NULL));
 		ccDisplayResolutionSet(display, rand() % ccDisplayResolutionGetAmount(display));
 
+		printf("DPI: %d\n", display->dpi);
+
 		ccTimeDelay(5000);
 		err();
 
@@ -286,7 +288,7 @@ int main(int argc, char **argv)
 	testDefaultDirectories(&test);
 	testReadDirectories(&test);
 	//testTime(&test);
-	//testDisplay(&test);
+	testDisplay(&test);
 	//testWindow(&test);
 	testGamepad(&test);
 

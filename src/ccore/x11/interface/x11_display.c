@@ -49,6 +49,7 @@ static ccReturn ccXFindDisplaysXinerama(Display *display, char *displayName)
 		memcpy(currentDisplay->monitorName, outputInfo->name, outputInfo->nameLen);
 
 		currentDisplay->deviceName[displayNameLength] = '\0';
+		//TODO find gpu name
 		currentDisplay->gpuName = "Undefined";
 
 		bool foundCrtc = false;
@@ -76,9 +77,12 @@ static ccReturn ccXFindDisplaysXinerama(Display *display, char *displayName)
 			currentDisplay->y = -1;
 		}
 
+		int xscreen = 0;
 		DISPLAY_DATA(currentDisplay)->XineramaScreen = i;
-		DISPLAY_DATA(currentDisplay)->XScreen = 0;
+		DISPLAY_DATA(currentDisplay)->XScreen = xscreen;
 		DISPLAY_DATA(currentDisplay)->XOutput = resources->outputs[i];
+		currentDisplay->dpi = ((double)DisplayWidth(display, xscreen) * 25.4) / (double)DisplayWidthMM(display, xscreen);
+
 		currentDisplay->current = 0;
 		currentDisplay->amount = 0;
 

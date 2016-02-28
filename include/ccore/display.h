@@ -45,7 +45,7 @@ typedef struct {
 typedef struct {
 	ccDisplayData *resolution;
 	int x, y;
-	unsigned short amount, current, initial;
+	unsigned short dpi, amount, current, initial;
 	char *gpuName;
 	char *monitorName;
 
