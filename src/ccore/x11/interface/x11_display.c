@@ -5,8 +5,7 @@
 static ccReturn ccXFindDisplaysXinerama(Display *display, char *displayName)
 {
 	int eventBase, errorBase;
-	if(CC_UNLIKELY(!XineramaQueryExtension(display, &eventBase, &errorBase) ||
-								 !XineramaIsActive(display))) {
+	if(CC_UNLIKELY(!XineramaQueryExtension(display, &eventBase, &errorBase) || !XineramaIsActive(display))) {
 		ccPrintf("Xinerama not supported or active\n");
 		ccErrorPush(CC_ERROR_DISPLAY_NONE);
 		return CC_FAIL;
@@ -24,9 +23,9 @@ static ccReturn ccXFindDisplaysXinerama(Display *display, char *displayName)
 
 	int i;
 	for(i = 0; i < resources->noutput; i++) {
-		XRROutputInfo *outputInfo =
-				XRRGetOutputInfo(display, resources, resources->outputs[i]);
-		/* Ignore disconnected devices */
+		XRROutputInfo *outputInfo = XRRGetOutputInfo(display, resources, resources->outputs[i]);
+
+		// Ignore disconnected devices
 		if(outputInfo->connection != 0) {
 			continue;
 		}
@@ -100,10 +99,8 @@ static ccReturn ccXFindDisplaysXinerama(Display *display, char *displayName)
 
 					ccMalloc(currentResolution.data, sizeof(ccDisplayData_x11));
 
-					((ccDisplayData_x11 *)currentResolution.data)->XMode =
-							outputInfo->modes[j];
-					currentResolution.refreshRate = resources->modes[k].dotClock /
-																					(resources->modes[k].hTotal * vTotal);
+					((ccDisplayData_x11 *)currentResolution.data)->XMode = outputInfo->modes[j];
+					currentResolution.refreshRate = resources->modes[k].dotClock / (resources->modes[k].hTotal * vTotal);
 					currentResolution.width = resources->modes[k].width;
 					currentResolution.height = resources->modes[k].height;
 
@@ -111,12 +108,9 @@ static ccReturn ccXFindDisplaysXinerama(Display *display, char *displayName)
 					if(currentDisplay->amount == 1) {
 						ccMalloc(currentDisplay->resolution, sizeof(ccDisplayData));
 					} else {
-						ccRealloc(currentDisplay->resolution,
-											sizeof(ccDisplayData) * currentDisplay->amount);
+						ccRealloc(currentDisplay->resolution, sizeof(ccDisplayData) * currentDisplay->amount);
 					}
-					memcpy(currentDisplay->resolution + (currentDisplay->amount - 1),
-								 &currentResolution,
-								 sizeof(ccDisplayData));
+					memcpy(currentDisplay->resolution + (currentDisplay->amount - 1), &currentResolution, sizeof(ccDisplayData));
 					break;
 				}
 			}
@@ -221,8 +215,7 @@ ccReturn ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
 		goto fail;
 	}
 
-	XRROutputInfo *outputInfo =
-			XRRGetOutputInfo(XDisplay, resources, DISPLAY_DATA(display)->XOutput);
+	XRROutputInfo *outputInfo = XRRGetOutputInfo(XDisplay, resources, DISPLAY_DATA(display)->XOutput);
 	if(CC_UNLIKELY(!outputInfo || outputInfo->connection == RR_Disconnected)) {
 		XRRFreeOutputInfo(outputInfo);
 		ccPrintf("X: Couldn't get output info");
@@ -251,8 +244,7 @@ ccReturn ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
 		}
 
 		int minX, minY, maxX, maxY;
-		if(CC_UNLIKELY(!XRRGetScreenSizeRange(
-											 XDisplay, root, &minX, &minY, &maxX, &maxY))) {
+		if(CC_UNLIKELY(!XRRGetScreenSizeRange(XDisplay, root, &minX, &minY, &maxX, &maxY))) {
 			XRRFreeOutputInfo(outputInfo);
 			XRRFreeCrtcInfo(crtcInfo);
 			ccPrintf("X: Unable to get screen size range\n");
@@ -263,43 +255,20 @@ ccReturn ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
 		if(CC_UNLIKELY(displayData->width < minX || displayData->height < minY)) {
 			XRRFreeOutputInfo(outputInfo);
 			XRRFreeCrtcInfo(crtcInfo);
-			ccPrintf("X: Unable to set size of screen below the minimum of %dx%d\n",
-							 minX,
-							 minY);
+			ccPrintf("X: Unable to set size of screen below the minimum of %dx%d\n", minX, minY);
 			ccErrorPush(CC_ERROR_DISPLAY_RESOLUTIONCHANGE);
 			goto fail;
-		} else if(CC_UNLIKELY(displayData->width > maxX ||
-													displayData->height > maxY)) {
+		} else if(CC_UNLIKELY(displayData->width > maxX || displayData->height > maxY)) {
 			XRRFreeOutputInfo(outputInfo);
 			XRRFreeCrtcInfo(crtcInfo);
-			ccPrintf("X: Unable to set size of screen above the maximum of %dx%d\n",
-							 maxX,
-							 maxY);
+			ccPrintf("X: Unable to set size of screen above the maximum of %dx%d\n", maxX, maxY);
 			ccErrorPush(CC_ERROR_DISPLAY_RESOLUTIONCHANGE);
 			goto fail;
 		}
 
-		XRRSetCrtcConfig(XDisplay,
-										 resources,
-										 outputInfo->crtc,
-										 CurrentTime,
-										 crtcInfo->x,
-										 crtcInfo->y,
-										 ((ccDisplayData_x11 *)displayData->data)->XMode,
-										 crtcInfo->rotation,
-										 &DISPLAY_DATA(display)->XOutput,
-										 1);
+		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, ((ccDisplayData_x11 *)displayData->data)->XMode, crtcInfo->rotation, &DISPLAY_DATA(display)->XOutput, 1);
 	} else {
-		XRRSetCrtcConfig(XDisplay,
-										 resources,
-										 outputInfo->crtc,
-										 CurrentTime,
-										 crtcInfo->x,
-										 crtcInfo->y,
-										 DISPLAY_DATA(display)->XOldMode,
-										 crtcInfo->rotation,
-										 &DISPLAY_DATA(display)->XOutput,
-										 1);
+		XRRSetCrtcConfig(XDisplay, resources, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, DISPLAY_DATA(display)->XOldMode, crtcInfo->rotation, &DISPLAY_DATA(display)->XOutput, 1);
 	}
 
 	XRRFreeScreenResources(resources);

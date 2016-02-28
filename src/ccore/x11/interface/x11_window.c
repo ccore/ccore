@@ -25,11 +25,7 @@ static ccReturn setWindowState(const char *type, bool value)
 	event.xclient.data.l[0] = value;
 	event.xclient.data.l[1] = newWmState;
 
-	XSendEvent(XWINDATA->XDisplay,
-						 DefaultRootWindow(XWINDATA->XDisplay),
-						 false,
-						 SubstructureNotifyMask,
-						 &event);
+	XSendEvent(XWINDATA->XDisplay, DefaultRootWindow(XWINDATA->XDisplay), false, SubstructureNotifyMask, &event);
 
 	return CC_SUCCESS;
 }
@@ -68,18 +64,13 @@ static ccReturn setResizable(bool resizable)
 static ccReturn checkRawSupport()
 {
 	int event, error;
-	if(CC_UNLIKELY(!XQueryExtension(XWINDATA->XDisplay,
-																	"XInputExtension",
-																	&XWINDATA->XInputOpcode,
-																	&event,
-																	&error))) {
+	if(CC_UNLIKELY(!XQueryExtension(XWINDATA->XDisplay, "XInputExtension", &XWINDATA->XInputOpcode, &event, &error))) {
 		return CC_FAIL;
 	}
 
 	int mayor = 2;
 	int minor = 0;
-	if(CC_UNLIKELY(XIQueryVersion(XWINDATA->XDisplay, &mayor, &minor) ==
-								 BadRequest)) {
+	if(CC_UNLIKELY(XIQueryVersion(XWINDATA->XDisplay, &mayor, &minor) == BadRequest)) {
 		return CC_FAIL;
 	}
 
@@ -88,8 +79,7 @@ static ccReturn checkRawSupport()
 
 static ccReturn initRawSupport()
 {
-	XIEventMask mask = {.deviceid = XIAllMasterDevices,
-											.mask_len = XIMaskLen(XI_RawMotion)};
+	XIEventMask mask = {.deviceid = XIAllMasterDevices, .mask_len = XIMaskLen(XI_RawMotion)};
 	ccCalloc(mask.mask, mask.mask_len, sizeof(char));
 
 	XISetMask(mask.mask, XI_Enter);
@@ -109,8 +99,7 @@ static ccReturn initRawSupport()
 	XISetMask(mask.mask, XI_RawKeyPress);
 	XISetMask(mask.mask, XI_RawKeyRelease);
 
-	XISelectEvents(
-			XWINDATA->XDisplay, DefaultRootWindow(XWINDATA->XDisplay), &mask, 1);
+	XISelectEvents( XWINDATA->XDisplay, DefaultRootWindow(XWINDATA->XDisplay), &mask, 1);
 
 	free(mask.mask);
 
@@ -141,8 +130,7 @@ static ccPoint getRawMouseMovement(XIRawEvent *event)
 
 static inline unsigned int getRawKeyboardCode(XIRawEvent *event)
 {
-	return XGetKeyboardMapping(
-			XWINDATA->XDisplay, event->detail, 1, (int[]){1})[0];
+	return XGetKeyboardMapping( XWINDATA->XDisplay, event->detail, 1, (int[]){1})[0];
 }
 
 static int (*origXError)(Display *, XErrorEvent *);
@@ -157,26 +145,12 @@ static int handleXError(Display *display, XErrorEvent *event)
 	return 0;
 }
 
-static unsigned long getWindowProperty(Window window,
-																			 Atom property,
-																			 Atom type,
-																			 unsigned char **value)
+static unsigned long getWindowProperty(Window window, Atom property, Atom type, unsigned char **value)
 {
 	Atom actualType;
 	int actualFormat;
 	unsigned long length, overflow;
-	XGetWindowProperty(XWINDATA->XDisplay,
-										 window,
-										 property,
-										 0,
-										 LONG_MAX,
-										 False,
-										 type,
-										 &actualType,
-										 &actualFormat,
-										 &length,
-										 &overflow,
-										 value);
+	XGetWindowProperty(XWINDATA->XDisplay, window, property, 0, LONG_MAX, False, type, &actualType, &actualFormat, &length, &overflow, value);
 
 	if(type != AnyPropertyType && type != actualType) {
 		return 0;
@@ -187,13 +161,8 @@ static unsigned long getWindowProperty(Window window,
 
 static bool handleSelectionRequest(XSelectionRequestEvent *request)
 {
-	const Atom formats[] = {
-			XWINDATA->UTF8_STRING, XWINDATA->COMPOUND_STRING, XA_STRING};
-	const Atom targets[] = {XWINDATA->TARGETS,
-													XWINDATA->MULTIPLE,
-													XWINDATA->UTF8_STRING,
-													XWINDATA->COMPOUND_STRING,
-													XA_STRING};
+	const Atom formats[] = {XWINDATA->UTF8_STRING, XWINDATA->COMPOUND_STRING, XA_STRING};
+	const Atom targets[] = {XWINDATA->TARGETS, XWINDATA->MULTIPLE, XWINDATA->UTF8_STRING, XWINDATA->COMPOUND_STRING, XA_STRING};
 	const int formatCount = sizeof(formats) / sizeof(formats[0]);
 
 	if(request->property == None) {
@@ -201,27 +170,14 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 		return false;
 	}
 
-	XSelectionEvent event = {.type = SelectionNotify,
-													 .selection = request->selection,
-													 .target = request->target,
-													 .display = request->display,
-													 .requestor = request->requestor,
-													 .time = request->time};
+	XSelectionEvent event = {.type = SelectionNotify, .selection = request->selection, .target = request->target, .display = request->display, .requestor = request->requestor, .time = request->time};
 	if(request->target == XWINDATA->TARGETS) {
-		XChangeProperty(XWINDATA->XDisplay,
-										request->requestor,
-										request->property,
-										XA_ATOM,
-										32,
-										PropModeReplace,
-										(unsigned char *)targets,
-										sizeof(targets) / sizeof(targets[0]));
+		XChangeProperty(XWINDATA->XDisplay, request->requestor, request->property, XA_ATOM, 32, PropModeReplace, (unsigned char *)targets, sizeof(targets) / sizeof(targets[0]));
 
 		event.property = request->property;
 	} else if(request->target == XWINDATA->MULTIPLE) {
 		// TODO implement this and save target
-		ccPrintf(
-				"X handleSelectionRequest: multiple targets not implemented yet!\n");
+		ccPrintf( "X handleSelectionRequest: multiple targets not implemented yet!\n");
 
 		event.property = None;
 	} else {
@@ -229,14 +185,7 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 		int i;
 		for(i = 0; i < formatCount; i++) {
 			if(request->target == formats[i]) {
-				XChangeProperty(XWINDATA->XDisplay,
-												request->requestor,
-												request->property,
-												request->target,
-												8,
-												PropModeReplace,
-												(unsigned char *)XWINDATA->XClipString,
-												XWINDATA->XClipStringLength);
+				XChangeProperty(XWINDATA->XDisplay, request->requestor, request->property, request->target, 8, PropModeReplace, (unsigned char *)XWINDATA->XClipString, XWINDATA->XClipStringLength);
 
 				event.property = request->property;
 				break;
@@ -244,8 +193,7 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 		}
 	}
 
-	XSendEvent(
-			XWINDATA->XDisplay, request->requestor, False, 0, (XEvent *)&event);
+	XSendEvent(XWINDATA->XDisplay, request->requestor, False, 0, (XEvent *)&event);
 
 	return true;
 }
@@ -275,45 +223,24 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 
 	XWINDATA->XScreen = DefaultScreen(XWINDATA->XDisplay);
 
-	Atom WM_WINDOW_TYPE =
-			XInternAtom(XWINDATA->XDisplay, "_NET_WM_WINDOW_TYPE", False);
-	Atom WM_WINDOW_TYPE_DIALOG =
-			XInternAtom(XWINDATA->XDisplay, "_NET_WM_WINDOW_TYPE_DOCK", False);
+	Atom WM_WINDOW_TYPE = XInternAtom(XWINDATA->XDisplay, "_NET_WM_WINDOW_TYPE", False);
+	Atom WM_WINDOW_TYPE_DIALOG = XInternAtom(XWINDATA->XDisplay, "_NET_WM_WINDOW_TYPE_DOCK", False);
 	XWINDATA->WM_ICON = XInternAtom(XWINDATA->XDisplay, "_NET_WM_ICON", False);
 	XWINDATA->WM_NAME = XInternAtom(XWINDATA->XDisplay, "_NET_WM_NAME", False);
-	XWINDATA->WM_ICON_NAME =
-			XInternAtom(XWINDATA->XDisplay, "_NET_WM_ICON_NAME", False);
+	XWINDATA->WM_ICON_NAME = XInternAtom(XWINDATA->XDisplay, "_NET_WM_ICON_NAME", False);
 	XWINDATA->CLIPBOARD = XInternAtom(XWINDATA->XDisplay, "CLIPBOARD", False);
 	XWINDATA->INCR = XInternAtom(XWINDATA->XDisplay, "INCR", False);
 	XWINDATA->TARGETS = XInternAtom(XWINDATA->XDisplay, "TARGETS", False);
 	XWINDATA->MULTIPLE = XInternAtom(XWINDATA->XDisplay, "MULTIPLE", False);
 	XWINDATA->UTF8_STRING = XInternAtom(XWINDATA->XDisplay, "UTF8_STRING", False);
-	XWINDATA->COMPOUND_STRING =
-			XInternAtom(XWINDATA->XDisplay, "COMPOUND_STRING", False);
-	XWINDATA->CCORE_SELECTION =
-			XInternAtom(XWINDATA->XDisplay, "CCORE_SELECTION", False);
+	XWINDATA->COMPOUND_STRING = XInternAtom(XWINDATA->XDisplay, "COMPOUND_STRING", False);
+	XWINDATA->CCORE_SELECTION = XInternAtom(XWINDATA->XDisplay, "CCORE_SELECTION", False);
 	Atom DELETE = XInternAtom(XWINDATA->XDisplay, "WM_DELETE_WINDOW", True);
 
-	XWINDATA->XWindow =
-			XCreateWindow(XWINDATA->XDisplay,
-										RootWindow(XWINDATA->XDisplay, XWINDATA->XScreen),
-										rect.x,
-										rect.y,
-										rect.width,
-										rect.height,
-										0,
-										CopyFromParent,
-										InputOutput,
-										CopyFromParent,
-										0,
-										0);
+	XWINDATA->XWindow = XCreateWindow(XWINDATA->XDisplay, RootWindow(XWINDATA->XDisplay, XWINDATA->XScreen), rect.x, rect.y, rect.width, rect.height, 0, CopyFromParent, InputOutput, CopyFromParent, 0, 0);
 
 	// Choose types of events
-	XSelectInput(XWINDATA->XDisplay,
-							 XWINDATA->XWindow,
-							 PropertyChangeMask | ExposureMask | ButtonPressMask |
-									 ButtonReleaseMask | StructureNotifyMask | PointerMotionMask |
-									 KeyPressMask | KeyReleaseMask | FocusChangeMask);
+	XSelectInput(XWINDATA->XDisplay, XWINDATA->XWindow, PropertyChangeMask | ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask | FocusChangeMask);
 
 	// Disable resizing
 	XWINDATA->resizable = true;
@@ -322,14 +249,7 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	}
 
 	if(flags & CC_WINDOW_FLAG_NOBUTTONS) {
-		XChangeProperty(XWINDATA->XDisplay,
-										XWINDATA->XWindow,
-										WM_WINDOW_TYPE,
-										XA_ATOM,
-										32,
-										PropModeReplace,
-										(unsigned char *)&WM_WINDOW_TYPE_DIALOG,
-										1);
+		XChangeProperty(XWINDATA->XDisplay, XWINDATA->XWindow, WM_WINDOW_TYPE, XA_ATOM, 32, PropModeReplace, (unsigned char *)&WM_WINDOW_TYPE_DIALOG, 1);
 	}
 
 	XMapWindow(XWINDATA->XDisplay, XWINDATA->XWindow);
@@ -355,8 +275,7 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 
 	_ccWindow->mouse.x = _ccWindow->mouse.y = 0;
 	XWINDATA->XCursor = 0;
-	XWINDATA->XEmptyCursorImage = XCreateBitmapFromData(
-			XWINDATA->XDisplay, XWINDATA->XWindow, emptyCursorData, 8, 8);
+	XWINDATA->XEmptyCursorImage = XCreateBitmapFromData(XWINDATA->XDisplay, XWINDATA->XWindow, emptyCursorData, 8, 8);
 	XWINDATA->XClipString = NULL;
 	XWINDATA->XContext = NULL;
 	XWINDATA->XClipStringLength = 0;
@@ -414,9 +333,7 @@ bool ccWindowEventPoll(void)
 			}
 
 			XGenericEventCookie *cookie = &event.xcookie;
-			if(!XGetEventData(XWINDATA->XDisplay, cookie) ||
-				 cookie->type != GenericEvent ||
-				 cookie->extension != XWINDATA->XInputOpcode) {
+			if(!XGetEventData(XWINDATA->XDisplay, cookie) || cookie->type != GenericEvent || cookie->extension != XWINDATA->XInputOpcode) {
 				return false;
 			}
 
@@ -471,8 +388,7 @@ bool ccWindowEventPoll(void)
 				_ccWindow->event.mouseDelta.x = _ccWindow->mouse.x - event.xmotion.x;
 				_ccWindow->event.mouseDelta.y = _ccWindow->mouse.y - event.xmotion.y;
 			}
-			if(CC_LIKELY(_ccWindow->mouse.x != event.xmotion.x ||
-									 _ccWindow->mouse.y != event.xmotion.y)) {
+			if(CC_LIKELY(_ccWindow->mouse.x != event.xmotion.x || _ccWindow->mouse.y != event.xmotion.y)) {
 				_ccWindow->event.type = CC_EVENT_MOUSE_MOVE;
 				_ccWindow->mouse.x = event.xmotion.x;
 				_ccWindow->mouse.y = event.xmotion.y;
@@ -490,15 +406,13 @@ bool ccWindowEventPoll(void)
 			_ccWindow->event.keyCode = XLookupKeysym(&event.xkey, 0);
 			break;
 		case ConfigureNotify:
-			if(_ccWindow->rect.width != event.xconfigure.width ||
-				 _ccWindow->rect.height != event.xconfigure.height) {
+			if(_ccWindow->rect.width != event.xconfigure.width || _ccWindow->rect.height != event.xconfigure.height) {
 				_ccWindow->event.type = CC_EVENT_WINDOW_RESIZE;
 				_ccWindow->rect.width = event.xconfigure.width;
 				_ccWindow->rect.height = event.xconfigure.height;
 
 				XWindowAttributes _ccWindowAttributes;
-				XGetWindowAttributes(
-						XWINDATA->XDisplay, XWINDATA->XWindow, &_ccWindowAttributes);
+				XGetWindowAttributes(XWINDATA->XDisplay, XWINDATA->XWindow, &_ccWindowAttributes);
 
 				_ccWindow->rect.x = _ccWindowAttributes.x;
 				_ccWindow->rect.y = _ccWindowAttributes.y;
@@ -510,8 +424,7 @@ bool ccWindowEventPoll(void)
 				}
 			}
 
-			if(_ccWindow->rect.x != event.xconfigure.x ||
-				 _ccWindow->rect.y != event.xconfigure.y) {
+			if(_ccWindow->rect.x != event.xconfigure.x || _ccWindow->rect.y != event.xconfigure.y) {
 				_ccWindow->rect.x = event.xconfigure.x;
 				_ccWindow->rect.y = event.xconfigure.y;
 
@@ -578,14 +491,12 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 
 	ccDisplay *current, *topDisplay, *bottomDisplay, *leftDisplay, *rightDisplay;
 	if(CC_LIKELY(displayCount == CC_FULLSCREEN_CURRENT_DISPLAY)) {
-		ccDisplay *topDisplay = bottomDisplay = leftDisplay = rightDisplay =
-				_ccWindow->display;
+		ccDisplay *topDisplay = bottomDisplay = leftDisplay = rightDisplay = _ccWindow->display;
 	} else {
 		va_list displays;
 		va_start(displays, displayCount);
 
-		topDisplay = bottomDisplay = leftDisplay = rightDisplay =
-				va_arg(displays, ccDisplay *);
+		topDisplay = bottomDisplay = leftDisplay = rightDisplay = va_arg(displays, ccDisplay *);
 
 		int i;
 		for(i = 1; i < displayCount; i++) {
@@ -597,13 +508,10 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 			if(current->y < topDisplay->y) {
 				topDisplay = current;
 			}
-			if(current->x + ccDisplayResolutionGetCurrent(current)->width >
-				 rightDisplay->x + ccDisplayResolutionGetCurrent(rightDisplay)->width) {
+			if(current->x + ccDisplayResolutionGetCurrent(current)->width > rightDisplay->x + ccDisplayResolutionGetCurrent(rightDisplay)->width) {
 				rightDisplay = current;
 			}
-			if(current->y + ccDisplayResolutionGetCurrent(current)->height >
-				 bottomDisplay->y +
-						 ccDisplayResolutionGetCurrent(bottomDisplay)->width) {
+			if(current->y + ccDisplayResolutionGetCurrent(current)->height > bottomDisplay->y + ccDisplayResolutionGetCurrent(bottomDisplay)->width) {
 				bottomDisplay = current;
 			}
 		}
@@ -611,8 +519,7 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 		va_end(displays);
 	}
 
-	Atom atom =
-			XInternAtom(XWINDATA->XDisplay, "_NET_WM_FULLSCREEN_MONITORS", False);
+	Atom atom = XInternAtom(XWINDATA->XDisplay, "_NET_WM_FULLSCREEN_MONITORS", False);
 
 	XEvent event = {0};
 	event.type = ClientMessage;
@@ -625,11 +532,7 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 	event.xclient.data.l[3] = DISPLAY_DATA(rightDisplay)->XineramaScreen;
 	event.xclient.data.l[4] = 0;
 
-	XSendEvent(XWINDATA->XDisplay,
-						 DefaultRootWindow(XWINDATA->XDisplay),
-						 false,
-						 SubstructureNotifyMask,
-						 &event);
+	XSendEvent(XWINDATA->XDisplay, DefaultRootWindow(XWINDATA->XDisplay), false, SubstructureNotifyMask, &event);
 
 	setResizable(true);
 	setWindowState("_NET_WM_STATE_FULLSCREEN", true);
@@ -643,12 +546,7 @@ ccReturn ccWindowResizeMove(ccRect rect)
 	ccAssert(rect.width > 0 && rect.height > 0);
 
 	setResizable(true);
-	XMoveResizeWindow(XWINDATA->XDisplay,
-										XWINDATA->XWindow,
-										rect.x,
-										rect.y,
-										rect.width,
-										rect.height);
+	XMoveResizeWindow(XWINDATA->XDisplay, XWINDATA->XWindow, rect.x, rect.y, rect.width, rect.height);
 
 	_ccWindow->rect = rect;
 	if(XWINDATA->windowFlags & CC_WINDOW_FLAG_NORESIZE) {
@@ -668,14 +566,9 @@ ccReturn ccWindowSetCentered(void)
 		return CC_FAIL;
 	}
 
-	ccDisplayData *currentResolution =
-			ccDisplayResolutionGetCurrent(_ccWindow->display);
+	ccDisplayData *currentResolution = ccDisplayResolutionGetCurrent(_ccWindow->display);
 
-	ccRect newRect = {
-			.x = (currentResolution->width - _ccWindow->rect.width) >> 1,
-			.y = (currentResolution->height - _ccWindow->rect.height) >> 1,
-			.width = _ccWindow->rect.width,
-			.height = _ccWindow->rect.height};
+	ccRect newRect = { .x = (currentResolution->width - _ccWindow->rect.width) >> 1, .y = (currentResolution->height - _ccWindow->rect.height) >> 1, .width = _ccWindow->rect.width, .height = _ccWindow->rect.height};
 
 	ccWindowResizeMove(newRect);
 
@@ -700,12 +593,8 @@ ccReturn ccWindowSetTitle(const char *title)
 	}
 	free(titleCopy);
 
-	XSetTextProperty(
-			XWINDATA->XDisplay, XWINDATA->XWindow, &titleProperty, XWINDATA->WM_NAME);
-	XSetTextProperty(XWINDATA->XDisplay,
-									 XWINDATA->XWindow,
-									 &titleProperty,
-									 XWINDATA->WM_ICON_NAME);
+	XSetTextProperty( XWINDATA->XDisplay, XWINDATA->XWindow, &titleProperty, XWINDATA->WM_NAME);
+	XSetTextProperty(XWINDATA->XDisplay, XWINDATA->XWindow, &titleProperty, XWINDATA->WM_ICON_NAME);
 	XSetWMName(XWINDATA->XDisplay, XWINDATA->XWindow, &titleProperty);
 	XSetWMIconName(XWINDATA->XDisplay, XWINDATA->XWindow, &titleProperty);
 	XFree(titleProperty.value);
@@ -731,14 +620,7 @@ ccReturn ccWindowIconSet(ccPoint size, unsigned long *icon)
 	data[1] = (unsigned long)size.y;
 	memcpy(data + 2, icon, dataLen * sizeof(unsigned long));
 
-	XChangeProperty(XWINDATA->XDisplay,
-									XWINDATA->XWindow,
-									XWINDATA->WM_ICON,
-									XA_CARDINAL,
-									32,
-									PropModeReplace,
-									(unsigned char *)data,
-									totalLen);
+	XChangeProperty(XWINDATA->XDisplay, XWINDATA->XWindow, XWINDATA->WM_ICON, XA_CARDINAL, 32, PropModeReplace, (unsigned char *)data, totalLen);
 
 	free(data);
 
@@ -749,15 +631,7 @@ ccReturn ccWindowMouseSetPosition(ccPoint target)
 {
 	ccAssert(_ccWindow);
 
-	XWarpPointer(XWINDATA->XDisplay,
-							 None,
-							 XWINDATA->XWindow,
-							 0,
-							 0,
-							 0,
-							 0,
-							 target.x,
-							 target.y);
+	XWarpPointer(XWINDATA->XDisplay, None, XWINDATA->XWindow, 0, 0, 0, 0, target.x, target.y);
 
 	return CC_SUCCESS;
 }
@@ -771,20 +645,13 @@ ccReturn ccWindowMouseSetCursor(ccCursor cursor)
 	}
 
 	if(cursor != CC_CURSOR_NONE) {
-		XWINDATA->XCursor =
-				XCreateFontCursor(XWINDATA->XDisplay, cursorList[cursor]);
+		XWINDATA->XCursor = XCreateFontCursor(XWINDATA->XDisplay, cursorList[cursor]);
 		if(!XWINDATA->XCursor) {
 			ccErrorPush(CC_ERROR_WINDOW_CURSOR);
 		}
 	} else {
 		XColor black = {0};
-		XWINDATA->XCursor = XCreatePixmapCursor(XWINDATA->XDisplay,
-																						XWINDATA->XEmptyCursorImage,
-																						XWINDATA->XEmptyCursorImage,
-																						&black,
-																						&black,
-																						0,
-																						0);
+		XWINDATA->XCursor = XCreatePixmapCursor(XWINDATA->XDisplay, XWINDATA->XEmptyCursorImage, XWINDATA->XEmptyCursorImage, &black, &black, 0, 0);
 	}
 
 	XDefineCursor(XWINDATA->XDisplay, XWINDATA->XWindow, XWINDATA->XCursor);
@@ -800,13 +667,8 @@ ccReturn ccWindowClipboardSet(const char *text)
 		return CC_FAIL;
 	}
 
-	if(XWINDATA->CLIPBOARD != None &&
-		 XGetSelectionOwner(XWINDATA->XDisplay, XWINDATA->CLIPBOARD) !=
-				 XWINDATA->XWindow) {
-		XSetSelectionOwner(XWINDATA->XDisplay,
-											 XWINDATA->CLIPBOARD,
-											 XWINDATA->XWindow,
-											 CurrentTime);
+	if(XWINDATA->CLIPBOARD != None && XGetSelectionOwner(XWINDATA->XDisplay, XWINDATA->CLIPBOARD) != XWINDATA->XWindow) {
+		XSetSelectionOwner(XWINDATA->XDisplay, XWINDATA->CLIPBOARD, XWINDATA->XWindow, CurrentTime);
 	}
 
 	XWINDATA->XClipStringLength = strlen(text);
@@ -822,8 +684,7 @@ ccReturn ccWindowClipboardSet(const char *text)
 
 char *ccWindowClipboardGet()
 {
-	const Atom formats[] = {
-			XA_STRING, XWINDATA->UTF8_STRING, XWINDATA->COMPOUND_STRING};
+	const Atom formats[] = { XA_STRING, XWINDATA->UTF8_STRING, XWINDATA->COMPOUND_STRING};
 	const int formatCount = sizeof(formats) / sizeof(formats[0]);
 
 	ccAssert(_ccWindow);
@@ -837,27 +698,16 @@ char *ccWindowClipboardGet()
 
 	int i;
 	for(i = 0; i < formatCount; i++) {
-		XConvertSelection(XWINDATA->XDisplay,
-											XWINDATA->CLIPBOARD,
-											formats[i],
-											XWINDATA->CCORE_SELECTION,
-											XWINDATA->XWindow,
-											CurrentTime);
-
+		XConvertSelection(XWINDATA->XDisplay, XWINDATA->CLIPBOARD, formats[i], XWINDATA->CCORE_SELECTION, XWINDATA->XWindow, CurrentTime); 
 		XEvent event;
-		while(XCheckTypedEvent(XWINDATA->XDisplay, SelectionNotify, &event) ||
-					event.xselection.requestor != XWINDATA->XWindow)
-			;
+		while(XCheckTypedEvent(XWINDATA->XDisplay, SelectionNotify, &event) || event.xselection.requestor != XWINDATA->XWindow);
 
 		if(event.xselection.property == None) {
 			continue;
 		}
 
 		unsigned char *data;
-		unsigned long length = getWindowProperty(event.xselection.requestor,
-																						 event.xselection.property,
-																						 event.xselection.target,
-																						 &data);
+		unsigned long length = getWindowProperty(event.xselection.requestor, event.xselection.property, event.xselection.target, &data);
 
 		if(length == 0) {
 			XFree(data);
