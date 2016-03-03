@@ -29,7 +29,8 @@ extern "C"
 #endif
 
 typedef enum {
-	CC_TEXT_INPUT = 0,
+	CC_TEXT_UNHANDLED = 0,
+	CC_TEXT_INPUT,
 	CC_TEXT_EDITTING
 } ccTextEventType;
 

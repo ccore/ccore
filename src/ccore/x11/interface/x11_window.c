@@ -133,7 +133,7 @@ static inline unsigned int getRawKeyboardCode(XIRawEvent *event)
 	return XGetKeyboardMapping( XWINDATA->XDisplay, event->detail, 1, (int[]){1})[0];
 }
 
-static int (*origXError)(Display *, XErrorEvent *);
+static int (*origXError)(Display*, XErrorEvent*);
 static int handleXError(Display *display, XErrorEvent *event)
 {
 	ccErrorPush(CC_ERROR_WM);
@@ -172,7 +172,7 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 
 	XSelectionEvent event = {.type = SelectionNotify, .selection = request->selection, .target = request->target, .display = request->display, .requestor = request->requestor, .time = request->time};
 	if(request->target == XWINDATA->TARGETS) {
-		XChangeProperty(XWINDATA->XDisplay, request->requestor, request->property, XA_ATOM, 32, PropModeReplace, (unsigned char *)targets, sizeof(targets) / sizeof(targets[0]));
+		XChangeProperty(XWINDATA->XDisplay, request->requestor, request->property, XA_ATOM, 32, PropModeReplace, (unsigned char*)targets, sizeof(targets) / sizeof(targets[0]));
 
 		event.property = request->property;
 	} else if(request->target == XWINDATA->MULTIPLE) {
@@ -185,7 +185,7 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 		int i;
 		for(i = 0; i < formatCount; i++) {
 			if(request->target == formats[i]) {
-				XChangeProperty(XWINDATA->XDisplay, request->requestor, request->property, request->target, 8, PropModeReplace, (unsigned char *)XWINDATA->XClipString, XWINDATA->XClipStringLength);
+				XChangeProperty(XWINDATA->XDisplay, request->requestor, request->property, request->target, 8, PropModeReplace, (unsigned char*)XWINDATA->XClipString, XWINDATA->XClipStringLength);
 
 				event.property = request->property;
 				break;
@@ -193,7 +193,7 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 		}
 	}
 
-	XSendEvent(XWINDATA->XDisplay, request->requestor, False, 0, (XEvent *)&event);
+	XSendEvent(XWINDATA->XDisplay, request->requestor, False, 0, (XEvent*)&event);
 
 	return true;
 }
@@ -249,7 +249,7 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	}
 
 	if(flags & CC_WINDOW_FLAG_NOBUTTONS) {
-		XChangeProperty(XWINDATA->XDisplay, XWINDATA->XWindow, WM_WINDOW_TYPE, XA_ATOM, 32, PropModeReplace, (unsigned char *)&WM_WINDOW_TYPE_DIALOG, 1);
+		XChangeProperty(XWINDATA->XDisplay, XWINDATA->XWindow, WM_WINDOW_TYPE, XA_ATOM, 32, PropModeReplace, (unsigned char*)&WM_WINDOW_TYPE_DIALOG, 1);
 	}
 
 	XMapWindow(XWINDATA->XDisplay, XWINDATA->XWindow);
@@ -326,6 +326,14 @@ bool ccWindowEventPoll(void)
 
 	XEvent event;
 	XNextEvent(XWINDATA->XDisplay, &event);
+#if defined CC_USE_ALL || defined CC_USE_TEXT
+	ccTextEvent te = ccTextEventHandle(event);
+	if(te.type != CC_TEXT_UNHANDLED){
+		_ccWindow->event.type = CC_EVENT_TEXT;
+		_ccWindow->event.textEvent = te;
+		return true;
+	}
+#endif
 	switch(event.type) {
 		case GenericEvent:
 			if(CC_UNLIKELY(!_ccWindow->supportsRawInput)) {
@@ -344,11 +352,11 @@ bool ccWindowEventPoll(void)
 					break;
 				case XI_RawButtonPress:
 					_ccWindow->event.type = CC_EVENT_MOUSE_DOWN;
-					_ccWindow->event.mouseButton = ((XIRawEvent *)cookie->data)->detail;
+					_ccWindow->event.mouseButton = ((XIRawEvent*)cookie->data)->detail;
 					break;
 				case XI_RawButtonRelease:
 					_ccWindow->event.type = CC_EVENT_MOUSE_UP;
-					_ccWindow->event.mouseButton = ((XIRawEvent *)cookie->data)->detail;
+					_ccWindow->event.mouseButton = ((XIRawEvent*)cookie->data)->detail;
 					break;
 				case XI_RawKeyPress:
 					_ccWindow->event.type = CC_EVENT_KEY_DOWN;
@@ -496,11 +504,11 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 		va_list displays;
 		va_start(displays, displayCount);
 
-		topDisplay = bottomDisplay = leftDisplay = rightDisplay = va_arg(displays, ccDisplay *);
+		topDisplay = bottomDisplay = leftDisplay = rightDisplay = va_arg(displays, ccDisplay*);
 
 		int i;
 		for(i = 1; i < displayCount; i++) {
-			current = va_arg(displays, ccDisplay *);
+			current = va_arg(displays, ccDisplay*);
 
 			if(current->x < leftDisplay->x) {
 				leftDisplay = current;
@@ -620,7 +628,7 @@ ccReturn ccWindowIconSet(ccPoint size, unsigned long *icon)
 	data[1] = (unsigned long)size.y;
 	memcpy(data + 2, icon, dataLen * sizeof(unsigned long));
 
-	XChangeProperty(XWINDATA->XDisplay, XWINDATA->XWindow, XWINDATA->WM_ICON, XA_CARDINAL, 32, PropModeReplace, (unsigned char *)data, totalLen);
+	XChangeProperty(XWINDATA->XDisplay, XWINDATA->XWindow, XWINDATA->WM_ICON, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)data, totalLen);
 
 	free(data);
 

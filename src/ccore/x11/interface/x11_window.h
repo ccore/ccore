@@ -30,6 +30,7 @@
 #endif
 
 #include "x11_display.h"
+#include "x11_text.h"
 
 typedef struct {
 	Display *XDisplay;
