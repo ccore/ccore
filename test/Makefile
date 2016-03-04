@@ -4,7 +4,7 @@ SOURCEDIR=.
 
 RM=rm -f
 CFLAGS=-I$(INCDIR) -g -Wall -D_DEBUG -DCC_USE_ALL 
-LDLIBS=-lGL -lGLU -lGLEW -lm -lX11 -lXrandr -lXinerama -lXi -lpthread $(LIBFILE)
+LDLIBS=$(LIBFILE) -lGL -lGLU -lGLEW -lm -lX11 -lXrandr -lXinerama -lXi -lpthread
 
 SRCS=$(shell find $(SOURCEDIR) -name '*.c')
 OBJS=$(subst .c,.o,$(SRCS))
