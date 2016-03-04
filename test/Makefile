@@ -14,7 +14,10 @@ all: $(NAME)
 .PHONY: $(NAME)
 $(NAME): $(OBJS) .depend
 	$(CC) $(LDFLAGS) -o $(NAME) $(OBJS) $(LDLIBS)
-	#./$(NAME)
+
+.PHONY: run
+run: $(NAME)
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDIR) ./$(NAME)
 
 .PHONY: clean
 clean:
@@ -22,7 +25,7 @@ clean:
 
 .PHONY: dist-clean
 dist-clean: clean
-	$(RM) *~ .depend
+	$(RM) ./.depend
 
 .depend: $(SRCS)
 	$(RM) ./.depend

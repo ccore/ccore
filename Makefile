@@ -9,6 +9,7 @@ LIBDIR=lib
 INCDIR=include
 TESTDIR=test
 
+CC=gcc
 CFLAGS:=-I$(INCDIR) -g -fPIC -O3 -DCC_USE_ALL
 LDLIBS=-lGL -lX11 -lXrandr -lXinerama -lXi -lpthread
 SRCS:=$(filter-out $(wildcard ./$(SOURCEDIR)/windows/*/*.c), $(wildcard ./$(SOURCEDIR)/*/*/*.c))
@@ -42,7 +43,11 @@ $(DLIBFILE).$(VERSIONMAYOR) $(DLIBFILE): $(OBJS)
 
 .PHONY: test
 test: $(SLIBFILE)
-	@(cd $(TESTDIR); $(MAKE) INCDIR="$(MAKEFILEDIR)$(INCDIR)" LIBFILE="$(MAKEFILEDIR)$(SLIBFILE)" LIBNAME="$(NAME)")
+	@(cd $(TESTDIR); $(MAKE) INCDIR="$(MAKEFILEDIR)$(INCDIR)" LIBFILE="$(MAKEFILEDIR)$(SLIBFILE)" LIBNAME="$(NAME)" CC="$(CC)")
+
+.PHONY: testrun
+testrun:
+	@(cd $(TESTDIR); $(MAKE) run INCDIR="$(MAKEFILEDIR)$(INCDIR)" LIBFILE="$(MAKEFILEDIR)$(SLIBFILE)" LIBNAME="$(NAME)" CC="$(CC)")
 
 .PHONY: clean
 clean:
