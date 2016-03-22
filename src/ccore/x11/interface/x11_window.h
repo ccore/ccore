@@ -13,7 +13,6 @@
 #include <X11/extensions/XInput2.h>
 
 #include <ccore/opengl.h>
-#include <GL/gl.h>
 #include <GL/glx.h>
 
 #include <ccore/window.h>
