@@ -2,16 +2,21 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([README.md])
-AM_INIT_AUTOMAKE([ccore], [0.1])
+AC_INIT([ccore], [0.1])
 
-AC_CONFIG_HEADER([include/core.h])
+AC_CONFIG_HEADER([include/ccore/config.h])
 AC_CONFIG_SRCDIR([src/ccore/common/interface/com_display.c])
+AC_CONFIG_FILES([Makefile])
+
+AM_INIT_AUTOMAKE([foreign subdir-objects -Wall -Werror])
+
+AM_PROG_AR
 
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
+AC_PROG_RANLIB
 
 # Checks for libraries.
 AC_CHECK_LIB([m], [cos], [], [echo "Math library is required" && exit -1])
