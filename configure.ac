@@ -4,10 +4,6 @@
 AC_PREREQ([2.69])
 AC_INIT([ccore], [0.1])
 
-AC_CONFIG_HEADER([include/ccore/config.h])
-AC_CONFIG_SRCDIR([src/ccore/common/interface/com_display.c])
-AC_CONFIG_FILES([Makefile])
-
 AM_INIT_AUTOMAKE([foreign subdir-objects -Wall -Werror])
 
 AM_PROG_AR
@@ -21,10 +17,6 @@ AC_PROG_RANLIB
 # Checks for libraries.
 AC_CHECK_LIB([m], [cos], [], [echo "Math library is required" && exit -1])
 AC_CHECK_LIB([GL], [glXChooseVisual], [], [echo "OpenGL dev library is required" && exit -1])
-AC_CHECK_LIB([X11], [XOpenDisplay], [], [echo "X11 dev library is required" && exit -1])
-AC_CHECK_LIB([Xrandr], [XRRGetScreenResources], [], [echo "XRandr dev library is required" && exit -1])
-AC_CHECK_LIB([Xinerama], [XineramaQueryExtension], [], [echo "Xinerama dev library is required" && exit -1])
-AC_CHECK_LIB([Xi], [XISelectEvents], [], [echo "XInput dev library is required" && exit -1])
 AC_CHECK_LIB([pthread], [pthread_create], [], [echo "Pthread dev library is required" && exit -1])
 
 # Checks for header files.
@@ -46,28 +38,66 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([clock_gettime memset select strdup sysinfo])
 
-AC_ARG_ENABLE(gamepad, AC_HELP_STRING([--enable-gamepad], [Enable the gamepad module [[default=yes]]]),, enable_gamepad=yes)
-if test x$enable_gamepad == xyes; then
-    SUMMARY_modules="${SUMMARY_modules} gamepad"
-    AC_DEFINE(CC_USE_GAMEPAD, 1, [ ])
+SUMMARY="Configuration summary:\n"
+
+CheckX11()
+{
+	AC_CHECK_LIB([X11], [XOpenDisplay], [], [echo "X11 dev library is required" && exit -1])
+	AC_CHECK_LIB([Xrandr], [XRRGetScreenResources], [], [echo "XRandr dev library is required" && exit -1])
+	AC_CHECK_LIB([Xinerama], [XineramaQueryExtension], [], [echo "Xinerama dev library is required" && exit -1])
+	AC_CHECK_LIB([Xi], [XISelectEvents], [], [echo "XInput dev library is required" && exit -1])
+
+	SOURCES="$SOURCES $srcdir/src/ccore/linux/interface/*.c"
+
+	SUMMARY="${SUMMARY}Using: X11\n"
+}
+
+CheckWindows()
+{
+	AC_MSG_CHECKING(Windows compiler)
+	have_win32_gcc=no
+	AC_TRY_COMPILE(["#include <windows.h>"],[],[have_win32_gcc=yes])
+	AC_MSG_RESULT($have_win32_gcc)
+  if test x$have_win32_gcc != xyes; then
+  	AC_MSG_ERROR(["*** Your compiler ($CC) does not produce Windows executables!"])
+	fi
+}
+
+SOURCES="$SOURCES $srcdir/src/ccore/common/interface/*.c"
+SOURCES="$SOURCES $srcdir/src/ccore/common/utils/*.c"
+
+AC_CANONICAL_HOST
+SUMMARY="${SUMMARY}Target host: ${host_os}\n"
+case "${host_os}" in
+	linux*)
+		SOURCES="$SOURCES $srcdir/src/ccore/linux/interface/*.c"
+		SOURCES="$SOURCES $srcdir/src/ccore/linux/utils/*.c"
+
+		CheckX11
+		;;
+	mingw*)
+		CheckWindows
+		SOURCES="$SOURCES $srcdir/src/ccore/windows/interface/*.c"
+		SOURCES="$SOURCES $srcdir/src/ccore/windows/utils/*.c"
+		;;
+	*)
+		AC_MSG_ERROR(["OS $host_os is not supported"])
+		;;
+esac
+
+AC_SUBST(SOURCES)
+
+# The library automatically includes all modules, change this if it is unwanted
+AC_ARG_ENABLE(all-modules, AC_HELP_STRING([--disable-all-modules], [Disable all ccore modules (not recommeded)]))
+if test x$disable_all_modules != xyes; then
+	AC_DEFINE(CC_USE_ALL, 1, ["Include all the modules"])
+	SUMMARY="${SUMMARY}Enabling all ccore modules (#define CC_USE_ALL)\n"
 fi
 
-AC_ARG_ENABLE(time, AC_HELP_STRING([--enable-time], [Enable the timing module [[default=yes]]]),, enable_time=yes)
-if test x$enable_time == xyes; then
-    SUMMARY_modules="${SUMMARY_modules} time"
-    AC_DEFINE(CC_USE_TIME, 1, [ ])
-fi
+AC_CONFIG_HEADER([include/ccore/config.h])
+AC_CONFIG_SRCDIR([src/ccore/common/interface/com_display.c])
+AC_CONFIG_FILES([Makefile])
 
-AC_ARG_ENABLE(thread, AC_HELP_STRING([--enable-thread], [Enable the threading module [[default=yes]]]),, enable_thread=yes)
-if test x$enable_thread == xyes; then
-    SUMMARY_modules="${SUMMARY_modules} thread"
-    AC_DEFINE(CC_USE_THREAD, 1, [ ])
-fi
-
-AC_ARG_ENABLE(sysinfo, AC_HELP_STRING([--enable-sysinfo], [Enable the system information module [[default=yes]]]),, enable_sysinfo=yes)
-if test x$enable_sysinfo == xyes; then
-    SUMMARY_modules="${SUMMARY_modules} sysinfo"
-    AC_DEFINE(CC_USE_GAMEPAD, 1, [ ])
-fi
+AC_CONFIG_COMMANDS([summary], [cat logo.txt ; echo -en "$SUMMARY"], [SUMMARY="$SUMMARY"])
 
 AC_OUTPUT

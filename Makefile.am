@@ -1,7 +1,7 @@
 pkginclude_HEADERS = include/ccore/*.h
 
 lib_LIBRARIES = libccore.a
-libccore_a_SOURCES = src/ccore/common/*/*.c src/ccore/linux/*/*.c src/ccore/x11/*/*.c
+libccore_a_SOURCES = $SOURCES
 
 #bin_PROGRAMS = test
 #test_SOURCES = test/icon.c test/test.c
