@@ -10,7 +10,7 @@ if BUILD_LINUX
 libccore_a_SOURCES += src/ccore/linux/interface/*.c src/ccore/linux/utils/*.c
 endif
 if BUILD_X11
-libccore_a_SOURCES += src/ccore/x11/interface/*.c src/ccore/x11/utils/*.c
+libccore_a_SOURCES += src/ccore/x11/interface/*.c
 endif
 
 #bin_PROGRAMS = test

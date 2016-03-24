@@ -6,13 +6,12 @@ AC_INIT([ccore], [0.1])
 
 AM_INIT_AUTOMAKE([foreign subdir-objects -Wall -Werror])
 
-AM_PROG_AR
-
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
+AM_PROG_AR
 
 # Checks for libraries.
 AC_CHECK_LIB([m], [cos], [], [echo "Math library is required" && exit -1])
@@ -45,6 +44,7 @@ SUMMARY="Configuration summary:\n"
 
 CheckX11()
 {
+	# Check for X11 libraries
 	AC_CHECK_LIB([X11], [XOpenDisplay], [], [echo "X11 dev library is required" && exit -1])
 	AC_CHECK_LIB([Xrandr], [XRRGetScreenResources], [], [echo "XRandr dev library is required" && exit -1])
 	AC_CHECK_LIB([Xinerama], [XineramaQueryExtension], [], [echo "Xinerama dev library is required" && exit -1])
@@ -67,10 +67,12 @@ CheckWindows()
 	build_windows=yes
 }
 
+# AC_CANONICAL_HOST is needed to acces the 'host_os' variable
 AC_CANONICAL_HOST
 SUMMARY="${SUMMARY}Target host: ${host_os}\n"
 case "${host_os}" in
 	linux*)
+		# Check Linux headers & libraries
 		AC_CHECK_HEADERS([sys/ioctl.h sys/param.h unistd.h])
 		AC_CHECK_LIB([pthread], [pthread_create], [], [echo "Pthread dev library is required" && exit -1])
 		build_linux=yes
@@ -85,9 +87,11 @@ case "${host_os}" in
 		;;
 esac
 
+# Add the include flag so the header files can read ccore/*.h
 AM_CPPFLAGS=-Iinclude
 AC_SUBST([AM_CPPFLAGS])
 
+# Pass the building booleans to Makefile.am
 AM_CONDITIONAL([BUILD_LINUX], [test "$build_linux" = "yes"])
 AM_CONDITIONAL([BUILD_WINDOWS], [test "$build_windows" = "yes"])
 AM_CONDITIONAL([BUILD_X11], [test "$build_x11" = "yes"])
@@ -99,10 +103,15 @@ if test x$disable_all_modules != xyes; then
 	SUMMARY="${SUMMARY}Enabling all ccore modules (#define CC_USE_ALL)\n"
 fi
 
+# Create a custom configuration header
 AC_CONFIG_HEADER([include/ccore/config.h])
+# Check if the source files are in the right location
 AC_CONFIG_SRCDIR([src/ccore/common/interface/com_display.c])
 AC_CONFIG_FILES([Makefile])
+# Create a symlink of libccore.a in the lib folder
+AC_CONFIG_LINKS([lib/libccore.a:libccore.a])
 
+# Display the output summary and show the ccore logo
 AC_CONFIG_COMMANDS([summary], [cat logo.txt ; echo -en "$SUMMARY"], [SUMMARY="$SUMMARY"])
 
 AC_OUTPUT
