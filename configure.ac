@@ -17,11 +17,10 @@ AC_PROG_RANLIB
 # Checks for libraries.
 AC_CHECK_LIB([m], [cos], [], [echo "Math library is required" && exit -1])
 AC_CHECK_LIB([GL], [glXChooseVisual], [], [echo "OpenGL dev library is required" && exit -1])
-AC_CHECK_LIB([pthread], [pthread_create], [], [echo "Pthread dev library is required" && exit -1])
 
 # Checks for header files.
 AC_PATH_X
-AC_CHECK_HEADERS([fcntl.h limits.h stdint.h stdlib.h string.h sys/ioctl.h sys/param.h unistd.h])
+AC_CHECK_HEADERS([fcntl.h limits.h stdint.h stdlib.h string.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
@@ -38,6 +37,10 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([clock_gettime memset select strdup sysinfo])
 
+build_linux=no
+build_windows=no
+build_x11=no
+
 SUMMARY="Configuration summary:\n"
 
 CheckX11()
@@ -47,8 +50,7 @@ CheckX11()
 	AC_CHECK_LIB([Xinerama], [XineramaQueryExtension], [], [echo "Xinerama dev library is required" && exit -1])
 	AC_CHECK_LIB([Xi], [XISelectEvents], [], [echo "XInput dev library is required" && exit -1])
 
-	SOURCES="$SOURCES $srcdir/src/ccore/linux/interface/*.c"
-
+	build_x11=yes
 	SUMMARY="${SUMMARY}Using: X11\n"
 }
 
@@ -61,31 +63,34 @@ CheckWindows()
   if test x$have_win32_gcc != xyes; then
   	AC_MSG_ERROR(["*** Your compiler ($CC) does not produce Windows executables!"])
 	fi
-}
 
-SOURCES="$SOURCES $srcdir/src/ccore/common/interface/*.c"
-SOURCES="$SOURCES $srcdir/src/ccore/common/utils/*.c"
+	build_windows=yes
+}
 
 AC_CANONICAL_HOST
 SUMMARY="${SUMMARY}Target host: ${host_os}\n"
 case "${host_os}" in
 	linux*)
-		SOURCES="$SOURCES $srcdir/src/ccore/linux/interface/*.c"
-		SOURCES="$SOURCES $srcdir/src/ccore/linux/utils/*.c"
+		AC_CHECK_HEADERS([sys/ioctl.h sys/param.h unistd.h])
+		AC_CHECK_LIB([pthread], [pthread_create], [], [echo "Pthread dev library is required" && exit -1])
+		build_linux=yes
 
 		CheckX11
 		;;
 	mingw*)
 		CheckWindows
-		SOURCES="$SOURCES $srcdir/src/ccore/windows/interface/*.c"
-		SOURCES="$SOURCES $srcdir/src/ccore/windows/utils/*.c"
 		;;
 	*)
 		AC_MSG_ERROR(["OS $host_os is not supported"])
 		;;
 esac
 
-AC_SUBST(SOURCES)
+AM_CPPFLAGS=-Iinclude
+AC_SUBST([AM_CPPFLAGS])
+
+AM_CONDITIONAL([BUILD_LINUX], [test "$build_linux" = "yes"])
+AM_CONDITIONAL([BUILD_WINDOWS], [test "$build_windows" = "yes"])
+AM_CONDITIONAL([BUILD_X11], [test "$build_x11" = "yes"])
 
 # The library automatically includes all modules, change this if it is unwanted
 AC_ARG_ENABLE(all-modules, AC_HELP_STRING([--disable-all-modules], [Disable all ccore modules (not recommeded)]))
