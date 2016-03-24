@@ -42,4 +42,4 @@ bin_PROGRAMS = test
 test_DEPENDENCIES = libccore_a
 test_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
 test_SOURCES = test/icon.c test/test.c
-test_LDADD = libccore.a
+test_LDADD = $(top_builddir)/libccore.a

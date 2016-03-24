@@ -19,7 +19,7 @@ AC_CHECK_LIB([GL], [glXChooseVisual], [], [echo "OpenGL dev library is required"
 
 # Checks for header files.
 AC_PATH_X
-AC_CHECK_HEADERS([fcntl.h limits.h stdint.h stdlib.h string.h])
+AC_CHECK_HEADERS([fcntl.h limits.h stdint.h stdlib.h string.h time.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
@@ -73,7 +73,7 @@ SUMMARY="${SUMMARY}Target host: ${host_os}\n"
 case "${host_os}" in
 	linux*)
 		# Check Linux headers & libraries
-		AC_CHECK_HEADERS([sys/ioctl.h sys/param.h unistd.h])
+		AC_CHECK_HEADERS([sys/ioctl.h sys/param.h sys/types.h unistd.h])
 		AC_CHECK_LIB([pthread], [pthread_create], [], [echo "Pthread dev library is required" && exit -1])
 		build_linux=yes
 
@@ -88,7 +88,7 @@ case "${host_os}" in
 esac
 
 # Add the include flag so the header files can read ccore/*.h
-AM_CPPFLAGS=-Iinclude
+AM_CPPFLAGS="-I./include -DCC_USE_ALL"
 AC_SUBST([AM_CPPFLAGS])
 
 # Pass the building booleans to Makefile.am

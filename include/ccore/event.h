@@ -21,9 +21,9 @@
 
 #include "core.h"
 
-#include "types.h"
 #include "gamepad.h"
 #include "text.h"
+#include "types.h"
 
 #ifdef __cplusplus
 extern "C"

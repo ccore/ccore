@@ -5000,7 +5000,7 @@ fi
 done
 
 
-for ac_header in fcntl.h limits.h stdint.h stdlib.h string.h
+for ac_header in fcntl.h limits.h stdint.h stdlib.h string.h time.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -5742,7 +5742,7 @@ SUMMARY="${SUMMARY}Target host: ${host_os}\n"
 case "${host_os}" in
 	linux*)
 		# Check Linux headers & libraries
-		for ac_header in sys/ioctl.h sys/param.h unistd.h
+		for ac_header in sys/ioctl.h sys/param.h sys/types.h unistd.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -5815,7 +5815,7 @@ fi
 esac
 
 # Add the include flag so the header files can read ccore/*.h
-AM_CPPFLAGS=-Iinclude
+AM_CPPFLAGS="-I./include -DCC_USE_ALL"
 
 
 # Pass the building booleans to Makefile.am
