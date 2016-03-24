@@ -88,7 +88,7 @@ case "${host_os}" in
 esac
 
 # Add the include flag so the header files can read ccore/*.h
-AM_CPPFLAGS="-I./include -DCC_USE_ALL"
+AM_CPPFLAGS="$AM_CPPFLAGS -I./include -DCC_USE_ALL"
 AC_SUBST([AM_CPPFLAGS])
 
 # Pass the building booleans to Makefile.am

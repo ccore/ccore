@@ -21,17 +21,16 @@
 
 #if defined CC_USE_ALL || defined CC_USE_FILE
 
-#include <stdint.h>
-#include <sys/stat.h>
-
 #include "core.h"
 #include "error.h"
 #include "types.h"
 
+#include <stdint.h>
+
 #ifdef WINDOWS
 #include <Windows.h>
 #elif defined LINUX
-#include <sys/types.h>
+#include <sys/time.h>
 #include <dirent.h>
 #endif
 

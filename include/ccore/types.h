@@ -43,18 +43,6 @@ typedef struct {
 	int width, height;
 } ccRect;
 
-#ifdef __GNUC__
-#define max(a,b) \
-	({ __typeof__ (a) _a = (a); \
-	__typeof__ (b) _b = (b); \
-	_a > _b ? _a : _b; })
-
-#define min(a,b) \
-({ __typeof__ (a) _a = (a); \
-    __typeof__ (b) _b = (b); \
-    _a < _b ? _a : _b; })
-#endif
-
 int ccRectIntersectionArea(ccRect *rectA, ccRect *rectB);
 ccRect ccRectConcatenate(int amount, ccRect* rectArray);
 
