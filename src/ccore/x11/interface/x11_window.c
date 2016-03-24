@@ -1,5 +1,23 @@
 #include "x11_window.h"
 
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <limits.h>
+
+#include <ccore/window.h>
+#include <ccore/gamepad.h>
+#include <ccore/opengl.h>
+#include <ccore/types.h>
+#include <ccore/event.h>
+#include <ccore/error.h>
+#include <ccore/assert.h>
+#include <ccore/print.h>
+
+#include "x11_display.h"
+#include "x11_text.h"
+
 static int cursorList[] = {XC_arrow,
 													 XC_crosshair,
 													 XC_xterm,

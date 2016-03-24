@@ -109,7 +109,7 @@ AC_CONFIG_HEADER([include/ccore/config.h])
 AC_CONFIG_SRCDIR([src/ccore/common/interface/com_display.c])
 AC_CONFIG_FILES([Makefile])
 # Create a symlink of libccore.a in the lib folder
-AC_CONFIG_LINKS([lib/libccore.a:libccore.a])
+#AC_CONFIG_LINKS([lib/libccore.a:libccore.a])
 
 # Display the output summary and show the ccore logo
 AC_CONFIG_COMMANDS([summary], [cat logo.txt ; echo -en "$SUMMARY"], [SUMMARY="$SUMMARY"])

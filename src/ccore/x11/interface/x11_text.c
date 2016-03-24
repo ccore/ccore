@@ -2,6 +2,8 @@
 
 #include "x11_text.h"
 
+#include <ccore/text.h>
+
 static bool _isactive;
 
 ccTextEvent ccTextEventHandle(XEvent event)

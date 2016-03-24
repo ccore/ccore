@@ -2,6 +2,20 @@
 
 #include "lin_gamepad.h"
 
+#include <errno.h>
+#include <dirent.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <time.h>
+#include <sys/ioctl.h>
+#include <sys/inotify.h>
+#include <linux/input.h>
+#include <linux/joystick.h>
+
+#include <ccore/assert.h>
+#include <ccore/print.h>
+
 #define _CC_TEST_BIT(nr, addr) \
 	(((1UL << ((nr) & 31)) & (((const unsigned int *) addr)[(nr) >> 5])) != 0)
 

@@ -1,6 +1,14 @@
 #include "x11_display.h"
 
 #include <stdio.h>
+#include <string.h>
+#include <dirent.h>
+
+#include <X11/extensions/Xinerama.h>
+
+#include <ccore/display.h>
+#include <ccore/assert.h>
+#include <ccore/print.h>
 
 static ccReturn ccXFindDisplaysXinerama(Display *display, char *displayName)
 {
