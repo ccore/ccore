@@ -19,6 +19,10 @@ AC_LANG_C
 AC_CHECK_LIB([m], [cos], [], [echo "Math library is required" && exit -1])
 AC_CHECK_LIB([GL], [glXChooseVisual], [], [echo "OpenGL dev library is required" && exit -1])
 
+# Checks for the test library
+have_check=no
+PKG_CHECK_MODULES([CHECK], [check >= 0.8.2], [have_check=yes])
+
 # Checks for header files.
 AC_HEADER_STDC
 
@@ -90,9 +94,9 @@ case "${host_os}" in
 esac
 
 # Add the include flag so the header files can read ccore/*.h
-AC_SUBST([AM_CPPFLAGS], "-DCC_USE_ALL")
 
 # Pass the building booleans to Makefile.am
+AM_CONDITIONAL([HAVE_CHECK], [test "$have_check" = "yes"])
 AM_CONDITIONAL([BUILD_LINUX], [test "$build_linux" = "yes"])
 AM_CONDITIONAL([BUILD_WINDOWS], [test "$build_windows" = "yes"])
 AM_CONDITIONAL([BUILD_X11], [test "$build_x11" = "yes"])
@@ -100,8 +104,13 @@ AM_CONDITIONAL([BUILD_X11], [test "$build_x11" = "yes"])
 # The library automatically includes all modules, change this if it is unwanted
 AC_ARG_ENABLE(all-modules, AC_HELP_STRING([--disable-all-modules], [Disable all ccore modules (not recommeded)]))
 if test x$disable_all_modules != xyes; then
-	AC_DEFINE(CC_USE_ALL, 1, ["Include all the modules"])
+	AC_SUBST([AM_CPPFLAGS], "-DCC_USE_ALL")
 	SUMMARY="${SUMMARY}Enabling all ccore modules (#define CC_USE_ALL)\n"
+fi
+
+if test x$have_check != xyes; then
+	SUMMARY="${SUMMARY}Not building tests (test/test.c) because the 'check' package could not be found\n"
+	SUMMARY="${SUMMARY}Please install the check package to be able to run the tests\n"
 fi
 
 # Create a custom configuration header

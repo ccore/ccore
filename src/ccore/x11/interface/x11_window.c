@@ -344,7 +344,7 @@ bool ccWindowEventPoll(void)
 
 	XEvent event;
 	XNextEvent(XWINDATA->XDisplay, &event);
-#if defined CC_USE_ALL || defined CC_USE_TEXT
+#if 0 && defined CC_USE_ALL || defined CC_USE_TEXT
 	ccTextEvent te = ccTextEventHandle(event);
 	if(te.type != CC_TEXT_UNHANDLED){
 		_ccWindow->event.type = CC_EVENT_TEXT;

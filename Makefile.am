@@ -9,7 +9,7 @@ pkginclude_HEADERS += include/ccore/opengl.h
 pkginclude_HEADERS += include/ccore/print.h
 pkginclude_HEADERS += include/ccore/string.h
 pkginclude_HEADERS += include/ccore/sysinfo.h
-pkginclude_HEADERS += include/ccore/text.h
+#pkginclude_HEADERS += include/ccore/text.h
 pkginclude_HEADERS += include/ccore/thread.h
 pkginclude_HEADERS += include/ccore/time.h
 pkginclude_HEADERS += include/ccore/types.h
@@ -55,8 +55,12 @@ libccore_a_SOURCES += src/ccore/x11/interface/x11_opengl.c
 libccore_a_SOURCES += src/ccore/x11/interface/x11_window.c
 endif
 
-bin_PROGRAMS = test
-test_DEPENDENCIES = libccore_a
-test_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
-test_SOURCES = test/icon.c test/test.c
-test_LDADD = $(top_builddir)/libccore.a
+if HAVE_CHECK
+check_PROGRAMS = check_ccore
+check_ccore_SOURCES = test/icon.c test/test.c
+check_ccore_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
+check_ccore_CFLAGS = @CHECK_CFLAGS@
+check_ccore_LDADD = @CHECK_LIBS@ $(top_builddir)/libccore.a
+
+TESTS = check_ccore
+endif
