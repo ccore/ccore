@@ -105,7 +105,7 @@ if test x$disable_all_modules != xyes; then
 fi
 
 # Create a custom configuration header
-AC_CONFIG_HEADER([include/ccore/config.h])
+#AC_CONFIG_HEADER([include/ccore/config.h])
 # Check if the source files are in the right location
 AC_CONFIG_SRCDIR([src/ccore/common/interface/com_display.c])
 AC_CONFIG_FILES([Makefile])
