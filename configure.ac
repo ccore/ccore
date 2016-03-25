@@ -4,7 +4,7 @@
 AC_PREREQ([2.69])
 AC_INIT([ccore], [0.1])
 
-AM_INIT_AUTOMAKE([foreign subdir-objects -Wall -Werror])
+AM_INIT_AUTOMAKE([foreign subdir-objects nostdinc -Wall -Werror])
 
 # Checks for programs.
 AC_PROG_CC
@@ -13,13 +13,14 @@ AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 AM_PROG_AR
 
+AC_LANG_C
+
 # Checks for libraries.
 AC_CHECK_LIB([m], [cos], [], [echo "Math library is required" && exit -1])
 AC_CHECK_LIB([GL], [glXChooseVisual], [], [echo "OpenGL dev library is required" && exit -1])
 
 # Checks for header files.
-AC_PATH_X
-AC_CHECK_HEADERS([fcntl.h limits.h stdint.h stdlib.h string.h time.h])
+AC_HEADER_STDC
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
@@ -49,6 +50,7 @@ CheckX11()
 	AC_CHECK_LIB([Xrandr], [XRRGetScreenResources], [], [echo "XRandr dev library is required" && exit -1])
 	AC_CHECK_LIB([Xinerama], [XineramaQueryExtension], [], [echo "Xinerama dev library is required" && exit -1])
 	AC_CHECK_LIB([Xi], [XISelectEvents], [], [echo "XInput dev library is required" && exit -1])
+	AC_PATH_X
 
 	build_x11=yes
 	SUMMARY="${SUMMARY}Using: X11\n"
@@ -88,8 +90,7 @@ case "${host_os}" in
 esac
 
 # Add the include flag so the header files can read ccore/*.h
-AM_CPPFLAGS="$AM_CPPFLAGS -I./include -DCC_USE_ALL"
-AC_SUBST([AM_CPPFLAGS])
+AC_SUBST([AM_CPPFLAGS], "-DCC_USE_ALL")
 
 # Pass the building booleans to Makefile.am
 AM_CONDITIONAL([BUILD_LINUX], [test "$build_linux" = "yes"])

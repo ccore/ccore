@@ -7,6 +7,7 @@
 #define ccStat _stat
 
 #elif defined LINUX
+#include <sys/stat.h>
 
 #define ccStat stat
 

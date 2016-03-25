@@ -15,6 +15,4 @@ typedef struct {
 #define GAMEPAD_DATA(gamepad) ((ccGamepad_lin*)(gamepad)->data)
 #define GAMEPADS_DATA() ((ccGamepads_lin*)(_ccGamepads)->data)
 
-ccGamepadEvent ccGamepadEventPoll(void);
-
 #endif

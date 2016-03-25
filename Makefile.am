@@ -1,4 +1,21 @@
-pkginclude_HEADERS = include/ccore/*.h
+pkginclude_HEADERS = include/ccore/assert.h
+pkginclude_HEADERS += include/ccore/core.h
+pkginclude_HEADERS += include/ccore/display.h
+pkginclude_HEADERS += include/ccore/error.h
+pkginclude_HEADERS += include/ccore/event.h
+pkginclude_HEADERS += include/ccore/file.h
+pkginclude_HEADERS += include/ccore/gamepad.h
+pkginclude_HEADERS += include/ccore/opengl.h
+pkginclude_HEADERS += include/ccore/print.h
+pkginclude_HEADERS += include/ccore/string.h
+pkginclude_HEADERS += include/ccore/sysinfo.h
+pkginclude_HEADERS += include/ccore/text.h
+pkginclude_HEADERS += include/ccore/thread.h
+pkginclude_HEADERS += include/ccore/time.h
+pkginclude_HEADERS += include/ccore/types.h
+pkginclude_HEADERS += include/ccore/window.h
+
+AM_CPPFLAGS += -I$(top_srcdir)/include
 
 lib_LIBRARIES = libccore.a
 libccore_a_SOURCES = src/ccore/common/interface/com_display.c
@@ -34,7 +51,7 @@ endif
 if BUILD_X11
 libccore_a_SOURCES += src/ccore/x11/interface/x11_display.c
 libccore_a_SOURCES += src/ccore/x11/interface/x11_opengl.c
-libccore_a_SOURCES += src/ccore/x11/interface/x11_text.c
+#libccore_a_SOURCES += src/ccore/x11/interface/x11_text.c
 libccore_a_SOURCES += src/ccore/x11/interface/x11_window.c
 endif
 

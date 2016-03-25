@@ -86,6 +86,10 @@ ccReturn ccGamepadInitialize(void); // Initializes gamepad input
 ccReturn ccGamepadFree(void); // Stops gamepad input
 ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force);
 
+#ifdef X11
+ccGamepadEvent ccGamepadEventPoll(void);
+#endif
+
 #ifdef __cplusplus
 }
 #endif
