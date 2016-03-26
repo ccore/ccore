@@ -6,7 +6,7 @@
 //                             \  \___\___/|_|  \___| 1.1                           //
 //                              \______\                                            //
 //                                                                                  //
-//             Copyright (C) 2014 \ Job Talle (job@ccore.org)                       //
+//             Copyright (C) 2014 \ Job Talle (jobtalle@hotmail.com)                //
 //                                 \ Thomas Versteeg (thomas@ccore.org)             //
 //__________________________________________________________________________________//
 //                                                                                  //
@@ -21,17 +21,16 @@
 
 #if defined CC_USE_ALL || defined CC_USE_FILE
 
-#include <stdint.h>
-#include <sys/stat.h>
-
 #include "core.h"
 #include "error.h"
 #include "types.h"
 
+#include <stdint.h>
+
 #ifdef WINDOWS
 #include <Windows.h>
 #elif defined LINUX
-#include <sys/types.h>
+#include <sys/time.h>
 #include <dirent.h>
 #endif
 

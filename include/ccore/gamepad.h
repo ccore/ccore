@@ -6,7 +6,7 @@
 //                             \  \___\___/|_|  \___| 1.1                           //
 //                              \______\                                            //
 //                                                                                  //
-//             Copyright (C) 2014 \ Job Talle (job@ccore.org)                       //
+//             Copyright (C) 2014 \ Job Talle (jobtalle@hotmail.com)                //
 //                                 \ Thomas Versteeg (thomas@ccore.org)             //
 //__________________________________________________________________________________//
 //                                                                                  //
@@ -85,6 +85,10 @@ ccGamepads *_ccGamepads;
 ccReturn ccGamepadInitialize(void); // Initializes gamepad input
 ccReturn ccGamepadFree(void); // Stops gamepad input
 ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force);
+
+#ifdef X11
+ccGamepadEvent ccGamepadEventPoll(void);
+#endif
 
 #ifdef __cplusplus
 }

@@ -20,8 +20,6 @@
 #pragma once
 
 #include "core.h"
-
-#include "window.h"
 #include "error.h"
 #include "types.h"
 
@@ -29,11 +27,26 @@
 extern "C"
 {
 #endif
-// opengl
-ccReturn ccGLContextBind(void); // Bind the openGl context to window
-ccReturn ccGLContextFree(void); // Free context
-ccReturn ccGLBuffersSwap(void); // Swap the buffers
-bool ccGLContextIsActive(void);
+
+typedef enum {
+	CC_TEXT_UNHANDLED = 0,
+	CC_TEXT_INPUT,
+	CC_TEXT_EDITTING
+} ccTextEventType;
+
+typedef struct {
+	ccTextEventType type;
+
+	bool active;
+
+	char text[32];
+	int start, length;
+} ccTextEvent;
+
+ccReturn ccTextInputStart();
+ccReturn ccTextInputStop();
+ccReturn ccTextInputRect(ccRect rect);
+bool ccTextInputIsActive();
 
 #ifdef __cplusplus
 }

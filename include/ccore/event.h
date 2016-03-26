@@ -6,7 +6,7 @@
 //                             \  \___\___/|_|  \___| 1.1                           //
 //                              \______\                                            //
 //                                                                                  //
-//             Copyright (C) 2014 \ Job Talle (job@ccore.org)                       //
+//             Copyright (C) 2014 \ Job Talle (jobtalle@hotmail.com)                //
 //                                 \ Thomas Versteeg (thomas@ccore.org)             //
 //__________________________________________________________________________________//
 //                                                                                  //
@@ -21,8 +21,9 @@
 
 #include "core.h"
 
-#include "types.h"
 #include "gamepad.h"
+#include "text.h"
+#include "types.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -52,10 +53,14 @@ typedef enum {
 	// Window close button was pressed
 	CC_EVENT_WINDOW_QUIT,
 	// Window has resized, new dimensions are stored in the window struct before the event fires
-	CC_EVENT_WINDOW_RESIZE,
+	CC_EVENT_WINDOW_RESIZE
 #if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 	// Gamepad event, see gamepad.h for specifics
-	CC_EVENT_GAMEPAD
+	, CC_EVENT_GAMEPAD
+#endif
+#if defined CC_USE_ALL || defined CC_USE_TEXT
+	// Text input event, see text.h for specifics
+	, CC_EVENT_TEXT
 #endif
 } ccEventType;
 
@@ -81,6 +86,9 @@ typedef struct {
 		double scrollDelta;
 #if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 		ccGamepadEvent gamepadEvent;
+#endif
+#if defined CC_USE_ALL || defined CC_USE_TEXT
+		ccTextEvent textEvent;
 #endif
 	};
 } ccEvent;

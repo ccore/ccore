@@ -6,7 +6,7 @@
 //                             \  \___\___/|_|  \___| 1.1                           //
 //                              \______\                                            //
 //                                                                                  //
-//             Copyright (C) 2014 \ Job Talle (job@ccore.org)                       //
+//             Copyright (C) 2014 \ Job Talle (jobtalle@hotmail.com)                //
 //                                 \ Thomas Versteeg (thomas@ccore.org)             //
 //__________________________________________________________________________________//
 //                                                                                  //
@@ -22,7 +22,6 @@
 #include <stdlib.h>
 
 #include "core.h"
-
 #include "print.h"
 
 #ifdef __cplusplus

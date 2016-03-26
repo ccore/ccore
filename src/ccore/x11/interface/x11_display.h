@@ -1,14 +1,6 @@
 #pragma once
 
-#include <dirent.h>
-#include <string.h>
 #include <X11/extensions/Xrandr.h>
-#include <X11/extensions/Xinerama.h>
-
-#include <ccore/display.h>
-
-#include <ccore/assert.h>
-#include <ccore/print.h>
 
 typedef struct {
 	RRMode XMode;
@@ -20,4 +12,4 @@ typedef struct {
 	RRMode XOldMode;
 } ccDisplay_x11;
 
-#define DISPLAY_DATA(display) ((ccDisplay_x11*)display->data)
+#define DISPLAY_DATA(display) ((ccDisplay_x11 *)display->data)

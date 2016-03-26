@@ -23,12 +23,44 @@
 
 #ifdef _DEBUG
 
+#ifdef LINUX
+// Use libcheck for Linux
+//
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <check.h>
+
+#include <ccore/sysinfo.h>
+#include <ccore/print.h>
+#include <ccore/file.h>
+#include <ccore/time.h>
+#include <ccore/string.h>
+#include <ccore/gamepad.h>
+#include <ccore/window.h>
+#include <ccore/display.h>
+
+#include "icon.h"
+
+START_TEST(test_sysinfo)
+{
+	ccPrintf("\tccSysInfoGetRamTotal output:\t%lld\n", (long long int)ccSysinfoGetRamTotal());
+	
+}
+END_TEST
+
+int main(void)
+{
+	return 0;
+}
+
+#else
+
 // rand, srand
 #include <stdlib.h>
 // time
 #include <time.h>
 
-#define CC_USE_ALL
 #include <ccore/sysinfo.h>
 #include <ccore/print.h>
 #include <ccore/file.h>
@@ -162,9 +194,18 @@ void testWindow(int *test)
 					break;
 				case CC_EVENT_MOUSE_DOWN:
 					switch(ccWindowEventGet().mouseButton) {
-					case CC_MOUSE_BUTTON_PREVIOUS: printf("Previous\n"); break;
-					case CC_MOUSE_BUTTON_NEXT: printf("Next\n"); break;
+						case CC_MOUSE_BUTTON_PREVIOUS: 
+							printf("Previous\n"); 
+							break;
+						case CC_MOUSE_BUTTON_NEXT: 
+							printf("Next\n"); 
+							break;
+						default:
+							break;
 					}
+					break;
+				default: 
+					break;
 			}
 		}
 	}
@@ -195,6 +236,8 @@ void testDisplay(int *test)
 
 		srand((unsigned int)time(NULL));
 		ccDisplayResolutionSet(display, rand() % ccDisplayResolutionGetAmount(display));
+
+		printf("DPI: %d\n", display->dpi);
 
 		ccTimeDelay(5000);
 		err();
@@ -255,7 +298,7 @@ void testSysinfo(int *test)
 	ccSysinfoInitialize();
 	err();
 
-	ccPrintf("\tInstalled RAM:\t%lld\n", ccSysinfoGetRamTotal());
+	ccPrintf("\tInstalled RAM:\t%lld\n", (long long int)ccSysinfoGetRamTotal());
 
 	ccPrintf("\tProcessors:\t%d\n", ccSysinfoGetProcessorCount());
 
@@ -280,12 +323,14 @@ int main(int argc, char **argv)
 	//testTime(&test);
 	//testDisplay(&test);
 	//testWindow(&test);
-	//testGamepad(&test);
+	testGamepad(&test);
 
 	ccFree();
 
 	return 0;
 }
+
+#endif
 
 #else
 

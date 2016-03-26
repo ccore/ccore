@@ -71,7 +71,7 @@ static bool initializeRawInput(void)
 	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_MOUSE].dwFlags = 0;
 	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_MOUSE].hwndTarget = _CC_WINDOW_DATA->winHandle;
 
-	return RegisterRawInputDevices(_CC_WINDOW_DATA->rid, _CC_NRAWINPUTDEVICES - _CC_RAWINPUT_GAMEPADCOUNT, sizeof(RAWINPUTDEVICE));
+	return (bool)RegisterRawInputDevices(_CC_WINDOW_DATA->rid, _CC_NRAWINPUTDEVICES - _CC_RAWINPUT_GAMEPADCOUNT, sizeof(RAWINPUTDEVICE));
 }
 
 static bool freeRawInput(void)
@@ -82,7 +82,7 @@ static bool freeRawInput(void)
 	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_MOUSE].dwFlags = RIDEV_REMOVE;
 	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_MOUSE].hwndTarget = NULL;
 
-	return RegisterRawInputDevices(_CC_WINDOW_DATA->rid, _CC_NRAWINPUTDEVICES - 1, sizeof(RAWINPUTDEVICE));
+	return (bool)RegisterRawInputDevices(_CC_WINDOW_DATA->rid, _CC_NRAWINPUTDEVICES - 1, sizeof(RAWINPUTDEVICE));
 }
 
 static void processRid(HRAWINPUT rawInput)
@@ -393,7 +393,7 @@ ccReturn ccWindowFree(void)
 		return CC_FAIL;
 	}
 
-	if(UnregisterClass((LPCSTR)_CC_WINDOW_DATA->winClass, NULL) == FALSE) {
+	if(UnregisterClass(_CC_WINDOW_DATA->winClass, NULL) == FALSE) {
 		ccErrorPush(CC_ERROR_WINDOW_DESTROY);
 		return CC_FAIL;
 	}
@@ -702,7 +702,7 @@ char *ccWindowClipboardGet(void)
 
 	OpenClipboard(NULL);
 
-	while(format = EnumClipboardFormats(format)) {
+	while((format = EnumClipboardFormats(format))) {
 		if(format == CF_TEXT) {
 			hasText = true;
 		}

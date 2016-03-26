@@ -2,35 +2,44 @@
 
 #include "lin_gamepad.h"
 
+#include <errno.h>
+#include <dirent.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/time.h>
+#include <sys/ioctl.h>
+#include <sys/inotify.h>
+#include <linux/input.h>
+#include <linux/joystick.h>
+
+#include <ccore/assert.h>
+#include <ccore/print.h>
+
 #define _CC_TEST_BIT(nr, addr) \
 	(((1UL << ((nr) & 31)) & (((const unsigned int *) addr)[(nr) >> 5])) != 0)
 
 static int openGamepadDescriptor(char *locName)
 {
 	char dirName[30];
-	int fd;
-
 	snprintf(dirName, 30, "/dev/input/%s", locName);
-	fd = open(dirName, O_RDONLY | O_NONBLOCK, 0);
+	int fd = open(dirName, O_RDONLY | O_NONBLOCK, 0);
 
 	return fd;
 }
 
 static ccReturn initHaptic(int joyId, char *locName)
 {
-	DIR *d;
-	struct dirent *dir;
-	char dirName[30];
-	int fd;
 	unsigned long features[1 + FF_MAX / sizeof(unsigned long)];	
-	struct ff_effect effect;
 
+	char dirName[30];
 	snprintf(dirName, 30, "/sys/class/input/%s/device", locName);
 
-	d = opendir(dirName);
-	fd = -1;
+	DIR *d = opendir(dirName);
+	int fd = -1;
 	// Check for the haptic device (event<x>)
 	// TODO support multiple motors on one gamepad
+	struct dirent *dir;
 	while((dir = readdir(d)) != NULL){
 		if(*dir->d_name == 'e'){
 			snprintf(dirName, 30, "/dev/input/%s", dir->d_name);
@@ -60,12 +69,14 @@ static ccReturn initHaptic(int joyId, char *locName)
 		return CC_FAIL;
 	}
 
-	effect.type = FF_RUMBLE;
-	effect.u.rumble.strong_magnitude = 65535;
-	effect.u.rumble.weak_magnitude = 65535;
-	effect.replay.length = USHRT_MAX;
-	effect.replay.delay = 0;
-	effect.id = -1;
+	struct ff_effect effect = {
+		.type = FF_RUMBLE,
+		.u.rumble.strong_magnitude = 65535,
+		.u.rumble.weak_magnitude = 65535,
+		.replay.length = USHRT_MAX,
+		.replay.delay = 0,
+		.id = -1
+	};
 
 	if(ioctl(fd, EVIOCSFF, &effect) < 0){
 		close(fd);
@@ -82,10 +93,7 @@ static ccReturn initHaptic(int joyId, char *locName)
 
 static ccReturn createGamepad(char *locName, int i)
 {
-	char buf[64];
-	int fd;
-
-	fd = openGamepadDescriptor(locName);
+	int fd = openGamepadDescriptor(locName);
 	if(fd < 0){
 		if(errno != EACCES){
 			ccErrorPush(CC_ERROR_GAMEPAD_DATA);
@@ -103,6 +111,7 @@ static ccReturn createGamepad(char *locName, int i)
 	ccMalloc((_ccGamepads->gamepad + i)->data, sizeof(ccGamepad_lin));
 
 	// Clear gamepad buffer
+	char buf[64];
 	while(read(fd, buf, 64) > 0);
 
 	_ccGamepads->gamepad[i].plugged = true;
@@ -130,25 +139,19 @@ static ccReturn createGamepad(char *locName, int i)
 static bool canReadINotify(void)
 {
 	fd_set set;
-	struct timeval timeout;
-
 	FD_ZERO(&set);
 	FD_SET(GAMEPADS_DATA()->fd, &set);
-	timeout.tv_sec = 0;
-	timeout.tv_usec = 0;
 
+	struct timeval timeout = {0};
 	return select(GAMEPADS_DATA()->fd + 1, &set, NULL, NULL, &timeout) > 0 && 
 		FD_ISSET(GAMEPADS_DATA()->fd, &set);
 }
 
 ccGamepadEvent ccGamepadEventPoll(void)
 {
-	struct js_event js;
-	struct inotify_event ne;
 	ccGamepadEvent event;
-	int i, id;
-
 	while(canReadINotify()){
+		struct inotify_event ne;
 		if(CC_LIKELY(read(GAMEPADS_DATA()->fd, &ne, sizeof(struct inotify_event) + 16) >= 0)){
 			if(*ne.name != 'j'){
 				continue;
@@ -156,7 +159,8 @@ ccGamepadEvent ccGamepadEventPoll(void)
 
 			// Find the matching gamepad
 			event.id = -1;
-			id = atoi(ne.name + 2);	
+			int id = atoi(ne.name + 2);	
+			int i;
 			for(i = 0; i < _ccGamepads->amount; i++){
 				if(GAMEPAD_DATA(_ccGamepads->gamepad + i)->id == id){
 					event.id = i;
@@ -205,10 +209,12 @@ ccGamepadEvent ccGamepadEventPoll(void)
 	}
 
 	event.type = CC_GAMEPAD_UNHANDLED;
+	int i;
 	for(i = 0; i < _ccGamepads->amount; i++){
 		if(!_ccGamepads->gamepad[i].plugged){
 			continue;
 		}
+		struct js_event js;
 		if(CC_LIKELY(read(GAMEPAD_DATA(_ccGamepads->gamepad + i)->fd, &js, sizeof(struct js_event)) > 0)){
 			event.id = i;
 			event.type = CC_GAMEPAD_UNHANDLED;
@@ -245,20 +251,16 @@ ccGamepadEvent ccGamepadEventPoll(void)
 
 ccReturn ccGamepadInitialize(void)
 {
-	DIR *d;
-	struct dirent *dir;
-	int fd, watch;
-
 	ccGamepadFree();
 
 	// Attach notifications to check if a device connects/disconnects
-	fd = inotify_init();
+	int fd = inotify_init();
 	if(CC_UNLIKELY(fd < 0)){
 		ccErrorPush(CC_ERROR_GAMEPAD_DATA);
 		goto error;
 	}
 
-	watch = inotify_add_watch(fd, "/dev/input", IN_DELETE | IN_ATTRIB);
+	int watch = inotify_add_watch(fd, "/dev/input", IN_DELETE | IN_ATTRIB);
 	if(CC_UNLIKELY(watch < 0)){
 		ccErrorPush(CC_ERROR_GAMEPAD_DATA);
 		goto error;
@@ -273,8 +275,9 @@ ccReturn ccGamepadInitialize(void)
 	GAMEPADS_DATA()->fd = fd;
 	GAMEPADS_DATA()->watch = watch;
 
-	d = opendir("/dev/input");
 	// Check for gamepads (js<x>)
+	DIR *d = opendir("/dev/input");
+	struct dirent *dir;
 	while((dir = readdir(d)) != NULL){
 		if(*dir->d_name == 'j'){
 			if(CC_UNLIKELY(createGamepad(dir->d_name, _ccGamepads->amount) == CC_FAIL)){
@@ -302,14 +305,14 @@ error:
 
 ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force)
 {
-	struct input_event ffev;
-
 	if(GAMEPAD_DATA(gamepad)->fffd < 0){
 		return CC_FAIL;
 	}	
 
-	ffev.type = EV_FF;
-	ffev.code = GAMEPAD_DATA(gamepad)->ffid; 
+	struct input_event ffev= {
+		.type = EV_FF,
+		.code = GAMEPAD_DATA(gamepad)->ffid
+	};
 	if(force <= CC_GAMEPAD_OUTPUT_VALUE_MIN){
 		ffev.value = 0;
 	}else{
@@ -334,8 +337,6 @@ ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force)
 
 ccReturn ccGamepadFree(void)
 {
-	int i;
-
 	if(CC_UNLIKELY(_ccGamepads == NULL)){
 		return CC_SUCCESS;
 	}
@@ -344,6 +345,7 @@ ccReturn ccGamepadFree(void)
 	close(GAMEPADS_DATA()->fd);
 
 	if(_ccGamepads->amount != 0){
+		int i;
 		for(i = 0; i < _ccGamepads->amount; i++){
 			if(_ccGamepads->gamepad[i].plugged){
 				close(GAMEPAD_DATA(_ccGamepads->gamepad + i)->fd);

@@ -6,7 +6,7 @@
 //                             \  \___\___/|_|  \___| 1.1                           //
 //                              \______\                                            //
 //                                                                                  //
-//             Copyright (C) 2014 \ Job Talle (job@ccore.org)                       //
+//             Copyright (C) 2014 \ Job Talle (jobtalle@hotmail.com)                //
 //                                 \ Thomas Versteeg (thomas@ccore.org)             //
 //__________________________________________________________________________________//
 //                                                                                  //
@@ -29,6 +29,17 @@ extern "C"
 {
 #endif
 
+#ifdef __GNUC__
+#define max(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a > _b ? _a : _b; })
+#define min(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a < _b ? _a : _b; })
+#endif
+
 #define CC_SUCCESS 0
 #define CC_FAIL -1
 
@@ -42,18 +53,6 @@ typedef struct {
 	int x, y;
 	int width, height;
 } ccRect;
-
-#ifdef __GNUC__
-#define max(a,b) \
-	({ __typeof__ (a) _a = (a); \
-	__typeof__ (b) _b = (b); \
-	_a > _b ? _a : _b; })
-
-#define min(a,b) \
-({ __typeof__ (a) _a = (a); \
-    __typeof__ (b) _b = (b); \
-    _a < _b ? _a : _b; })
-#endif
 
 int ccRectIntersectionArea(ccRect *rectA, ccRect *rectB);
 ccRect ccRectConcatenate(int amount, ccRect* rectArray);

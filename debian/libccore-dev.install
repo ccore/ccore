@@ -1,1 +1,3 @@
-usr/include/ccore
+include/ccore usr/include
+.libs/lib*.a usr/lib
+.libs/lib*.so usr/lib

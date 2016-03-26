@@ -1,5 +1,7 @@
 #include <ccore/string.h>
 
+#include <string.h>
+
 void ccStringTrimToChar(char* str, char ch, bool includeChar)
 {
 	int i;
