@@ -15,4 +15,4 @@ addons:
     - libxinerama-dev
     - libxi-dev
   
-script: make test
+script: ./configure && make && make check
