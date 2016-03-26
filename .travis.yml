@@ -14,6 +14,7 @@ addons:
     - libxrandr-dev
     - libxinerama-dev
     - libxi-dev
+    - libtool
     - check
   
 script: ./configure && make && make check
