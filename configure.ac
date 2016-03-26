@@ -2,18 +2,27 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([ccore], [0.1])
+AC_INIT([ccore], m4_esyscmd_s([cat VERSION]))
+CCORE_VERSION="$(cat VERSION)"
+AC_SUBST(CCORE_VERSION)
+
+# Set the programming language to 'C'
+AC_LANG_C
 
 AM_INIT_AUTOMAKE([foreign subdir-objects nostdinc -Wall -Werror])
+AM_PROG_AR
+
+# Initialize libtool
+LT_INIT
+AC_ENABLE_STATIC
+AC_ENABLE_SHARED
 
 # Checks for programs.
 AC_PROG_CC
+AM_PROG_CC_C_O
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
-AC_PROG_RANLIB
-AM_PROG_AR
-
-AC_LANG_C
+AC_PROG_LIBTOOL
 
 # Checks for libraries.
 AC_CHECK_LIB([m], [cos], [], [echo "Math library is required" && exit -1])
@@ -45,7 +54,8 @@ build_linux=no
 build_windows=no
 build_x11=no
 
-SUMMARY="Configuration summary:\n"
+SUMMARY="Configuration summary\n"
+SUMMARY="${SUMMARY}ccore version: ${CCORE_VERSION}\n"
 
 CheckX11()
 {
@@ -57,7 +67,7 @@ CheckX11()
 	AC_PATH_X
 
 	build_x11=yes
-	SUMMARY="${SUMMARY}Using: X11\n"
+	SUMMARY="${SUMMARY}Using X11 to handle window and input functions\n"
 }
 
 CheckWindows()
@@ -67,7 +77,7 @@ CheckWindows()
 	AC_TRY_COMPILE(["#include <windows.h>"],[],[have_win32_gcc=yes])
 	AC_MSG_RESULT($have_win32_gcc)
   if test x$have_win32_gcc != xyes; then
-  	AC_MSG_ERROR(["*** Your compiler ($CC) does not produce Windows executables!"])
+  	AC_MSG_ERROR(["Your compiler ($CC) does not produce Windows executables!"])
 	fi
 
 	build_windows=yes
@@ -118,8 +128,8 @@ fi
 # Check if the source files are in the right location
 AC_CONFIG_SRCDIR([src/ccore/common/interface/com_display.c])
 AC_CONFIG_FILES([Makefile])
-# Create a symlink of libccore.a in the lib folder
-#AC_CONFIG_LINKS([lib/libccore.a:libccore.a])
+# Setup m4 folder for libtool
+AC_CONFIG_MACRO_DIR([m4])
 
 # Display the output summary and show the ccore logo
 AC_CONFIG_COMMANDS([summary], [cat logo.txt ; echo -en "$SUMMARY"], [SUMMARY="$SUMMARY"])
