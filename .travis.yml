@@ -15,7 +15,7 @@ addons:
     - libxinerama-dev
     - libxi-dev
     - libtool
-    - m4
+    - automake
     - check
   
 script: ./configure && make && make check
