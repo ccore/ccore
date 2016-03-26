@@ -11,6 +11,7 @@ AC_SUBST(CCORE_VERSION)
 AC_LANG_C
 
 AM_INIT_AUTOMAKE([foreign subdir-objects nostdinc -Wall -Werror])
+AM_MAINTAINER_MODE([disable])
 AM_PROG_AR
 
 # Initialize libtool
