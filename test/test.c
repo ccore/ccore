@@ -23,6 +23,39 @@
 
 #ifdef _DEBUG
 
+#ifdef LINUX
+// Use libcheck for Linux
+//
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <check.h>
+
+#include <ccore/sysinfo.h>
+#include <ccore/print.h>
+#include <ccore/file.h>
+#include <ccore/time.h>
+#include <ccore/string.h>
+#include <ccore/gamepad.h>
+#include <ccore/window.h>
+#include <ccore/display.h>
+
+#include "icon.h"
+
+START_TEST(test_sysinfo)
+{
+	ccPrintf("\tccSysInfoGetRamTotal output:\t%lld\n", (long long int)ccSysinfoGetRamTotal());
+	
+}
+END_TEST
+
+int main(void)
+{
+	return 0;
+}
+
+#else
+
 // rand, srand
 #include <stdlib.h>
 // time
@@ -296,6 +329,8 @@ int main(int argc, char **argv)
 
 	return 0;
 }
+
+#endif
 
 #else
 
