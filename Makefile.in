@@ -224,7 +224,7 @@ am__check_ccore_SOURCES_DIST = test/icon.c test/test.c
 @HAVE_CHECK_TRUE@	test/check_ccore-test.$(OBJEXT)
 check_ccore_OBJECTS = $(am_check_ccore_OBJECTS)
 @HAVE_CHECK_TRUE@check_ccore_DEPENDENCIES =  \
-@HAVE_CHECK_TRUE@	$(top_builddir)/libccore.a
+@HAVE_CHECK_TRUE@	$(top_builddir)/.libs/libccore.a
 check_ccore_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(check_ccore_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
@@ -622,7 +622,6 @@ pkginclude_HEADERS = include/ccore/assert.h include/ccore/core.h \
 	include/ccore/sysinfo.h include/ccore/thread.h \
 	include/ccore/time.h include/ccore/types.h \
 	include/ccore/window.h
-LIBVER = 
 lib_LTLIBRARIES = libccore.la
 libccore_la_LDFLAGS = -version-info $(CCORE_VERSION)
 libccore_la_SOURCES = src/ccore/common/interface/com_display.c \
@@ -638,7 +637,7 @@ libccore_la_SOURCES = src/ccore/common/interface/com_display.c \
 @HAVE_CHECK_TRUE@check_ccore_SOURCES = test/icon.c test/test.c
 @HAVE_CHECK_TRUE@check_ccore_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
 @HAVE_CHECK_TRUE@check_ccore_CFLAGS = @CHECK_CFLAGS@
-@HAVE_CHECK_TRUE@check_ccore_LDADD = @CHECK_LIBS@ $(top_builddir)/libccore.a
+@HAVE_CHECK_TRUE@check_ccore_LDADD = @CHECK_LIBS@ $(top_builddir)/.libs/libccore.a
 all: all-am
 
 .SUFFIXES:

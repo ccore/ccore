@@ -3,6 +3,7 @@
 
 AC_PREREQ([2.69])
 AC_INIT([ccore], m4_esyscmd_s([cat VERSION]))
+
 CCORE_VERSION="$(cat VERSION)"
 AC_SUBST(CCORE_VERSION)
 

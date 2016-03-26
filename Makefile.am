@@ -18,8 +18,6 @@ pkginclude_HEADERS += include/ccore/time.h
 pkginclude_HEADERS += include/ccore/types.h
 pkginclude_HEADERS += include/ccore/window.h
 
-LIBVER = 
-
 lib_LTLIBRARIES = libccore.la
 libccore_la_LDFLAGS = -version-info $(CCORE_VERSION)
 libccore_la_SOURCES = src/ccore/common/interface/com_display.c
@@ -64,7 +62,7 @@ check_PROGRAMS = check_ccore
 check_ccore_SOURCES = test/icon.c test/test.c
 check_ccore_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
 check_ccore_CFLAGS = @CHECK_CFLAGS@
-check_ccore_LDADD = @CHECK_LIBS@ $(top_builddir)/libccore.a
+check_ccore_LDADD = @CHECK_LIBS@ $(top_builddir)/.libs/libccore.a
 
 TESTS = check_ccore
 endif

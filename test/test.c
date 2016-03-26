@@ -288,7 +288,7 @@ int main(int argc, char **argv)
 	testDefaultDirectories(&test);
 	testReadDirectories(&test);
 	//testTime(&test);
-	testDisplay(&test);
+	//testDisplay(&test);
 	//testWindow(&test);
 	testGamepad(&test);
 
