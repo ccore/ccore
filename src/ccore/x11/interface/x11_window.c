@@ -476,6 +476,11 @@ bool ccWindowEventPoll(void)
 		case SelectionRequest:
 			handleSelectionRequest(&event.xselectionrequest);
 			return false;
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
+		case Expose:
+			XPutImage(XWINDATA->XDisplay, XWINDATA->XWindow, 0, XWINDATA->XFramebuffer, 0, 0, 0, 0, _ccWindow->rect.width, _ccWindow->rect.height);
+			return false;
+#endif
 		default:
 			return false;
 	}
@@ -685,6 +690,7 @@ ccReturn ccWindowMouseSetCursor(ccCursor cursor)
 	return CC_SUCCESS;
 }
 
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 ccReturn ccWindowFramebufferCreate(const void *pixels, ccFramebufferFormat format)
 {
 	ccAssert(_ccWindow);
@@ -704,6 +710,7 @@ ccReturn ccWindowFramebufferFree()
 
 	return CC_SUCCESS;
 }
+#endif
 
 ccReturn ccWindowClipboardSet(const char *text)
 {

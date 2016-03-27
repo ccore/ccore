@@ -56,12 +56,14 @@ typedef enum {
 	CC_WINDOW_FLAG_NORAWINPUT = 8
 } ccWindowFlag;
 
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 typedef enum {
 	CC_FB_CHAR_RGB,
 	CC_FB_CHAR_RGBA,
 	CC_FB_INT_RGB,
 	CC_FB_INT_RGBA,
 } ccFramebufferFormat;
+#endif
 
 // The window struct
 typedef struct {
@@ -96,8 +98,11 @@ ccReturn ccWindowIconSet(ccPoint size, unsigned long *icon);
 ccReturn ccWindowMouseSetPosition(ccPoint target);
 ccReturn ccWindowMouseSetCursor(ccCursor cursor);
 
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 ccReturn ccWindowFramebufferCreate(const void *pixels, ccFramebufferFormat format);
+ccReturn ccWindowFramebufferUpdate();
 ccReturn ccWindowFramebufferFree();
+#endif
 
 ccReturn ccWindowClipboardSet(const char *data);
 char *ccWindowClipboardGet(void);

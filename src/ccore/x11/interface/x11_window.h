@@ -20,7 +20,9 @@ typedef struct {
 	GLXContext XContext;
 	XID XCursor;
 	Pixmap XEmptyCursorImage;
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 	XImage *XFramebuffer;
+#endif
 	char *XClipString;
 	size_t XClipStringLength;
 	Atom CCORE_SELECTION, WM_ICON, WM_ICON_NAME, WM_NAME, CLIPBOARD, INCR,
