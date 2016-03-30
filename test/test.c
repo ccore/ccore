@@ -50,7 +50,7 @@
 
 START_TEST(test_sysinfo_ram)
 {
-	ccInitialize();
+	ccSysinfoInitialize();
 
 	ccPrintf("\tccSysInfoGetRamTotal output:\t%lld\n", (long long int)ccSysinfoGetRamTotal());
 
