@@ -58,10 +58,8 @@ typedef enum {
 
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 typedef enum {
-	CC_FB_CHAR_RGB,
-	CC_FB_CHAR_RGBA,
-	CC_FB_INT_RGB,
-	CC_FB_INT_RGBA,
+	CC_FB_CHAR,
+	CC_FB_INT,
 } ccFramebufferFormat;
 #endif
 

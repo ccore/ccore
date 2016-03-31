@@ -59,12 +59,44 @@ START_TEST(test_sysinfo_ram)
 }
 END_TEST
 
-START_TEST(test_extras_framebuffer)
+START_TEST(test_extras_framebuffer_create)
 {
 	ccDisplayInitialize();
 
 	ccWindowCreate((ccRect){0, 0, 1, 1}, "ccore test", 0);
-	ccTimeDelay(500);
+
+	void *pixels;
+	ccWindowFramebufferCreate(&pixels, CC_FB_CHAR);
+
+	CC_ERROR_CHECK();
+	ccFree();
+}
+END_TEST
+
+START_TEST(test_extras_framebuffer_update)
+{
+	ccDisplayInitialize();
+
+	ccWindowCreate((ccRect){0, 0, 1, 1}, "ccore test", 0);
+
+	void *pixels;
+	ccWindowFramebufferCreate(&pixels, CC_FB_CHAR);
+	ccTimeDelay(2000);
+
+	CC_ERROR_CHECK();
+	ccFree();
+}
+END_TEST
+
+START_TEST(test_extras_framebuffer_resize)
+{
+	ccDisplayInitialize();
+
+	ccWindowCreate((ccRect){0, 0, 1, 1}, "ccore test", 0);
+
+	void *pixels;
+	ccWindowFramebufferCreate(&pixels, CC_FB_CHAR);
+	ccTimeDelay(2000);
 
 	CC_ERROR_CHECK();
 	ccFree();
@@ -87,7 +119,9 @@ Suite *extras_suite(void)
 	Suite *s = suite_create("Extras");
 
 	TCase *tframebuffer = tcase_create("Framebuffer");
-	tcase_add_test(tframebuffer, test_extras_framebuffer);
+	tcase_add_test(tframebuffer, test_extras_framebuffer_create);
+	tcase_add_test(tframebuffer, test_extras_framebuffer_update);
+	tcase_add_test(tframebuffer, test_extras_framebuffer_resize);
 	suite_add_tcase(s, tframebuffer);
 
 	return s;

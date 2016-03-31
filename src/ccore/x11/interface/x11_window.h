@@ -34,6 +34,7 @@ typedef struct {
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 	XImage *XFramebuffer;
 	XShmSegmentInfo XShminfo;
+	GC XGc;
 #endif
 	char *XClipString;
 	size_t XClipStringLength;

@@ -291,12 +291,16 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 		_ccWindow->supportsRawInput = false;
 	}
 
+	XWINDATA->XEmptyCursorImage = XCreateBitmapFromData(XWINDATA->XDisplay, XWINDATA->XWindow, emptyCursorData, 8, 8);
+
 	_ccWindow->mouse.x = _ccWindow->mouse.y = 0;
 	XWINDATA->XCursor = 0;
-	XWINDATA->XEmptyCursorImage = XCreateBitmapFromData(XWINDATA->XDisplay, XWINDATA->XWindow, emptyCursorData, 8, 8);
 	XWINDATA->XClipString = NULL;
 	XWINDATA->XContext = NULL;
 	XWINDATA->XClipStringLength = 0;
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
+	XWINDATA->XFramebuffer = NULL;
+#endif
 
 	return CC_SUCCESS;
 }
@@ -306,6 +310,10 @@ ccReturn ccWindowFree(void)
 	ccAssert(_ccWindow);
 
 	XSetErrorHandler(origXError);
+
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
+	ccWindowFramebufferFree();
+#endif
 
 	if(XWINDATA->XCursor != 0) {
 		XFreeCursor(XWINDATA->XDisplay, XWINDATA->XCursor);
@@ -695,13 +703,50 @@ ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat format)
 {
 	ccAssert(_ccWindow);
 
-	int major, minor, ignore;
+	int ignore;
 	if(!XQueryExtension(XWINDATA->XDisplay, "MIT-SHM", &ignore, &ignore, &ignore)){
 		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
 		return CC_FAIL;
 	}
 
-	XWINDATA->XFramebuffer = XShmCreateImage(XWINDATA->XDisplay, CopyFromParent, 3, ZPixmap, NULL, &XWINDATA->XShminfo, _ccWindow->rect.width, _ccWindow->rect.height);
+	XWINDATA->XGc = XCreateGC(XWINDATA->XDisplay, XWINDATA->XWindow, 0, 0);
+	if(!XWINDATA->XGc){
+		ccErrorPush(CC_ERROR_FRAMEBUFFER_CREATE);
+		return CC_FAIL;
+	}
+
+	Window root;
+	int depth, cx, cy;
+	XGetGeometry(XWINDATA->XDisplay, XWINDATA->XScreen, &root, &ignore, &ignore, &cx, &cy, &ignore, &depth);
+
+	XVisualInfo vinfo;
+	XMatchVisualInfo(XWINDATA->XDisplay, XWINDATA->XScreen, depth, DirectColor, &vinfo);
+
+	XWINDATA->XFramebuffer = XShmCreateImage(XWINDATA->XDisplay, vinfo.visual, depth, ZPixmap, 0, &XWINDATA->XShminfo, cx, cy);
+	if(XWINDATA->XFramebuffer == NULL){
+		ccErrorPush(CC_ERROR_FRAMEBUFFER_CREATE);
+		return CC_FAIL;
+	}
+	
+	int bytesperline = _ccWindow->rect.width;
+	switch(format){
+		case CC_FB_CHAR:
+			bytesperline *= 3;
+			break;
+		case CC_FB_INT:
+			bytesperline *= sizeof(int);
+			break;
+		default:
+			ccErrorPush(CC_ERROR_INVALID_ARGUMENT);
+			return CC_FAIL;
+	}
+	XWINDATA->XShminfo.shmid = shmget(IPC_PRIVATE, bytesperline * _ccWindow->rect.height, IPC_CREAT | 0777);
+	if(XWINDATA->XShminfo.shmid < 0){
+		XDestroyImage(XWINDATA->XFramebuffer);
+		XWINDATA->XFramebuffer = NULL;
+		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
+		return CC_FAIL;
+	}
 
 	return CC_SUCCESS;
 }
