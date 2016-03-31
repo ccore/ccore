@@ -2,11 +2,22 @@
 
 #include <stdbool.h>
 
+#include <ccore/core.h>
+
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <X11/cursorfont.h>
 #include <X11/extensions/XInput2.h>
+
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
+#ifndef LINUX
+#error "Shared memory libraries are needed to create a framebuffer object"
+#endif
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <X11/extensions/XShm.h>
+#endif
 
 #include <GL/glx.h>
 
@@ -22,6 +33,7 @@ typedef struct {
 	Pixmap XEmptyCursorImage;
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 	XImage *XFramebuffer;
+	XShmSegmentInfo XShminfo;
 #endif
 	char *XClipString;
 	size_t XClipStringLength;

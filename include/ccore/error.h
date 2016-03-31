@@ -48,6 +48,12 @@ typedef enum {
 	CC_ERROR_WINDOW_CURSOR, // The cursor couldn't be changed or moved
 	CC_ERROR_WINDOW_CLIPBOARD, // The clipboad couldn't be read or written to
 
+	// Framebuffer related
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
+	CC_ERROR_FRAMEBUFFER_SHAREDMEM, // Shared memory functions not available
+	CC_ERROR_FRAMEBUFFER_CREATE, // Couldn't create a framebuffer instance
+#endif
+
 	// OpenGL related
 	CC_ERROR_GL_VERSION, // The target OpenGL version is not supported
 	CC_ERROR_GL_CONTEXT, // OpenGL context creation failed

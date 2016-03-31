@@ -691,11 +691,17 @@ ccReturn ccWindowMouseSetCursor(ccCursor cursor)
 }
 
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
-ccReturn ccWindowFramebufferCreate(const void *pixels, ccFramebufferFormat format)
+ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat format)
 {
 	ccAssert(_ccWindow);
 
-	XWINDATA->XFramebuffer = XCreateImage(XWINDATA->XDisplay, CopyFromParent, 3, ZPixmap, 0, (char*)pixels, _ccWindow->rect.width, _ccWindow->rect.height, 32, 0);
+	int major, minor, ignore;
+	if(!XQueryExtension(XWINDATA->XDisplay, "MIT-SHM", &ignore, &ignore, &ignore)){
+		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
+		return CC_FAIL;
+	}
+
+	XWINDATA->XFramebuffer = XShmCreateImage(XWINDATA->XDisplay, CopyFromParent, 3, ZPixmap, NULL, &XWINDATA->XShminfo, _ccWindow->rect.width, _ccWindow->rect.height);
 
 	return CC_SUCCESS;
 }
