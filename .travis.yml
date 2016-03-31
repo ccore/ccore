@@ -14,7 +14,13 @@ addons:
     - libxrandr-dev
     - libxinerama-dev
     - libxi-dev
+    - libxext-dev
     - libtool
     - check
   
-script: ./configure && make && make check
+script: 
+  - ./configure && make && make check
+  - ./configure && make && make install
+
+after_failure:
+  - cat test-suite.log
