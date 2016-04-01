@@ -31,8 +31,7 @@ AC_CHECK_LIB([m], [cos], [], [echo "Math library is required" && exit -1])
 AC_CHECK_LIB([GL], [glXChooseVisual], [], [echo "OpenGL dev library is required" && exit -1])
 
 # Checks for the test library
-have_check=no
-PKG_CHECK_MODULES([CHECK], [check >= 0.8.2], [have_check=yes])
+PKG_CHECK_MODULES([CHECK], [check >= 0.8.2], [have_check=yes], [have_check=no])
 
 # Checks for header files.
 AC_HEADER_STDC
@@ -122,6 +121,7 @@ if test x$disable_all_modules != xyes; then
 fi
 
 if test x$have_check != xyes; then
+	AC_DEFINE([HAVE_CHECK], [1], [Use check])
 	SUMMARY="${SUMMARY}Not building tests (test/test.c) because the 'check' package could not be found\n"
 	SUMMARY="${SUMMARY}Please install the check package to be able to run the tests\n"
 fi

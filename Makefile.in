@@ -218,13 +218,13 @@ am__v_lt_1 =
 libccore_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(libccore_la_LDFLAGS) $(LDFLAGS) -o $@
-am__check_ccore_SOURCES_DIST = test/icon.c test/test.c
-@HAVE_CHECK_TRUE@am_check_ccore_OBJECTS =  \
-@HAVE_CHECK_TRUE@	test/check_ccore-icon.$(OBJEXT) \
-@HAVE_CHECK_TRUE@	test/check_ccore-test.$(OBJEXT)
+am__check_ccore_SOURCES_DIST = $(top_builddir)/test/icon.c \
+	$(top_builddir)/test/test.c
+@HAVE_CHECK_TRUE@am_check_ccore_OBJECTS = $(top_builddir)/test/check_ccore-icon.$(OBJEXT) \
+@HAVE_CHECK_TRUE@	$(top_builddir)/test/check_ccore-test.$(OBJEXT)
 check_ccore_OBJECTS = $(am_check_ccore_OBJECTS)
 @HAVE_CHECK_TRUE@check_ccore_DEPENDENCIES =  \
-@HAVE_CHECK_TRUE@	$(top_builddir)/.libs/libccore.a
+@HAVE_CHECK_TRUE@	$(top_builddir)/.libs/libccore.la
 check_ccore_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(check_ccore_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
@@ -635,10 +635,10 @@ libccore_la_SOURCES = src/ccore/common/interface/com_display.c \
 	src/ccore/common/utils/com_string.c \
 	src/ccore/common/utils/com_sysinfo.c $(am__append_1) \
 	$(am__append_2) $(am__append_3)
-@HAVE_CHECK_TRUE@check_ccore_SOURCES = test/icon.c test/test.c
+@HAVE_CHECK_TRUE@check_ccore_SOURCES = $(top_builddir)/test/icon.c $(top_builddir)/test/test.c
 @HAVE_CHECK_TRUE@check_ccore_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
 @HAVE_CHECK_TRUE@check_ccore_CFLAGS = @CHECK_CFLAGS@
-@HAVE_CHECK_TRUE@check_ccore_LDADD = @CHECK_LIBS@ $(top_builddir)/.libs/libccore.a
+@HAVE_CHECK_TRUE@check_ccore_LDADD = @CHECK_LIBS@ $(top_builddir)/.libs/libccore.la
 all: all-am
 
 .SUFFIXES:
@@ -840,16 +840,18 @@ clean-checkPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
-test/$(am__dirstamp):
-	@$(MKDIR_P) test
-	@: > test/$(am__dirstamp)
-test/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) test/$(DEPDIR)
-	@: > test/$(DEPDIR)/$(am__dirstamp)
-test/check_ccore-icon.$(OBJEXT): test/$(am__dirstamp) \
-	test/$(DEPDIR)/$(am__dirstamp)
-test/check_ccore-test.$(OBJEXT): test/$(am__dirstamp) \
-	test/$(DEPDIR)/$(am__dirstamp)
+$(top_builddir)/test/$(am__dirstamp):
+	@$(MKDIR_P) $(top_builddir)/test
+	@: > $(top_builddir)/test/$(am__dirstamp)
+$(top_builddir)/test/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) $(top_builddir)/test/$(DEPDIR)
+	@: > $(top_builddir)/test/$(DEPDIR)/$(am__dirstamp)
+$(top_builddir)/test/check_ccore-icon.$(OBJEXT):  \
+	$(top_builddir)/test/$(am__dirstamp) \
+	$(top_builddir)/test/$(DEPDIR)/$(am__dirstamp)
+$(top_builddir)/test/check_ccore-test.$(OBJEXT):  \
+	$(top_builddir)/test/$(am__dirstamp) \
+	$(top_builddir)/test/$(DEPDIR)/$(am__dirstamp)
 
 check_ccore$(EXEEXT): $(check_ccore_OBJECTS) $(check_ccore_DEPENDENCIES) $(EXTRA_check_ccore_DEPENDENCIES) 
 	@rm -f check_ccore$(EXEEXT)
@@ -857,6 +859,7 @@ check_ccore$(EXEEXT): $(check_ccore_OBJECTS) $(check_ccore_DEPENDENCIES) $(EXTRA
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f $(top_builddir)/test/*.$(OBJEXT)
 	-rm -f src/ccore/common/interface/*.$(OBJEXT)
 	-rm -f src/ccore/common/interface/*.lo
 	-rm -f src/ccore/common/utils/*.$(OBJEXT)
@@ -871,11 +874,12 @@ mostlyclean-compile:
 	-rm -f src/ccore/windows/utils/*.lo
 	-rm -f src/ccore/x11/interface/*.$(OBJEXT)
 	-rm -f src/ccore/x11/interface/*.lo
-	-rm -f test/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@$(top_builddir)/test/$(DEPDIR)/check_ccore-icon.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@$(top_builddir)/test/$(DEPDIR)/check_ccore-test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/com_display.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/com_event.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/com_window.Plo@am__quote@
@@ -901,8 +905,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/x11/interface/$(DEPDIR)/x11_display.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/x11/interface/$(DEPDIR)/x11_opengl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/x11/interface/$(DEPDIR)/x11_window.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/check_ccore-icon.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/check_ccore-test.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -928,33 +930,33 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
-test/check_ccore-icon.o: test/icon.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -MT test/check_ccore-icon.o -MD -MP -MF test/$(DEPDIR)/check_ccore-icon.Tpo -c -o test/check_ccore-icon.o `test -f 'test/icon.c' || echo '$(srcdir)/'`test/icon.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) test/$(DEPDIR)/check_ccore-icon.Tpo test/$(DEPDIR)/check_ccore-icon.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test/icon.c' object='test/check_ccore-icon.o' libtool=no @AMDEPBACKSLASH@
+$(top_builddir)/test/check_ccore-icon.o: $(top_builddir)/test/icon.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -MT $(top_builddir)/test/check_ccore-icon.o -MD -MP -MF $(top_builddir)/test/$(DEPDIR)/check_ccore-icon.Tpo -c -o $(top_builddir)/test/check_ccore-icon.o `test -f '$(top_builddir)/test/icon.c' || echo '$(srcdir)/'`$(top_builddir)/test/icon.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(top_builddir)/test/$(DEPDIR)/check_ccore-icon.Tpo $(top_builddir)/test/$(DEPDIR)/check_ccore-icon.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(top_builddir)/test/icon.c' object='$(top_builddir)/test/check_ccore-icon.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -c -o test/check_ccore-icon.o `test -f 'test/icon.c' || echo '$(srcdir)/'`test/icon.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -c -o $(top_builddir)/test/check_ccore-icon.o `test -f '$(top_builddir)/test/icon.c' || echo '$(srcdir)/'`$(top_builddir)/test/icon.c
 
-test/check_ccore-icon.obj: test/icon.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -MT test/check_ccore-icon.obj -MD -MP -MF test/$(DEPDIR)/check_ccore-icon.Tpo -c -o test/check_ccore-icon.obj `if test -f 'test/icon.c'; then $(CYGPATH_W) 'test/icon.c'; else $(CYGPATH_W) '$(srcdir)/test/icon.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) test/$(DEPDIR)/check_ccore-icon.Tpo test/$(DEPDIR)/check_ccore-icon.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test/icon.c' object='test/check_ccore-icon.obj' libtool=no @AMDEPBACKSLASH@
+$(top_builddir)/test/check_ccore-icon.obj: $(top_builddir)/test/icon.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -MT $(top_builddir)/test/check_ccore-icon.obj -MD -MP -MF $(top_builddir)/test/$(DEPDIR)/check_ccore-icon.Tpo -c -o $(top_builddir)/test/check_ccore-icon.obj `if test -f '$(top_builddir)/test/icon.c'; then $(CYGPATH_W) '$(top_builddir)/test/icon.c'; else $(CYGPATH_W) '$(srcdir)/$(top_builddir)/test/icon.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(top_builddir)/test/$(DEPDIR)/check_ccore-icon.Tpo $(top_builddir)/test/$(DEPDIR)/check_ccore-icon.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(top_builddir)/test/icon.c' object='$(top_builddir)/test/check_ccore-icon.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -c -o test/check_ccore-icon.obj `if test -f 'test/icon.c'; then $(CYGPATH_W) 'test/icon.c'; else $(CYGPATH_W) '$(srcdir)/test/icon.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -c -o $(top_builddir)/test/check_ccore-icon.obj `if test -f '$(top_builddir)/test/icon.c'; then $(CYGPATH_W) '$(top_builddir)/test/icon.c'; else $(CYGPATH_W) '$(srcdir)/$(top_builddir)/test/icon.c'; fi`
 
-test/check_ccore-test.o: test/test.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -MT test/check_ccore-test.o -MD -MP -MF test/$(DEPDIR)/check_ccore-test.Tpo -c -o test/check_ccore-test.o `test -f 'test/test.c' || echo '$(srcdir)/'`test/test.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) test/$(DEPDIR)/check_ccore-test.Tpo test/$(DEPDIR)/check_ccore-test.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test/test.c' object='test/check_ccore-test.o' libtool=no @AMDEPBACKSLASH@
+$(top_builddir)/test/check_ccore-test.o: $(top_builddir)/test/test.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -MT $(top_builddir)/test/check_ccore-test.o -MD -MP -MF $(top_builddir)/test/$(DEPDIR)/check_ccore-test.Tpo -c -o $(top_builddir)/test/check_ccore-test.o `test -f '$(top_builddir)/test/test.c' || echo '$(srcdir)/'`$(top_builddir)/test/test.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(top_builddir)/test/$(DEPDIR)/check_ccore-test.Tpo $(top_builddir)/test/$(DEPDIR)/check_ccore-test.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(top_builddir)/test/test.c' object='$(top_builddir)/test/check_ccore-test.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -c -o test/check_ccore-test.o `test -f 'test/test.c' || echo '$(srcdir)/'`test/test.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -c -o $(top_builddir)/test/check_ccore-test.o `test -f '$(top_builddir)/test/test.c' || echo '$(srcdir)/'`$(top_builddir)/test/test.c
 
-test/check_ccore-test.obj: test/test.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -MT test/check_ccore-test.obj -MD -MP -MF test/$(DEPDIR)/check_ccore-test.Tpo -c -o test/check_ccore-test.obj `if test -f 'test/test.c'; then $(CYGPATH_W) 'test/test.c'; else $(CYGPATH_W) '$(srcdir)/test/test.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) test/$(DEPDIR)/check_ccore-test.Tpo test/$(DEPDIR)/check_ccore-test.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test/test.c' object='test/check_ccore-test.obj' libtool=no @AMDEPBACKSLASH@
+$(top_builddir)/test/check_ccore-test.obj: $(top_builddir)/test/test.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -MT $(top_builddir)/test/check_ccore-test.obj -MD -MP -MF $(top_builddir)/test/$(DEPDIR)/check_ccore-test.Tpo -c -o $(top_builddir)/test/check_ccore-test.obj `if test -f '$(top_builddir)/test/test.c'; then $(CYGPATH_W) '$(top_builddir)/test/test.c'; else $(CYGPATH_W) '$(srcdir)/$(top_builddir)/test/test.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(top_builddir)/test/$(DEPDIR)/check_ccore-test.Tpo $(top_builddir)/test/$(DEPDIR)/check_ccore-test.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(top_builddir)/test/test.c' object='$(top_builddir)/test/check_ccore-test.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -c -o test/check_ccore-test.obj `if test -f 'test/test.c'; then $(CYGPATH_W) 'test/test.c'; else $(CYGPATH_W) '$(srcdir)/test/test.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -c -o $(top_builddir)/test/check_ccore-test.obj `if test -f '$(top_builddir)/test/test.c'; then $(CYGPATH_W) '$(top_builddir)/test/test.c'; else $(CYGPATH_W) '$(srcdir)/$(top_builddir)/test/test.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -1430,8 +1432,8 @@ distclean-generic:
 	-rm -f src/ccore/windows/utils/$(am__dirstamp)
 	-rm -f src/ccore/x11/interface/$(DEPDIR)/$(am__dirstamp)
 	-rm -f src/ccore/x11/interface/$(am__dirstamp)
-	-rm -f test/$(DEPDIR)/$(am__dirstamp)
-	-rm -f test/$(am__dirstamp)
+	-test -z "$(top_builddir)/test/$(DEPDIR)/$(am__dirstamp)" || rm -f $(top_builddir)/test/$(DEPDIR)/$(am__dirstamp)
+	-test -z "$(top_builddir)/test/$(am__dirstamp)" || rm -f $(top_builddir)/test/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -1443,7 +1445,7 @@ clean-am: clean-checkPROGRAMS clean-generic clean-libLTLIBRARIES \
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf src/ccore/common/interface/$(DEPDIR) src/ccore/common/utils/$(DEPDIR) src/ccore/linux/interface/$(DEPDIR) src/ccore/linux/utils/$(DEPDIR) src/ccore/windows/interface/$(DEPDIR) src/ccore/windows/utils/$(DEPDIR) src/ccore/x11/interface/$(DEPDIR) test/$(DEPDIR)
+	-rm -rf $(top_builddir)/test/$(DEPDIR) src/ccore/common/interface/$(DEPDIR) src/ccore/common/utils/$(DEPDIR) src/ccore/linux/interface/$(DEPDIR) src/ccore/linux/utils/$(DEPDIR) src/ccore/windows/interface/$(DEPDIR) src/ccore/windows/utils/$(DEPDIR) src/ccore/x11/interface/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-libtool distclean-tags
@@ -1491,7 +1493,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf src/ccore/common/interface/$(DEPDIR) src/ccore/common/utils/$(DEPDIR) src/ccore/linux/interface/$(DEPDIR) src/ccore/linux/utils/$(DEPDIR) src/ccore/windows/interface/$(DEPDIR) src/ccore/windows/utils/$(DEPDIR) src/ccore/x11/interface/$(DEPDIR) test/$(DEPDIR)
+	-rm -rf $(top_builddir)/test/$(DEPDIR) src/ccore/common/interface/$(DEPDIR) src/ccore/common/utils/$(DEPDIR) src/ccore/linux/interface/$(DEPDIR) src/ccore/linux/utils/$(DEPDIR) src/ccore/windows/interface/$(DEPDIR) src/ccore/windows/utils/$(DEPDIR) src/ccore/x11/interface/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

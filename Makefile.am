@@ -59,10 +59,10 @@ endif
 
 if HAVE_CHECK
 check_PROGRAMS = check_ccore
-check_ccore_SOURCES = test/icon.c test/test.c
+check_ccore_SOURCES = $(top_builddir)/test/icon.c $(top_builddir)/test/test.c
 check_ccore_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
 check_ccore_CFLAGS = @CHECK_CFLAGS@
-check_ccore_LDADD = @CHECK_LIBS@ $(top_builddir)/.libs/libccore.a
+check_ccore_LDADD = @CHECK_LIBS@ $(top_builddir)/.libs/libccore.la
 
 TESTS = check_ccore
 endif
