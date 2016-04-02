@@ -42,11 +42,9 @@
 #include <ccore/window.h>
 #include <ccore/display.h>
 
-#include "icon.h"
-
-#define CC_ERROR_CHECK() \
+#define CC_ERROR_CHECK(){ \
 	ccError error = ccErrorPop(); \
-	ck_assert_msg(error == CC_ERROR_NONE, "ccore err: \"%s\"", ccErrorString(error))
+	ck_assert_msg(error == CC_ERROR_NONE, "ccore err: \"%s\"", ccErrorString(error)); }
 
 START_TEST(test_sysinfo_ram)
 {
@@ -54,52 +52,8 @@ START_TEST(test_sysinfo_ram)
 
 	ccPrintf("\tccSysInfoGetRamTotal output:\t%lld\n", (long long int)ccSysinfoGetRamTotal());
 
-	CC_ERROR_CHECK();
 	ccFree();
-}
-END_TEST
-
-START_TEST(test_extras_framebuffer_create)
-{
-	ccDisplayInitialize();
-
-	ccWindowCreate((ccRect){0, 0, 1, 1}, "ccore test", 0);
-
-	void *pixels;
-	ccWindowFramebufferCreate(&pixels, CC_FB_CHAR);
-
 	CC_ERROR_CHECK();
-	ccFree();
-}
-END_TEST
-
-START_TEST(test_extras_framebuffer_update)
-{
-	ccDisplayInitialize();
-
-	ccWindowCreate((ccRect){0, 0, 1, 1}, "ccore test", 0);
-
-	void *pixels;
-	ccWindowFramebufferCreate(&pixels, CC_FB_CHAR);
-	ccTimeDelay(2000);
-
-	CC_ERROR_CHECK();
-	ccFree();
-}
-END_TEST
-
-START_TEST(test_extras_framebuffer_resize)
-{
-	ccDisplayInitialize();
-
-	ccWindowCreate((ccRect){0, 0, 1, 1}, "ccore test", 0);
-
-	void *pixels;
-	ccWindowFramebufferCreate(&pixels, CC_FB_CHAR);
-	ccTimeDelay(2000);
-
-	CC_ERROR_CHECK();
-	ccFree();
 }
 END_TEST
 
@@ -117,12 +71,6 @@ Suite *sysinfo_suite(void)
 Suite *extras_suite(void)
 {
 	Suite *s = suite_create("Extras");
-
-	TCase *tframebuffer = tcase_create("Framebuffer");
-	tcase_add_test(tframebuffer, test_extras_framebuffer_create);
-	tcase_add_test(tframebuffer, test_extras_framebuffer_update);
-	tcase_add_test(tframebuffer, test_extras_framebuffer_resize);
-	suite_add_tcase(s, tframebuffer);
 
 	return s;
 }

@@ -55,6 +55,8 @@ build_linux=no
 build_windows=no
 build_x11=no
 
+build_examples=yes
+
 SUMMARY="Configuration summary\n"
 SUMMARY="${SUMMARY}ccore version: ${CCORE_VERSION}\n"
 
@@ -108,10 +110,11 @@ esac
 # Add the include flag so the header files can read ccore/*.h
 
 # Pass the building booleans to Makefile.am
-AM_CONDITIONAL([HAVE_CHECK], [test "$have_check" = "yes"])
 AM_CONDITIONAL([BUILD_LINUX], [test "$build_linux" = "yes"])
 AM_CONDITIONAL([BUILD_WINDOWS], [test "$build_windows" = "yes"])
 AM_CONDITIONAL([BUILD_X11], [test "$build_x11" = "yes"])
+AM_CONDITIONAL([BUILD_TESTS], [test "$have_check" = "yes"])
+AM_CONDITIONAL([BUILD_EXAMPLES], [test "$build_examples" = "yes"])
 
 # The library automatically includes all modules, change this if it is unwanted
 AC_ARG_ENABLE(all-modules, AC_HELP_STRING([--disable-all-modules], [Disable all ccore modules (not recommeded)]))

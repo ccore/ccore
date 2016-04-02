@@ -633,14 +633,16 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 AM_CPPFLAGS
+BUILD_EXAMPLES_FALSE
+BUILD_EXAMPLES_TRUE
+BUILD_TESTS_FALSE
+BUILD_TESTS_TRUE
 BUILD_X11_FALSE
 BUILD_X11_TRUE
 BUILD_WINDOWS_FALSE
 BUILD_WINDOWS_TRUE
 BUILD_LINUX_FALSE
 BUILD_LINUX_TRUE
-HAVE_CHECK_FALSE
-HAVE_CHECK_TRUE
 XMKMF
 LIBOBJS
 CHECK_LIBS
@@ -14032,6 +14034,8 @@ build_linux=no
 build_windows=no
 build_x11=no
 
+build_examples=yes
+
 SUMMARY="Configuration summary\n"
 SUMMARY="${SUMMARY}ccore version: ${CCORE_VERSION}\n"
 
@@ -14581,14 +14585,6 @@ esac
 # Add the include flag so the header files can read ccore/*.h
 
 # Pass the building booleans to Makefile.am
- if test "$have_check" = "yes"; then
-  HAVE_CHECK_TRUE=
-  HAVE_CHECK_FALSE='#'
-else
-  HAVE_CHECK_TRUE='#'
-  HAVE_CHECK_FALSE=
-fi
-
  if test "$build_linux" = "yes"; then
   BUILD_LINUX_TRUE=
   BUILD_LINUX_FALSE='#'
@@ -14611,6 +14607,22 @@ fi
 else
   BUILD_X11_TRUE='#'
   BUILD_X11_FALSE=
+fi
+
+ if test "$have_check" = "yes"; then
+  BUILD_TESTS_TRUE=
+  BUILD_TESTS_FALSE='#'
+else
+  BUILD_TESTS_TRUE='#'
+  BUILD_TESTS_FALSE=
+fi
+
+ if test "$build_examples" = "yes"; then
+  BUILD_EXAMPLES_TRUE=
+  BUILD_EXAMPLES_FALSE='#'
+else
+  BUILD_EXAMPLES_TRUE='#'
+  BUILD_EXAMPLES_FALSE=
 fi
 
 
@@ -14824,10 +14836,6 @@ if test -z "${am__fastdepCC_TRUE}" && test -z "${am__fastdepCC_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCC\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
-if test -z "${HAVE_CHECK_TRUE}" && test -z "${HAVE_CHECK_FALSE}"; then
-  as_fn_error $? "conditional \"HAVE_CHECK\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
 if test -z "${BUILD_LINUX_TRUE}" && test -z "${BUILD_LINUX_FALSE}"; then
   as_fn_error $? "conditional \"BUILD_LINUX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
@@ -14838,6 +14846,14 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${BUILD_X11_TRUE}" && test -z "${BUILD_X11_FALSE}"; then
   as_fn_error $? "conditional \"BUILD_X11\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${BUILD_TESTS_TRUE}" && test -z "${BUILD_TESTS_FALSE}"; then
+  as_fn_error $? "conditional \"BUILD_TESTS\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${BUILD_EXAMPLES_TRUE}" && test -z "${BUILD_EXAMPLES_FALSE}"; then
+  as_fn_error $? "conditional \"BUILD_EXAMPLES\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 

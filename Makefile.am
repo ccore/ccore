@@ -57,12 +57,20 @@ libccore_la_SOURCES += src/ccore/x11/interface/x11_opengl.c
 libccore_la_SOURCES += src/ccore/x11/interface/x11_window.c
 endif
 
-if HAVE_CHECK
+if BUILD_TESTS
 check_PROGRAMS = check_ccore
-check_ccore_SOURCES = $(top_builddir)/test/icon.c $(top_builddir)/test/test.c
+check_ccore_SOURCES = test/icon.c test/test.c
 check_ccore_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
 check_ccore_CFLAGS = @CHECK_CFLAGS@
 check_ccore_LDADD = @CHECK_LIBS@ $(top_builddir)/.libs/libccore.la
 
 TESTS = check_ccore
+endif
+
+if BUILD_EXAMPLES
+bin_PROGRAMS = bin/framebuffer
+
+bin_framebuffer_SOURCES = examples/framebuffer.c
+bin_framebuffer_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
+bin_framebuffer_LDADD = $(top_builddir)/.libs/libccore.la
 endif
