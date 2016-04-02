@@ -24,15 +24,13 @@ ccReturn ccGLContextBind(void)
 		return CC_FAIL;
 	}
 
-	XVisualInfo *visual =
-			glXChooseVisual(XWINDATA->XDisplay, XWINDATA->XScreen, attrList);
+	XVisualInfo *visual = glXChooseVisual(XWINDATA->XDisplay, XWINDATA->XScreen, attrList);
 	if(CC_UNLIKELY(!visual)) {
 		ccErrorPush(CC_ERROR_GL_CONTEXT);
 		return CC_FAIL;
 	}
 
-	XWINDATA->XContext =
-			glXCreateContext(XWINDATA->XDisplay, visual, NULL, GL_TRUE);
+	XWINDATA->XContext = glXCreateContext(XWINDATA->XDisplay, visual, NULL, GL_TRUE);
 	glXMakeCurrent(XWINDATA->XDisplay, XWINDATA->XWindow, XWINDATA->XContext);
 
 	return CC_SUCCESS;

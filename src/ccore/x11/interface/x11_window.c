@@ -163,6 +163,13 @@ static int handleXError(Display *display, XErrorEvent *event)
 	return 0;
 }
 
+static int _xerrflag = 0;
+static int handleXErrorSetFlag(Display *display, XErrorEvent *event)
+{
+	_xerrflag = 1;
+	return 0;
+}
+
 static unsigned long getWindowProperty(Window window, Atom property, Atom type, unsigned char **value)
 {
 	Atom actualType;
@@ -703,6 +710,12 @@ ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat format)
 {
 	ccAssert(_ccWindow);
 
+	// There already is a OpenGL context, you can't create both
+	if(XWINDATA->XContext != NULL){
+		ccErrorPush(CC_ERROR_FRAMEBUFFER_CREATE);
+		return CC_FAIL;
+	}
+
 	int ignore;
 	if(!XQueryExtension(XWINDATA->XDisplay, "MIT-SHM", &ignore, &ignore, &ignore)){
 		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
@@ -728,7 +741,11 @@ ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat format)
 		return CC_FAIL;
 	}
 	
-	int bytesperline = _ccWindow->rect.width;
+	int bytesperline = XWINDATA->XFramebuffer->bytes_per_line;
+	int imagesize = bytesperline * XWINDATA->XFramebuffer->height;
+	fprintf(stderr, "%d\n", bytesperline);
+	/*int bytesperline = _ccWindow->rect.width;
+	// Calculate the amount of pixels for the framebuffer
 	switch(format){
 		case CC_FB_CHAR:
 			bytesperline *= 3;
@@ -740,13 +757,57 @@ ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat format)
 			ccErrorPush(CC_ERROR_INVALID_ARGUMENT);
 			return CC_FAIL;
 	}
-	XWINDATA->XShminfo.shmid = shmget(IPC_PRIVATE, bytesperline * _ccWindow->rect.height, IPC_CREAT | 0777);
+	int imagesize = bytesperline * _ccWindow->rect.height
+	*/
+	XWINDATA->XShminfo.shmid = shmget(IPC_PRIVATE, imagesize, IPC_CREAT | 0777);
 	if(XWINDATA->XShminfo.shmid < 0){
 		XDestroyImage(XWINDATA->XFramebuffer);
 		XWINDATA->XFramebuffer = NULL;
 		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
 		return CC_FAIL;
 	}
+
+	XWINDATA->XShminfo.shmaddr = (char*)shmat(XWINDATA->XShminfo.shmid, 0, 0);
+	XWINDATA->XFramebuffer->data = XWINDATA->XShminfo.shmaddr;
+	if(XWINDATA->XShminfo.shmaddr == (char*)-1){
+		XDestroyImage(XWINDATA->XFramebuffer);
+		XWINDATA->XFramebuffer = NULL;
+		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
+		return CC_FAIL;
+	}
+
+	XWINDATA->XShminfo.readOnly = False;
+
+	// Check if we can trigger an X error event to know if we are on a remote display
+	_xerrflag = 0;
+	XSetErrorHandler(handleXErrorSetFlag);
+	XShmAttach(XWINDATA->XDisplay, &XWINDATA->XShminfo);
+	XSync(XWINDATA->XDisplay, False);
+	if(_xerrflag){
+		_xerrflag = 0;
+		XFlush(XWINDATA->XDisplay);
+
+		XDestroyImage(XWINDATA->XFramebuffer);
+		shmdt(XWINDATA->XShminfo.shmaddr);
+		shmctl(XWINDATA->XShminfo.shmid, IPC_RMID, 0);
+
+		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
+		return CC_FAIL;
+	}
+
+	shmctl(XWINDATA->XShminfo.shmid, IPC_RMID, 0);
+
+	return CC_SUCCESS;
+}
+
+ccReturn ccWindowFramebufferUpdate()
+{
+	if(CC_UNLIKELY(XWINDATA->XFramebuffer == NULL)){
+		return CC_FAIL;
+	}
+
+	XShmPutImage(XWINDATA->XDisplay, XWINDATA->XWindow, XWINDATA->XGc, XWINDATA->XFramebuffer, 0, 0, 0, 0, _ccWindow->rect.width, _ccWindow->rect.height, False);
+	XSync(XWINDATA->XDisplay, False);
 
 	return CC_SUCCESS;
 }
@@ -756,7 +817,14 @@ ccReturn ccWindowFramebufferFree()
 	ccAssert(_ccWindow);
 
 	if(XWINDATA->XFramebuffer){
+		XShmDetach(XWINDATA->XDisplay, &XWINDATA->XShminfo);
 		XDestroyImage(XWINDATA->XFramebuffer);		
+		shmdt(XWINDATA->XShminfo.shmaddr);
+	}
+
+	if(XWINDATA->XGc){
+		XFreeGC(XWINDATA->XDisplay, XWINDATA->XGc);
+		XWINDATA->XGc = NULL;
 	}
 
 	return CC_SUCCESS;

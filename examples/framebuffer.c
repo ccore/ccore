@@ -17,7 +17,7 @@
 int main(int argc, char **argv)
 {
 	ccDisplayInitialize();
-	ccWindowCreate((ccRect){0, 0, 100, 100}, "ccore examples: framebuffer", 0);
+	ccWindowCreate((ccRect){0, 0, 400, 400}, "ccore examples: framebuffer", 0);
 
 	void *pixels;
 	if(ccWindowFramebufferCreate(&pixels, CC_FB_CHAR) != CC_SUCCESS){
@@ -25,5 +25,12 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	ccTimeDelay(2000);
+	int cycles = 10;
+	while(cycles--){
+		if(ccWindowFramebufferCreate(&pixels, CC_FB_CHAR) != CC_SUCCESS){
+			fprintf(stderr, "Something went wrong updating the framebuffer\n");
+			exit(1);
+		}
+		ccTimeDelay(500);
+	}
 }
