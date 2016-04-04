@@ -72,6 +72,8 @@ const char *ccErrorString(ccError error)
 			return "Failed initializing shared memory for the framebuffer";
 		case CC_ERROR_FRAMEBUFFER_CREATE:
 			return "Can't create a framebuffer instance";
+		case CC_ERROR_FRAMEBUFFER_PIXELFORMAT:
+			return "The pixel format the framebuffer wants to use is not supported";
 #endif
 
 			// OpenGL related

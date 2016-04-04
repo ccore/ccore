@@ -706,7 +706,7 @@ ccReturn ccWindowMouseSetCursor(ccCursor cursor)
 }
 
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
-ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat format)
+ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat *format)
 {
 	ccAssert(_ccWindow);
 
@@ -735,32 +735,29 @@ ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat format)
 	XVisualInfo vinfo;
 	XMatchVisualInfo(XWINDATA->XDisplay, XWINDATA->XScreen, depth, DirectColor, &vinfo);
 
-	XWINDATA->XFramebuffer = XShmCreateImage(XWINDATA->XDisplay, vinfo.visual, depth, ZPixmap, 0, &XWINDATA->XShminfo, cx, cy);
+	XWINDATA->XFramebuffer = XShmCreateImage(XWINDATA->XDisplay, vinfo.visual, depth, ZPixmap, NULL, &XWINDATA->XShminfo, _ccWindow->rect.width, _ccWindow->rect.height);
+	printf("WTF\n");
 	if(XWINDATA->XFramebuffer == NULL){
 		ccErrorPush(CC_ERROR_FRAMEBUFFER_CREATE);
 		return CC_FAIL;
 	}
-	
-	int bytesperline = XWINDATA->XFramebuffer->bytes_per_line;
-	int imagesize = bytesperline * XWINDATA->XFramebuffer->height;
-	fprintf(stderr, "%d\n", bytesperline);
-	/*int bytesperline = _ccWindow->rect.width;
-	// Calculate the amount of pixels for the framebuffer
-	switch(format){
-		case CC_FB_CHAR:
-			bytesperline *= 3;
+
+	switch(XWINDATA->XFramebuffer->bits_per_pixel){
+		case 24:
+			*format = CC_FRAMEBUFFER_PIXEL_RGB24;
 			break;
-		case CC_FB_INT:
-			bytesperline *= sizeof(int);
+		case 32:
+			*format = CC_FRAMEBUFFER_PIXEL_RGB32;
 			break;
 		default:
-			ccErrorPush(CC_ERROR_INVALID_ARGUMENT);
+			XDestroyImage(XWINDATA->XFramebuffer);
+			XWINDATA->XFramebuffer = NULL;
+			ccErrorPush(CC_ERROR_FRAMEBUFFER_PIXELFORMAT);
 			return CC_FAIL;
 	}
-	int imagesize = bytesperline * _ccWindow->rect.height
-	*/
-	XWINDATA->XShminfo.shmid = shmget(IPC_PRIVATE, imagesize, IPC_CREAT | 0777);
-	if(XWINDATA->XShminfo.shmid < 0){
+	
+	XWINDATA->XShminfo.shmid = shmget(IPC_PRIVATE, XWINDATA->XFramebuffer->bytes_per_line * XWINDATA->XFramebuffer->height, IPC_CREAT | 0777);
+	if(XWINDATA->XShminfo.shmid == -1){
 		XDestroyImage(XWINDATA->XFramebuffer);
 		XWINDATA->XFramebuffer = NULL;
 		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
@@ -768,13 +765,14 @@ ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat format)
 	}
 
 	XWINDATA->XShminfo.shmaddr = (char*)shmat(XWINDATA->XShminfo.shmid, 0, 0);
-	XWINDATA->XFramebuffer->data = XWINDATA->XShminfo.shmaddr;
 	if(XWINDATA->XShminfo.shmaddr == (char*)-1){
 		XDestroyImage(XWINDATA->XFramebuffer);
 		XWINDATA->XFramebuffer = NULL;
 		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
 		return CC_FAIL;
 	}
+	XWINDATA->XFramebuffer->data = XWINDATA->XShminfo.shmaddr;
+	*pixels = XWINDATA->XShminfo.shmaddr;
 
 	XWINDATA->XShminfo.readOnly = False;
 

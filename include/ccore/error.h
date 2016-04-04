@@ -52,6 +52,7 @@ typedef enum {
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 	CC_ERROR_FRAMEBUFFER_SHAREDMEM, // Shared memory functions not available
 	CC_ERROR_FRAMEBUFFER_CREATE, // Couldn't create a framebuffer instance
+	CC_ERROR_FRAMEBUFFER_PIXELFORMAT, // Pixel format not supported
 #endif
 
 	// OpenGL related
