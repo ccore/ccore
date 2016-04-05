@@ -14,6 +14,9 @@
 #include <ccore/window.h>
 #include <ccore/display.h>
 
+#define MAX_CYCLES 100
+#define CYCLE_DURATION 10
+
 int main(int argc, char **argv)
 {
 	ccDisplayInitialize();
@@ -30,10 +33,10 @@ int main(int argc, char **argv)
 	int nbytes = format / 8;
 	int npixels = ccWindowGetRect().width * ccWindowGetRect().height;
 
-	int cycles = 10;
-	while(cycles--){
+	int cycles = 0;
+	while(cycles++ < MAX_CYCLES){
 		for(int i = 0; i < npixels * nbytes; i++){
-			((char*)pixels)[i] = 0;
+			((char*)pixels)[i] = cycles * (255 / MAX_CYCLES);
 		}
 
 		if(ccWindowFramebufferUpdate() != CC_SUCCESS){
@@ -41,7 +44,7 @@ int main(int argc, char **argv)
 			fprintf(stderr, "%s\n", ccErrorString(ccErrorPop()));
 			exit(1);
 		}
-		ccTimeDelay(500);
+		ccTimeDelay(CYCLE_DURATION);
 	}
 
 	ccFree();

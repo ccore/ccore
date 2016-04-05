@@ -728,15 +728,7 @@ ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat *format)
 		return CC_FAIL;
 	}
 
-	Window root;
-	int depth, cx, cy;
-	XGetGeometry(XWINDATA->XDisplay, XWINDATA->XScreen, &root, &ignore, &ignore, &cx, &cy, &ignore, &depth);
-
-	XVisualInfo vinfo;
-	XMatchVisualInfo(XWINDATA->XDisplay, XWINDATA->XScreen, depth, DirectColor, &vinfo);
-
-	XWINDATA->XFramebuffer = XShmCreateImage(XWINDATA->XDisplay, vinfo.visual, depth, ZPixmap, NULL, &XWINDATA->XShminfo, _ccWindow->rect.width, _ccWindow->rect.height);
-	printf("WTF\n");
+	XWINDATA->XFramebuffer = XShmCreateImage(XWINDATA->XDisplay, DefaultVisual(XWINDATA->XDisplay, XWINDATA->XScreen), DefaultDepth(XWINDATA->XDisplay, XWINDATA->XScreen), ZPixmap, NULL, &XWINDATA->XShminfo, _ccWindow->rect.width, _ccWindow->rect.height);
 	if(XWINDATA->XFramebuffer == NULL){
 		ccErrorPush(CC_ERROR_FRAMEBUFFER_CREATE);
 		return CC_FAIL;
