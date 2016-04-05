@@ -20,7 +20,6 @@ addons:
   
 script: 
   - ./configure && make && make check
-  - ./configure && make && make install
 
 after_failure:
   - cat test-suite.log
