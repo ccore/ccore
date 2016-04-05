@@ -35,7 +35,8 @@ int main(int argc, char **argv)
 
 	int cycles = 0;
 	while(cycles++ < MAX_CYCLES){
-		for(int i = 0; i < npixels * nbytes; i++){
+		int i;
+		for(i = 0; i < npixels * nbytes; i++){
 			((char*)pixels)[i] = cycles * (255 / MAX_CYCLES);
 		}
 
