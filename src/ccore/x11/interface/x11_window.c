@@ -163,6 +163,13 @@ static int handleXError(Display *display, XErrorEvent *event)
 	return 0;
 }
 
+static int _xerrflag = 0;
+static int handleXErrorSetFlag(Display *display, XErrorEvent *event)
+{
+	_xerrflag = 1;
+	return 0;
+}
+
 static unsigned long getWindowProperty(Window window, Atom property, Atom type, unsigned char **value)
 {
 	Atom actualType;
@@ -291,12 +298,16 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 		_ccWindow->supportsRawInput = false;
 	}
 
+	XWINDATA->XEmptyCursorImage = XCreateBitmapFromData(XWINDATA->XDisplay, XWINDATA->XWindow, emptyCursorData, 8, 8);
+
 	_ccWindow->mouse.x = _ccWindow->mouse.y = 0;
 	XWINDATA->XCursor = 0;
-	XWINDATA->XEmptyCursorImage = XCreateBitmapFromData(XWINDATA->XDisplay, XWINDATA->XWindow, emptyCursorData, 8, 8);
 	XWINDATA->XClipString = NULL;
 	XWINDATA->XContext = NULL;
 	XWINDATA->XClipStringLength = 0;
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
+	XWINDATA->XFramebuffer = NULL;
+#endif
 
 	return CC_SUCCESS;
 }
@@ -306,6 +317,10 @@ ccReturn ccWindowFree(void)
 	ccAssert(_ccWindow);
 
 	XSetErrorHandler(origXError);
+
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
+	ccWindowFramebufferFree();
+#endif
 
 	if(XWINDATA->XCursor != 0) {
 		XFreeCursor(XWINDATA->XDisplay, XWINDATA->XCursor);
@@ -476,6 +491,11 @@ bool ccWindowEventPoll(void)
 		case SelectionRequest:
 			handleSelectionRequest(&event.xselectionrequest);
 			return false;
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
+		case Expose:
+			XPutImage(XWINDATA->XDisplay, XWINDATA->XWindow, 0, XWINDATA->XFramebuffer, 0, 0, 0, 0, _ccWindow->rect.width, _ccWindow->rect.height);
+			return false;
+#endif
 		default:
 			return false;
 	}
@@ -684,6 +704,122 @@ ccReturn ccWindowMouseSetCursor(ccCursor cursor)
 
 	return CC_SUCCESS;
 }
+
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
+ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat *format)
+{
+	ccAssert(_ccWindow);
+
+	// There already is a OpenGL context, you can't create both
+	if(XWINDATA->XContext != NULL){
+		ccErrorPush(CC_ERROR_FRAMEBUFFER_CREATE);
+		return CC_FAIL;
+	}
+
+	int ignore;
+	if(!XQueryExtension(XWINDATA->XDisplay, "MIT-SHM", &ignore, &ignore, &ignore)){
+		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
+		return CC_FAIL;
+	}
+
+	XWINDATA->XGc = XCreateGC(XWINDATA->XDisplay, XWINDATA->XWindow, 0, 0);
+	if(!XWINDATA->XGc){
+		ccErrorPush(CC_ERROR_FRAMEBUFFER_CREATE);
+		return CC_FAIL;
+	}
+
+	XWINDATA->XFramebuffer = XShmCreateImage(XWINDATA->XDisplay, DefaultVisual(XWINDATA->XDisplay, XWINDATA->XScreen), DefaultDepth(XWINDATA->XDisplay, XWINDATA->XScreen), ZPixmap, NULL, &XWINDATA->XShminfo, _ccWindow->rect.width, _ccWindow->rect.height);
+	if(XWINDATA->XFramebuffer == NULL){
+		ccErrorPush(CC_ERROR_FRAMEBUFFER_CREATE);
+		return CC_FAIL;
+	}
+
+	switch(XWINDATA->XFramebuffer->bits_per_pixel){
+		case 24:
+			*format = CC_FRAMEBUFFER_PIXEL_RGB24;
+			break;
+		case 32:
+			*format = CC_FRAMEBUFFER_PIXEL_RGB32;
+			break;
+		default:
+			XDestroyImage(XWINDATA->XFramebuffer);
+			XWINDATA->XFramebuffer = NULL;
+			ccErrorPush(CC_ERROR_FRAMEBUFFER_PIXELFORMAT);
+			return CC_FAIL;
+	}
+	
+	XWINDATA->XShminfo.shmid = shmget(IPC_PRIVATE, XWINDATA->XFramebuffer->bytes_per_line * XWINDATA->XFramebuffer->height, IPC_CREAT | 0777);
+	if(XWINDATA->XShminfo.shmid == -1){
+		XDestroyImage(XWINDATA->XFramebuffer);
+		XWINDATA->XFramebuffer = NULL;
+		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
+		return CC_FAIL;
+	}
+
+	XWINDATA->XShminfo.shmaddr = (char*)shmat(XWINDATA->XShminfo.shmid, 0, 0);
+	if(XWINDATA->XShminfo.shmaddr == (char*)-1){
+		XDestroyImage(XWINDATA->XFramebuffer);
+		XWINDATA->XFramebuffer = NULL;
+		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
+		return CC_FAIL;
+	}
+	XWINDATA->XFramebuffer->data = XWINDATA->XShminfo.shmaddr;
+	*pixels = XWINDATA->XShminfo.shmaddr;
+
+	XWINDATA->XShminfo.readOnly = False;
+
+	// Check if we can trigger an X error event to know if we are on a remote display
+	_xerrflag = 0;
+	XSetErrorHandler(handleXErrorSetFlag);
+	XShmAttach(XWINDATA->XDisplay, &XWINDATA->XShminfo);
+	XSync(XWINDATA->XDisplay, False);
+	if(_xerrflag){
+		_xerrflag = 0;
+		XFlush(XWINDATA->XDisplay);
+
+		XDestroyImage(XWINDATA->XFramebuffer);
+		shmdt(XWINDATA->XShminfo.shmaddr);
+		shmctl(XWINDATA->XShminfo.shmid, IPC_RMID, 0);
+
+		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
+		return CC_FAIL;
+	}
+
+	shmctl(XWINDATA->XShminfo.shmid, IPC_RMID, 0);
+
+	return CC_SUCCESS;
+}
+
+ccReturn ccWindowFramebufferUpdate()
+{
+	if(CC_UNLIKELY(XWINDATA->XFramebuffer == NULL)){
+		return CC_FAIL;
+	}
+
+	XShmPutImage(XWINDATA->XDisplay, XWINDATA->XWindow, XWINDATA->XGc, XWINDATA->XFramebuffer, 0, 0, 0, 0, _ccWindow->rect.width, _ccWindow->rect.height, False);
+	XSync(XWINDATA->XDisplay, False);
+
+	return CC_SUCCESS;
+}
+
+ccReturn ccWindowFramebufferFree()
+{
+	ccAssert(_ccWindow);
+
+	if(XWINDATA->XFramebuffer){
+		XShmDetach(XWINDATA->XDisplay, &XWINDATA->XShminfo);
+		XDestroyImage(XWINDATA->XFramebuffer);		
+		shmdt(XWINDATA->XShminfo.shmaddr);
+	}
+
+	if(XWINDATA->XGc){
+		XFreeGC(XWINDATA->XDisplay, XWINDATA->XGc);
+		XWINDATA->XGc = NULL;
+	}
+
+	return CC_SUCCESS;
+}
+#endif
 
 ccReturn ccWindowClipboardSet(const char *text)
 {

@@ -11,6 +11,7 @@ AC_SUBST(CCORE_VERSION)
 AC_LANG_C
 
 AM_INIT_AUTOMAKE([foreign subdir-objects nostdinc -Wall -Werror])
+AM_MAINTAINER_MODE([disable])
 AM_PROG_AR
 
 # Initialize libtool
@@ -30,8 +31,7 @@ AC_CHECK_LIB([m], [cos], [], [echo "Math library is required" && exit -1])
 AC_CHECK_LIB([GL], [glXChooseVisual], [], [echo "OpenGL dev library is required" && exit -1])
 
 # Checks for the test library
-have_check=no
-PKG_CHECK_MODULES([CHECK], [check >= 0.8.2], [have_check=yes])
+PKG_CHECK_MODULES([CHECK], [check >= 0.8.2], [have_check=yes], [have_check=no])
 
 # Checks for header files.
 AC_HEADER_STDC
@@ -55,6 +55,8 @@ build_linux=no
 build_windows=no
 build_x11=no
 
+build_examples=yes
+
 SUMMARY="Configuration summary\n"
 SUMMARY="${SUMMARY}ccore version: ${CCORE_VERSION}\n"
 
@@ -65,6 +67,7 @@ CheckX11()
 	AC_CHECK_LIB([Xrandr], [XRRGetScreenResources], [], [echo "XRandr dev library is required" && exit -1])
 	AC_CHECK_LIB([Xinerama], [XineramaQueryExtension], [], [echo "Xinerama dev library is required" && exit -1])
 	AC_CHECK_LIB([Xi], [XISelectEvents], [], [echo "XInput dev library is required" && exit -1])
+	AC_CHECK_LIB([Xext], [XShmCreateImage], [], [echo "Xshm (Xext) dev library is required" && exit -1])
 	AC_PATH_X
 
 	build_x11=yes
@@ -107,10 +110,11 @@ esac
 # Add the include flag so the header files can read ccore/*.h
 
 # Pass the building booleans to Makefile.am
-AM_CONDITIONAL([HAVE_CHECK], [test "$have_check" = "yes"])
 AM_CONDITIONAL([BUILD_LINUX], [test "$build_linux" = "yes"])
 AM_CONDITIONAL([BUILD_WINDOWS], [test "$build_windows" = "yes"])
 AM_CONDITIONAL([BUILD_X11], [test "$build_x11" = "yes"])
+AM_CONDITIONAL([BUILD_TESTS], [test "$have_check" = "yes"])
+AM_CONDITIONAL([BUILD_EXAMPLES], [test "$build_examples" = "yes"])
 
 # The library automatically includes all modules, change this if it is unwanted
 AC_ARG_ENABLE(all-modules, AC_HELP_STRING([--disable-all-modules], [Disable all ccore modules (not recommeded)]))
@@ -120,6 +124,7 @@ if test x$disable_all_modules != xyes; then
 fi
 
 if test x$have_check != xyes; then
+	AC_DEFINE([HAVE_CHECK], [1], [Use check])
 	SUMMARY="${SUMMARY}Not building tests (test/test.c) because the 'check' package could not be found\n"
 	SUMMARY="${SUMMARY}Please install the check package to be able to run the tests\n"
 fi

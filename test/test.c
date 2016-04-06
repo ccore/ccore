@@ -21,6 +21,8 @@
 //      along with this program. If not, see <http://www.gnu.org/licenses/>.        //
 //__________________________________________________________________________________//
 
+#include <ccore/core.h>
+
 #ifdef _DEBUG
 
 #ifdef LINUX
@@ -40,18 +42,50 @@
 #include <ccore/window.h>
 #include <ccore/display.h>
 
-#include "icon.h"
+#define CC_ERROR_CHECK(){ \
+	ccError error = ccErrorPop(); \
+	ck_assert_msg(error == CC_ERROR_NONE, "ccore err: \"%s\"", ccErrorString(error)); }
 
-START_TEST(test_sysinfo)
+START_TEST(test_sysinfo_ram)
 {
+	ccSysinfoInitialize();
+
 	ccPrintf("\tccSysInfoGetRamTotal output:\t%lld\n", (long long int)ccSysinfoGetRamTotal());
-	
+
+	ccFree();
+	CC_ERROR_CHECK();
 }
 END_TEST
 
+Suite *sysinfo_suite(void)
+{
+	Suite *s = suite_create("Sysinfo");
+
+	TCase *tmem = tcase_create("Memory");
+	tcase_add_test(tmem, test_sysinfo_ram);
+	suite_add_tcase(s, tmem);
+
+	return s;
+}
+
+Suite *extras_suite(void)
+{
+	Suite *s = suite_create("Extras");
+
+	return s;
+}
+
 int main(void)
 {
-	return 0;
+	SRunner *sr = srunner_create(sysinfo_suite());
+	srunner_add_suite(sr, extras_suite());
+
+	srunner_set_log(sr, "test/test.log");
+	srunner_run_all(sr, CK_NORMAL);
+	int nfailed = srunner_ntests_failed(sr);
+	srunner_free(sr);
+
+	return nfailed != 0;
 }
 
 #else

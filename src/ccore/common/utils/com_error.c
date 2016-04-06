@@ -64,7 +64,17 @@ const char *ccErrorString(ccError error)
 		case CC_ERROR_WINDOW_CURSOR:
 			return "The cursor couldn't be changed or moved";
 		case CC_ERROR_WINDOW_CLIPBOARD:
-			return "The clipboad couldn't be read or written to";
+			return "The clipboad couldn't be read or written to";	
+			
+			// Framebuffer related
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
+		case CC_ERROR_FRAMEBUFFER_SHAREDMEM:
+			return "Failed initializing shared memory for the framebuffer";
+		case CC_ERROR_FRAMEBUFFER_CREATE:
+			return "Can't create a framebuffer instance";
+		case CC_ERROR_FRAMEBUFFER_PIXELFORMAT:
+			return "The pixel format the framebuffer wants to use is not supported";
+#endif
 
 			// OpenGL related
 		case CC_ERROR_GL_VERSION:

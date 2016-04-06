@@ -1,3 +1,6 @@
+# Library files
+*.la
+
 # Object files
 *.o
 *.ko
@@ -28,9 +31,6 @@
 # SConstruct files
 .sconsign.dblite
 
-# Build files
-test-*
-
 # Log files
 *.log
 
@@ -40,6 +40,18 @@ test-*
 # User-specific files
 *.suo
 *.sln.docstates
+
+# Automake files
+*.lo
+*.deps
+*.dirstamp
+libtool
+check_*
+Makefile
+.libs/
+*.status
+*.cache/
+m4/
 
 # Build results
 
