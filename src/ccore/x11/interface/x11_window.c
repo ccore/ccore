@@ -589,7 +589,6 @@ ccReturn ccWindowResizeMove(ccRect rect)
 	setResizable(true);
 	XMoveResizeWindow(XWINDATA->XDisplay, XWINDATA->XWindow, rect.x, rect.y, rect.width, rect.height);
 
-	_ccWindow->rect = rect;
 	if(XWINDATA->windowFlags & CC_WINDOW_FLAG_NORESIZE) {
 		setResizable(false);
 	}

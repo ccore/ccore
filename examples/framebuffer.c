@@ -14,7 +14,7 @@
 #include <ccore/window.h>
 #include <ccore/display.h>
 
-#define MAX_CYCLES 2000
+#define MAX_CYCLES 500
 #define CYCLE_DURATION 5
 
 int main(int argc, char **argv)
