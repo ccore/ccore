@@ -491,11 +491,6 @@ bool ccWindowEventPoll(void)
 		case SelectionRequest:
 			handleSelectionRequest(&event.xselectionrequest);
 			return false;
-#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
-		case Expose:
-			XPutImage(XWINDATA->XDisplay, XWINDATA->XWindow, 0, XWINDATA->XFramebuffer, 0, 0, 0, 0, _ccWindow->rect.width, _ccWindow->rect.height);
-			return false;
-#endif
 		default:
 			return false;
 	}
@@ -728,20 +723,25 @@ ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat *format)
 		return CC_FAIL;
 	}
 
+	XWINDATA->XShminfo = (XShmSegmentInfo){0};
 	XWINDATA->XFramebuffer = XShmCreateImage(XWINDATA->XDisplay, DefaultVisual(XWINDATA->XDisplay, XWINDATA->XScreen), DefaultDepth(XWINDATA->XDisplay, XWINDATA->XScreen), ZPixmap, NULL, &XWINDATA->XShminfo, _ccWindow->rect.width, _ccWindow->rect.height);
 	if(XWINDATA->XFramebuffer == NULL){
+		XFreeGC(XWINDATA->XDisplay, XWINDATA->XGc);
+		XWINDATA->XGc = NULL;
 		ccErrorPush(CC_ERROR_FRAMEBUFFER_CREATE);
 		return CC_FAIL;
 	}
 
 	switch(XWINDATA->XFramebuffer->bits_per_pixel){
 		case 24:
-			*format = CC_FRAMEBUFFER_PIXEL_RGB24;
+			*format = CC_FRAMEBUFFER_PIXEL_BGR24;
 			break;
 		case 32:
-			*format = CC_FRAMEBUFFER_PIXEL_RGB32;
+			*format = CC_FRAMEBUFFER_PIXEL_BGR32;
 			break;
 		default:
+			XFreeGC(XWINDATA->XDisplay, XWINDATA->XGc);
+			XWINDATA->XGc = NULL;
 			XDestroyImage(XWINDATA->XFramebuffer);
 			XWINDATA->XFramebuffer = NULL;
 			ccErrorPush(CC_ERROR_FRAMEBUFFER_PIXELFORMAT);
@@ -750,6 +750,8 @@ ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat *format)
 	
 	XWINDATA->XShminfo.shmid = shmget(IPC_PRIVATE, XWINDATA->XFramebuffer->bytes_per_line * XWINDATA->XFramebuffer->height, IPC_CREAT | 0777);
 	if(XWINDATA->XShminfo.shmid == -1){
+		XFreeGC(XWINDATA->XDisplay, XWINDATA->XGc);
+		XWINDATA->XGc = NULL;
 		XDestroyImage(XWINDATA->XFramebuffer);
 		XWINDATA->XFramebuffer = NULL;
 		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
@@ -758,6 +760,8 @@ ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat *format)
 
 	XWINDATA->XShminfo.shmaddr = (char*)shmat(XWINDATA->XShminfo.shmid, 0, 0);
 	if(XWINDATA->XShminfo.shmaddr == (char*)-1){
+		XFreeGC(XWINDATA->XDisplay, XWINDATA->XGc);
+		XWINDATA->XGc = NULL;
 		XDestroyImage(XWINDATA->XFramebuffer);
 		XWINDATA->XFramebuffer = NULL;
 		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
@@ -773,27 +777,49 @@ ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat *format)
 	XSetErrorHandler(handleXErrorSetFlag);
 	XShmAttach(XWINDATA->XDisplay, &XWINDATA->XShminfo);
 	XSync(XWINDATA->XDisplay, False);
+
+	shmctl(XWINDATA->XShminfo.shmid, IPC_RMID, 0);
 	if(_xerrflag){
 		_xerrflag = 0;
 		XFlush(XWINDATA->XDisplay);
 
+		XFreeGC(XWINDATA->XDisplay, XWINDATA->XGc);
+		XWINDATA->XGc = NULL;
 		XDestroyImage(XWINDATA->XFramebuffer);
+		XWINDATA->XFramebuffer = NULL;
 		shmdt(XWINDATA->XShminfo.shmaddr);
-		shmctl(XWINDATA->XShminfo.shmid, IPC_RMID, 0);
 
 		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
 		return CC_FAIL;
 	}
 
-	shmctl(XWINDATA->XShminfo.shmid, IPC_RMID, 0);
+	XWINDATA->oldw = _ccWindow->rect.width;
+	XWINDATA->oldh = _ccWindow->rect.height;
 
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowFramebufferUpdate()
+ccReturn ccWindowFramebufferUpdate(void **pixels)
 {
 	if(CC_UNLIKELY(XWINDATA->XFramebuffer == NULL)){
 		return CC_FAIL;
+	}
+
+	if(_ccWindow->rect.width != XWINDATA->oldw || _ccWindow->rect.height != XWINDATA->oldh){
+		if(ccWindowFramebufferFree() != CC_SUCCESS){
+			return CC_FAIL;
+		}
+
+		ccFramebufferFormat format;
+		void *temppixels;
+		if(ccWindowFramebufferCreate(&temppixels, &format) != CC_SUCCESS){
+			return CC_FAIL;		
+		}
+
+		*pixels = temppixels;
+
+		XWINDATA->oldw = _ccWindow->rect.width;
+		XWINDATA->oldh = _ccWindow->rect.height;
 	}
 
 	XShmPutImage(XWINDATA->XDisplay, XWINDATA->XWindow, XWINDATA->XGc, XWINDATA->XFramebuffer, 0, 0, 0, 0, _ccWindow->rect.width, _ccWindow->rect.height, False);
@@ -809,6 +835,7 @@ ccReturn ccWindowFramebufferFree()
 	if(XWINDATA->XFramebuffer){
 		XShmDetach(XWINDATA->XDisplay, &XWINDATA->XShminfo);
 		XDestroyImage(XWINDATA->XFramebuffer);		
+		XWINDATA->XFramebuffer = NULL;
 		shmdt(XWINDATA->XShminfo.shmaddr);
 	}
 

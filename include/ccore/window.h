@@ -59,8 +59,8 @@ typedef enum {
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 typedef enum {
 	CC_FRAMEBUFFER_PIXEL_NONE = 0,
-	CC_FRAMEBUFFER_PIXEL_RGB24 = 24,
-	CC_FRAMEBUFFER_PIXEL_RGB32 = 32
+	CC_FRAMEBUFFER_PIXEL_BGR24 = 24,
+	CC_FRAMEBUFFER_PIXEL_BGR32 = 32
 } ccFramebufferFormat;
 #endif
 
@@ -100,7 +100,7 @@ ccReturn ccWindowMouseSetCursor(ccCursor cursor);
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 // Create a framebuffer object, sets the format
 ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat *format);
-ccReturn ccWindowFramebufferUpdate();
+ccReturn ccWindowFramebufferUpdate(void **pixels);
 ccReturn ccWindowFramebufferFree();
 #endif
 

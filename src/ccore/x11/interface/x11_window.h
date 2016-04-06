@@ -35,6 +35,8 @@ typedef struct {
 	XImage *XFramebuffer;
 	XShmSegmentInfo XShminfo;
 	GC XGc;
+	int oldw, oldh;
+	void *pixels;
 #endif
 	char *XClipString;
 	size_t XClipStringLength;
