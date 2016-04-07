@@ -71,6 +71,9 @@ typedef struct {
 	ccEvent event;
 	ccDisplay *display;
 	bool supportsRawInput;
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
+	void *pixels;
+#endif
 
 	void *data;
 } ccWindow;
@@ -99,9 +102,10 @@ ccReturn ccWindowMouseSetCursor(ccCursor cursor);
 
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 // Create a framebuffer object, sets the format
-ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat *format);
-ccReturn ccWindowFramebufferUpdate(void **pixels);
+ccReturn ccWindowFramebufferCreate(ccFramebufferFormat *format);
+ccReturn ccWindowFramebufferUpdate();
 ccReturn ccWindowFramebufferFree();
+void *ccWindowFramebufferGetPixels();
 #endif
 
 ccReturn ccWindowClipboardSet(const char *data);

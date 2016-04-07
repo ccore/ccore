@@ -235,7 +235,7 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	ccMalloc(_ccWindow, sizeof(ccWindow));
 
 	_ccWindow->rect = rect;
-	ccMalloc(_ccWindow->data, sizeof(ccWindow_x11));
+	ccCalloc(_ccWindow->data, 1, sizeof(ccWindow_x11));
 	XWINDATA->windowFlags = flags;
 
 	origXError = XSetErrorHandler(handleXError);
@@ -301,13 +301,6 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	XWINDATA->XEmptyCursorImage = XCreateBitmapFromData(XWINDATA->XDisplay, XWINDATA->XWindow, emptyCursorData, 8, 8);
 
 	_ccWindow->mouse.x = _ccWindow->mouse.y = 0;
-	XWINDATA->XCursor = 0;
-	XWINDATA->XClipString = NULL;
-	XWINDATA->XContext = NULL;
-	XWINDATA->XClipStringLength = 0;
-#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
-	XWINDATA->XFramebuffer = NULL;
-#endif
 
 	return CC_SUCCESS;
 }
@@ -463,6 +456,15 @@ bool ccWindowEventPoll(void)
 				if(XWINDATA->windowFlags & CC_WINDOW_FLAG_NORESIZE) {
 					setResizable(false);
 				}
+
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
+				if(XWINDATA->XFramebuffer != NULL){
+					ccWindowFramebufferFree();
+
+					ccFramebufferFormat format;
+					ccWindowFramebufferCreate(&format);
+				}
+#endif
 			}
 
 			if(_ccWindow->rect.x != event.xconfigure.x || _ccWindow->rect.y != event.xconfigure.y) {
@@ -700,7 +702,7 @@ ccReturn ccWindowMouseSetCursor(ccCursor cursor)
 }
 
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
-ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat *format)
+ccReturn ccWindowFramebufferCreate(ccFramebufferFormat *format)
 {
 	ccAssert(_ccWindow);
 
@@ -767,7 +769,7 @@ ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat *format)
 		return CC_FAIL;
 	}
 	XWINDATA->XFramebuffer->data = XWINDATA->XShminfo.shmaddr;
-	*pixels = XWINDATA->XShminfo.shmaddr;
+	_ccWindow->pixels = XWINDATA->XShminfo.shmaddr;
 
 	XWINDATA->XShminfo.readOnly = False;
 
@@ -792,36 +794,19 @@ ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat *format)
 		return CC_FAIL;
 	}
 
-	XWINDATA->oldw = _ccWindow->rect.width;
-	XWINDATA->oldh = _ccWindow->rect.height;
+	XWINDATA->w = _ccWindow->rect.width;
+	XWINDATA->h = _ccWindow->rect.height;
 
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowFramebufferUpdate(void **pixels)
+ccReturn ccWindowFramebufferUpdate()
 {
 	if(CC_UNLIKELY(XWINDATA->XFramebuffer == NULL)){
 		return CC_FAIL;
 	}
 
-	if(_ccWindow->rect.width != XWINDATA->oldw || _ccWindow->rect.height != XWINDATA->oldh){
-		if(ccWindowFramebufferFree() != CC_SUCCESS){
-			return CC_FAIL;
-		}
-
-		ccFramebufferFormat format;
-		void *temppixels;
-		if(ccWindowFramebufferCreate(&temppixels, &format) != CC_SUCCESS){
-			return CC_FAIL;		
-		}
-
-		*pixels = temppixels;
-
-		XWINDATA->oldw = _ccWindow->rect.width;
-		XWINDATA->oldh = _ccWindow->rect.height;
-	}
-
-	XShmPutImage(XWINDATA->XDisplay, XWINDATA->XWindow, XWINDATA->XGc, XWINDATA->XFramebuffer, 0, 0, 0, 0, _ccWindow->rect.width, _ccWindow->rect.height, False);
+	XShmPutImage(XWINDATA->XDisplay, XWINDATA->XWindow, XWINDATA->XGc, XWINDATA->XFramebuffer, 0, 0, 0, 0, XWINDATA->w, XWINDATA->h, False);
 	XSync(XWINDATA->XDisplay, False);
 
 	return CC_SUCCESS;
@@ -836,12 +821,15 @@ ccReturn ccWindowFramebufferFree()
 		XDestroyImage(XWINDATA->XFramebuffer);		
 		XWINDATA->XFramebuffer = NULL;
 		shmdt(XWINDATA->XShminfo.shmaddr);
+		shmctl(XWINDATA->XShminfo.shmid, IPC_RMID, 0);
 	}
 
 	if(XWINDATA->XGc){
 		XFreeGC(XWINDATA->XDisplay, XWINDATA->XGc);
 		XWINDATA->XGc = NULL;
 	}
+
+	_ccWindow->pixels = NULL;
 
 	return CC_SUCCESS;
 }

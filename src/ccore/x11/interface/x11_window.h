@@ -35,13 +35,11 @@ typedef struct {
 	XImage *XFramebuffer;
 	XShmSegmentInfo XShminfo;
 	GC XGc;
-	int oldw, oldh;
-	void *pixels;
+	int w, h;
 #endif
 	char *XClipString;
 	size_t XClipStringLength;
-	Atom CCORE_SELECTION, WM_ICON, WM_ICON_NAME, WM_NAME, CLIPBOARD, INCR,
-			TARGETS, MULTIPLE, UTF8_STRING, COMPOUND_STRING;
+	Atom CCORE_SELECTION, WM_ICON, WM_ICON_NAME, WM_NAME, CLIPBOARD, INCR, TARGETS, MULTIPLE, UTF8_STRING, COMPOUND_STRING;
 	int XScreen, windowFlags, XInputOpcode;
 	bool resizable;
 } ccWindow_x11;

@@ -15,16 +15,16 @@
 #include <ccore/display.h>
 
 #define MAX_CYCLES 500
-#define CYCLE_DURATION 5
+#define CYCLE_DURATION 10
 
 int main(int argc, char **argv)
 {
 	ccDisplayInitialize();
-	ccWindowCreate((ccRect){0, 0, 405, 400}, "ccore examples: framebuffer", 0);
+	ccWindowCreate((ccRect){0, 0, 100, 100}, "ccore examples: framebuffer", 0);
 
 	void *pixels;
 	ccFramebufferFormat format;
-	if(ccWindowFramebufferCreate(&pixels, &format) != CC_SUCCESS){
+	if(ccWindowFramebufferCreate(&format) != CC_SUCCESS){
 		fprintf(stderr, "Something went wrong creating a framebuffer:\n");
 		fprintf(stderr, "%s\n", ccErrorString(ccErrorPop()));
 		exit(1);
@@ -38,10 +38,8 @@ int main(int argc, char **argv)
 		// Resize after a quarter of the time
 		if(cycles == MAX_CYCLES / 4){
 			ccRect r = ccWindowGetRect();
-			r.x -= 100;
-			r.y -= 100;
-			r.width += 200;
-			r.height += 200;
+			r.width += 100;
+			r.height += 100;
 			ccWindowResizeMove(r);
 		}
 
@@ -61,13 +59,14 @@ int main(int argc, char **argv)
 		}
 
 		int i;
+		char* pixels = (char*)ccWindowFramebufferGetPixels();
 		for(i = 0; i < npixels * nbytes; i += nbytes){
-			((char*)pixels)[i] = i / 4 + cycles;
-			((char*)pixels)[i + 1] = i / 7 + cycles;
-			((char*)pixels)[i + 2] = i / 200 + cycles;
+			pixels[i] = i / 4 + cycles;
+			pixels[i + 1] = i / 7 + cycles;
+			pixels[i + 2] = i / 200 + cycles;
 		}
 
-		if(ccWindowFramebufferUpdate(&pixels) != CC_SUCCESS){
+		if(ccWindowFramebufferUpdate() != CC_SUCCESS){
 			fprintf(stderr, "Something went wrong updating the framebuffer:\n");
 			fprintf(stderr, "%s\n", ccErrorString(ccErrorPop()));
 			exit(1);
