@@ -59,8 +59,8 @@ typedef enum {
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 typedef enum {
 	CC_FRAMEBUFFER_PIXEL_NONE = 0,
-	CC_FRAMEBUFFER_PIXEL_RGB24 = 24,
-	CC_FRAMEBUFFER_PIXEL_RGB32 = 32
+	CC_FRAMEBUFFER_PIXEL_BGR24 = 24,
+	CC_FRAMEBUFFER_PIXEL_BGR32 = 32
 } ccFramebufferFormat;
 #endif
 
@@ -71,6 +71,9 @@ typedef struct {
 	ccEvent event;
 	ccDisplay *display;
 	bool supportsRawInput;
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
+	void *pixels;
+#endif
 
 	void *data;
 } ccWindow;
@@ -99,9 +102,10 @@ ccReturn ccWindowMouseSetCursor(ccCursor cursor);
 
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 // Create a framebuffer object, sets the format
-ccReturn ccWindowFramebufferCreate(void **pixels, ccFramebufferFormat *format);
+ccReturn ccWindowFramebufferCreate(ccFramebufferFormat *format);
 ccReturn ccWindowFramebufferUpdate();
 ccReturn ccWindowFramebufferFree();
+void *ccWindowFramebufferGetPixels();
 #endif
 
 ccReturn ccWindowClipboardSet(const char *data);

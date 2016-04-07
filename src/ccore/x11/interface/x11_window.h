@@ -26,22 +26,22 @@
 #endif
 
 typedef struct {
-	Display *XDisplay;
-	Window XWindow;
-	GLXContext XContext;
-	XID XCursor;
-	Pixmap XEmptyCursorImage;
-#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
-	XImage *XFramebuffer;
-	XShmSegmentInfo XShminfo;
-	GC XGc;
-#endif
-	char *XClipString;
-	size_t XClipStringLength;
-	Atom CCORE_SELECTION, WM_ICON, WM_ICON_NAME, WM_NAME, CLIPBOARD, INCR,
-			TARGETS, MULTIPLE, UTF8_STRING, COMPOUND_STRING;
-	int XScreen, windowFlags, XInputOpcode;
+	Display *display;
+	Window win;
+	GLXContext context;
+	XID cursor;
+	Pixmap cursorimg;
+	char *clipstr;
+	size_t clipstrlen;
+	Atom CCORE_SELECTION, WM_ICON, WM_ICON_NAME, WM_NAME, CLIPBOARD, INCR, TARGETS, MULTIPLE, UTF8_STRING, COMPOUND_STRING;
+	int screen, winflags, inputopcode;
 	bool resizable;
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
+	XImage *fb;
+	XShmSegmentInfo shminfo;
+	GC gc;
+	int w, h;
+#endif
 } ccWindow_x11;
 
-#define XWINDATA ((ccWindow_x11 *)_ccWindow->data)
+#define XD ((ccWindow_x11*)_ccWindow->data)

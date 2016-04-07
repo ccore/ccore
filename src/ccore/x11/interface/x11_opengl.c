@@ -24,43 +24,43 @@ ccReturn ccGLContextBind(void)
 		return CC_FAIL;
 	}
 
-	XVisualInfo *visual = glXChooseVisual(XWINDATA->XDisplay, XWINDATA->XScreen, attrList);
+	XVisualInfo *visual = glXChooseVisual(XD->display, XD->screen, attrList);
 	if(CC_UNLIKELY(!visual)) {
 		ccErrorPush(CC_ERROR_GL_CONTEXT);
 		return CC_FAIL;
 	}
 
-	XWINDATA->XContext = glXCreateContext(XWINDATA->XDisplay, visual, NULL, GL_TRUE);
-	glXMakeCurrent(XWINDATA->XDisplay, XWINDATA->XWindow, XWINDATA->XContext);
+	XD->context = glXCreateContext(XD->display, visual, NULL, GL_TRUE);
+	glXMakeCurrent(XD->display, XD->win, XD->context);
 
 	return CC_SUCCESS;
 }
 
 ccReturn ccGLContextFree(void)
 {
-	if(CC_UNLIKELY(XWINDATA->XContext == NULL)) {
+	if(CC_UNLIKELY(XD->context == NULL)) {
 		ccErrorPush(CC_ERROR_GL_CONTEXT);
 		return CC_FAIL;
 	}
 
-	glXDestroyContext(XWINDATA->XDisplay, XWINDATA->XContext);
+	glXDestroyContext(XD->display, XD->context);
 
 	return CC_SUCCESS;
 }
 
 ccReturn ccGLBuffersSwap(void)
 {
-	if(CC_UNLIKELY(XWINDATA->XContext == NULL)) {
+	if(CC_UNLIKELY(XD->context == NULL)) {
 		ccErrorPush(CC_ERROR_GL_CONTEXT);
 		return CC_FAIL;
 	}
 
-	glXSwapBuffers(XWINDATA->XDisplay, XWINDATA->XWindow);
+	glXSwapBuffers(XD->display, XD->win);
 
 	return CC_SUCCESS;
 }
 
 bool ccGLContextIsActive(void)
 {
-	return XWINDATA->XContext != NULL;
+	return XD->context != NULL;
 }

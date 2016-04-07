@@ -52,3 +52,12 @@ void ccWindowUpdateDisplay(void)
 		}
 	}
 }
+
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
+void *ccWindowFramebufferGetPixels()
+{
+	ccAssert(_ccWindow != NULL);
+
+	return _ccWindow->pixels;
+}
+#endif
