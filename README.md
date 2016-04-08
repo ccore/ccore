@@ -1,4 +1,4 @@
-ccore ![License](http://img.shields.io/badge/license-BSD-red.svg?style=flat)
+ccore ![License](http://img.shields.io/badge/license-BSD-red.svg?style=flat) [![ccore chat](http://badges.gitter.im/tversteeg/ccore.svg)](http://gitter.im/tversteeg/ccore.svg)
 =====
 
 ccore is a light weight low level library to facilitate cross platform software development in C/C++. ccore is focused on but not exclusively aimed at game development. It provides the user with basic functionality while leaving high level implementations up to the user.
