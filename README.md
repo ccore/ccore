@@ -31,7 +31,7 @@ The features of ccore include support for the following:
 
 | | Username | Mail | Talk to me about...|
 | --- | --- | --- | --- |
-|<img src="https://avatars.githubusercontent.com/jobtalle" height="50px" title="Job Talle"/>| jobtalle@ccore.org | [`@jobtalle`](https://github.com/jobtalle) | Any design decision & Windows related things |
-|<img src="https://avatars.githubusercontent.com/tversteeg" height="50px" title="Thomas Versteeg"/>| tversteeg@ccore.org | [`@tversteeg`](https://github.com/tversteeg) | Any design decision & Linux related things |
+|<img src="https://avatars.githubusercontent.com/jobtalle" height="50px" title="Job Talle"/>|  [`@jobtalle`](https://github.com/jobtalle) | jobtalle@ccore.org | Any design decision & Windows related things |
+|<img src="https://avatars.githubusercontent.com/tversteeg" height="50px" title="Thomas Versteeg"/>|  [`@tversteeg`](https://github.com/tversteeg) | tversteeg@ccore.org | Any design decision & Linux related things |
 
 Feel free to ask us any questions related to ccore!
