@@ -101,11 +101,11 @@ host_triplet = @host@
 @BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/win_time.c
 @BUILD_LINUX_TRUE@am__append_2 =  \
 @BUILD_LINUX_TRUE@	src/ccore/linux/interface/lin_gamepad.c \
+@BUILD_LINUX_TRUE@	src/ccore/linux/interface/lin_text.c \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_file.c \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_sysinfo.c \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_thread.c \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_time.c
-#libccore_la_SOURCES += src/ccore/x11/interface/x11_text.c
 @BUILD_X11_TRUE@am__append_3 = src/ccore/x11/interface/x11_display.c \
 @BUILD_X11_TRUE@	src/ccore/x11/interface/x11_opengl.c \
 @BUILD_X11_TRUE@	src/ccore/x11/interface/x11_window.c
@@ -178,6 +178,7 @@ am__libccore_la_SOURCES_DIST =  \
 	src/ccore/windows/utils/win_thread.c \
 	src/ccore/windows/utils/win_time.c \
 	src/ccore/linux/interface/lin_gamepad.c \
+	src/ccore/linux/interface/lin_text.c \
 	src/ccore/linux/utils/lin_file.c \
 	src/ccore/linux/utils/lin_sysinfo.c \
 	src/ccore/linux/utils/lin_thread.c \
@@ -196,6 +197,7 @@ am__dirstamp = $(am__leading_dot)dirstamp
 @BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/win_time.lo
 @BUILD_LINUX_TRUE@am__objects_2 =  \
 @BUILD_LINUX_TRUE@	src/ccore/linux/interface/lin_gamepad.lo \
+@BUILD_LINUX_TRUE@	src/ccore/linux/interface/lin_text.lo \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_file.lo \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_sysinfo.lo \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_thread.lo \
@@ -819,6 +821,9 @@ src/ccore/linux/interface/$(DEPDIR)/$(am__dirstamp):
 src/ccore/linux/interface/lin_gamepad.lo:  \
 	src/ccore/linux/interface/$(am__dirstamp) \
 	src/ccore/linux/interface/$(DEPDIR)/$(am__dirstamp)
+src/ccore/linux/interface/lin_text.lo:  \
+	src/ccore/linux/interface/$(am__dirstamp) \
+	src/ccore/linux/interface/$(DEPDIR)/$(am__dirstamp)
 src/ccore/linux/utils/$(am__dirstamp):
 	@$(MKDIR_P) src/ccore/linux/utils
 	@: > src/ccore/linux/utils/$(am__dirstamp)
@@ -983,6 +988,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_string.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_sysinfo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/interface/$(DEPDIR)/lin_gamepad.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/interface/$(DEPDIR)/lin_text.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/utils/$(DEPDIR)/lin_file.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/utils/$(DEPDIR)/lin_sysinfo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/utils/$(DEPDIR)/lin_thread.Plo@am__quote@

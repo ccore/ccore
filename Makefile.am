@@ -44,6 +44,7 @@ libccore_la_SOURCES += src/ccore/windows/utils/win_time.c
 endif
 if BUILD_LINUX
 libccore_la_SOURCES += src/ccore/linux/interface/lin_gamepad.c
+libccore_la_SOURCES += src/ccore/linux/interface/lin_text.c
 
 libccore_la_SOURCES += src/ccore/linux/utils/lin_file.c
 libccore_la_SOURCES += src/ccore/linux/utils/lin_sysinfo.c
@@ -53,7 +54,6 @@ endif
 if BUILD_X11
 libccore_la_SOURCES += src/ccore/x11/interface/x11_display.c
 libccore_la_SOURCES += src/ccore/x11/interface/x11_opengl.c
-#libccore_la_SOURCES += src/ccore/x11/interface/x11_text.c
 libccore_la_SOURCES += src/ccore/x11/interface/x11_window.c
 endif
 
