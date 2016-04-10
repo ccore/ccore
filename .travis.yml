@@ -15,6 +15,7 @@ addons:
     - libxinerama-dev
     - libxi-dev
     - libxext-dev
+    - libibus-1.0-dev
     - libtool
     - check
   
