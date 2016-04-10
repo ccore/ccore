@@ -22,7 +22,6 @@
 #include "core.h"
 
 #include "gamepad.h"
-#include "text.h"
 #include "types.h"
 
 #ifdef __cplusplus
@@ -58,10 +57,6 @@ typedef enum {
 	// Gamepad event, see gamepad.h for specifics
 	, CC_EVENT_GAMEPAD
 #endif
-#if defined CC_USE_ALL || defined CC_USE_TEXT
-	// Text input event, see text.h for specifics
-	, CC_EVENT_TEXT
-#endif
 } ccEventType;
 
 // The type of mouse button pressed, used inside the ccEvent union
@@ -86,9 +81,6 @@ typedef struct {
 		double scrollDelta;
 #if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 		ccGamepadEvent gamepadEvent;
-#endif
-#if defined CC_USE_ALL || defined CC_USE_TEXT
-		ccTextEvent textEvent;
 #endif
 	};
 } ccEvent;

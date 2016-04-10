@@ -8,7 +8,6 @@
 
 #include <ccore/window.h>
 #include <ccore/gamepad.h>
-#include <ccore/text.h>
 #include <ccore/opengl.h>
 #include <ccore/types.h>
 #include <ccore/event.h>
@@ -343,15 +342,6 @@ bool ccWindowEventPoll(void)
 			_ccWindow->event.gamepadEvent = gamepadEvent;
 			return true;
 		}
-	}
-#endif
-
-#if defined CC_USE_ALL || defined CC_USE_TEXT
-	ccTextEvent te = ccTextEventPoll();
-	if(te.type != CC_TEXT_UNHANDLED){
-		_ccWindow->event.type = CC_EVENT_TEXT;
-		_ccWindow->event.textEvent = te;
-		return true;
 	}
 #endif
 

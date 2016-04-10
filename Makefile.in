@@ -101,7 +101,6 @@ host_triplet = @host@
 @BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/win_time.c
 @BUILD_LINUX_TRUE@am__append_2 =  \
 @BUILD_LINUX_TRUE@	src/ccore/linux/interface/lin_gamepad.c \
-@BUILD_LINUX_TRUE@	src/ccore/linux/interface/lin_text.c \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_file.c \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_sysinfo.c \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_thread.c \
@@ -111,8 +110,7 @@ host_triplet = @host@
 @BUILD_X11_TRUE@	src/ccore/x11/interface/x11_window.c
 @BUILD_TESTS_TRUE@check_PROGRAMS = check_ccore$(EXEEXT)
 @BUILD_TESTS_TRUE@TESTS = check_ccore$(EXEEXT)
-@BUILD_EXAMPLES_TRUE@bin_PROGRAMS = bin/framebuffer$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	bin/text$(EXEEXT)
+@BUILD_EXAMPLES_TRUE@bin_PROGRAMS = bin/framebuffer$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -178,7 +176,6 @@ am__libccore_la_SOURCES_DIST =  \
 	src/ccore/windows/utils/win_thread.c \
 	src/ccore/windows/utils/win_time.c \
 	src/ccore/linux/interface/lin_gamepad.c \
-	src/ccore/linux/interface/lin_text.c \
 	src/ccore/linux/utils/lin_file.c \
 	src/ccore/linux/utils/lin_sysinfo.c \
 	src/ccore/linux/utils/lin_thread.c \
@@ -197,7 +194,6 @@ am__dirstamp = $(am__leading_dot)dirstamp
 @BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/win_time.lo
 @BUILD_LINUX_TRUE@am__objects_2 =  \
 @BUILD_LINUX_TRUE@	src/ccore/linux/interface/lin_gamepad.lo \
-@BUILD_LINUX_TRUE@	src/ccore/linux/interface/lin_text.lo \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_file.lo \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_sysinfo.lo \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_thread.lo \
@@ -229,12 +225,6 @@ am__bin_framebuffer_SOURCES_DIST = examples/framebuffer.c
 @BUILD_EXAMPLES_TRUE@am_bin_framebuffer_OBJECTS = examples/bin_framebuffer-framebuffer.$(OBJEXT)
 bin_framebuffer_OBJECTS = $(am_bin_framebuffer_OBJECTS)
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_DEPENDENCIES =  \
-@BUILD_EXAMPLES_TRUE@	$(top_builddir)/.libs/libccore.la
-am__bin_text_SOURCES_DIST = examples/text.c
-@BUILD_EXAMPLES_TRUE@am_bin_text_OBJECTS =  \
-@BUILD_EXAMPLES_TRUE@	examples/bin_text-text.$(OBJEXT)
-bin_text_OBJECTS = $(am_bin_text_OBJECTS)
-@BUILD_EXAMPLES_TRUE@bin_text_DEPENDENCIES =  \
 @BUILD_EXAMPLES_TRUE@	$(top_builddir)/.libs/libccore.la
 am__check_ccore_SOURCES_DIST = test/icon.c test/test.c
 @BUILD_TESTS_TRUE@am_check_ccore_OBJECTS =  \
@@ -281,10 +271,10 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(libccore_la_SOURCES) $(bin_framebuffer_SOURCES) \
-	$(bin_text_SOURCES) $(check_ccore_SOURCES)
+	$(check_ccore_SOURCES)
 DIST_SOURCES = $(am__libccore_la_SOURCES_DIST) \
 	$(am__bin_framebuffer_SOURCES_DIST) \
-	$(am__bin_text_SOURCES_DIST) $(am__check_ccore_SOURCES_DIST)
+	$(am__check_ccore_SOURCES_DIST)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -634,7 +624,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-#pkginclude_HEADERS += include/ccore/text.h
 pkginclude_HEADERS = include/ccore/assert.h include/ccore/core.h \
 	include/ccore/display.h include/ccore/error.h \
 	include/ccore/event.h include/ccore/file.h \
@@ -662,9 +651,6 @@ libccore_la_SOURCES = src/ccore/common/interface/com_display.c \
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_SOURCES = examples/framebuffer.c
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_LDADD = $(top_builddir)/.libs/libccore.la
-@BUILD_EXAMPLES_TRUE@bin_text_SOURCES = examples/text.c
-@BUILD_EXAMPLES_TRUE@bin_text_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
-@BUILD_EXAMPLES_TRUE@bin_text_LDADD = $(top_builddir)/.libs/libccore.la
 all: all-am
 
 .SUFFIXES:
@@ -821,9 +807,6 @@ src/ccore/linux/interface/$(DEPDIR)/$(am__dirstamp):
 src/ccore/linux/interface/lin_gamepad.lo:  \
 	src/ccore/linux/interface/$(am__dirstamp) \
 	src/ccore/linux/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/linux/interface/lin_text.lo:  \
-	src/ccore/linux/interface/$(am__dirstamp) \
-	src/ccore/linux/interface/$(DEPDIR)/$(am__dirstamp)
 src/ccore/linux/utils/$(am__dirstamp):
 	@$(MKDIR_P) src/ccore/linux/utils
 	@: > src/ccore/linux/utils/$(am__dirstamp)
@@ -933,12 +916,6 @@ bin/$(am__dirstamp):
 bin/framebuffer$(EXEEXT): $(bin_framebuffer_OBJECTS) $(bin_framebuffer_DEPENDENCIES) $(EXTRA_bin_framebuffer_DEPENDENCIES) bin/$(am__dirstamp)
 	@rm -f bin/framebuffer$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(bin_framebuffer_OBJECTS) $(bin_framebuffer_LDADD) $(LIBS)
-examples/bin_text-text.$(OBJEXT): examples/$(am__dirstamp) \
-	examples/$(DEPDIR)/$(am__dirstamp)
-
-bin/text$(EXEEXT): $(bin_text_OBJECTS) $(bin_text_DEPENDENCIES) $(EXTRA_bin_text_DEPENDENCIES) bin/$(am__dirstamp)
-	@rm -f bin/text$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(bin_text_OBJECTS) $(bin_text_LDADD) $(LIBS)
 test/$(am__dirstamp):
 	@$(MKDIR_P) test
 	@: > test/$(am__dirstamp)
@@ -977,7 +954,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@examples/$(DEPDIR)/bin_framebuffer-framebuffer.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@examples/$(DEPDIR)/bin_text-text.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/com_display.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/com_event.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/com_window.Plo@am__quote@
@@ -988,7 +964,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_string.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_sysinfo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/interface/$(DEPDIR)/lin_gamepad.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/interface/$(DEPDIR)/lin_text.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/utils/$(DEPDIR)/lin_file.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/utils/$(DEPDIR)/lin_sysinfo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/utils/$(DEPDIR)/lin_thread.Plo@am__quote@
@@ -1044,20 +1019,6 @@ examples/bin_framebuffer-framebuffer.obj: examples/framebuffer.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='examples/framebuffer.c' object='examples/bin_framebuffer-framebuffer.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_framebuffer_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o examples/bin_framebuffer-framebuffer.obj `if test -f 'examples/framebuffer.c'; then $(CYGPATH_W) 'examples/framebuffer.c'; else $(CYGPATH_W) '$(srcdir)/examples/framebuffer.c'; fi`
-
-examples/bin_text-text.o: examples/text.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_text_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT examples/bin_text-text.o -MD -MP -MF examples/$(DEPDIR)/bin_text-text.Tpo -c -o examples/bin_text-text.o `test -f 'examples/text.c' || echo '$(srcdir)/'`examples/text.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) examples/$(DEPDIR)/bin_text-text.Tpo examples/$(DEPDIR)/bin_text-text.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='examples/text.c' object='examples/bin_text-text.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_text_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o examples/bin_text-text.o `test -f 'examples/text.c' || echo '$(srcdir)/'`examples/text.c
-
-examples/bin_text-text.obj: examples/text.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_text_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT examples/bin_text-text.obj -MD -MP -MF examples/$(DEPDIR)/bin_text-text.Tpo -c -o examples/bin_text-text.obj `if test -f 'examples/text.c'; then $(CYGPATH_W) 'examples/text.c'; else $(CYGPATH_W) '$(srcdir)/examples/text.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) examples/$(DEPDIR)/bin_text-text.Tpo examples/$(DEPDIR)/bin_text-text.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='examples/text.c' object='examples/bin_text-text.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_text_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o examples/bin_text-text.obj `if test -f 'examples/text.c'; then $(CYGPATH_W) 'examples/text.c'; else $(CYGPATH_W) '$(srcdir)/examples/text.c'; fi`
 
 test/check_ccore-icon.o: test/icon.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -MT test/check_ccore-icon.o -MD -MP -MF test/$(DEPDIR)/check_ccore-icon.Tpo -c -o test/check_ccore-icon.o `test -f 'test/icon.c' || echo '$(srcdir)/'`test/icon.c
