@@ -8,6 +8,7 @@
 
 #include <ccore/window.h>
 #include <ccore/gamepad.h>
+#include <ccore/text.h>
 #include <ccore/opengl.h>
 #include <ccore/types.h>
 #include <ccore/event.h>
@@ -16,7 +17,6 @@
 #include <ccore/print.h>
 
 #include "x11_display.h"
-#include "x11_text.h"
 
 static int cursorList[] = {XC_arrow,
 													 XC_crosshair,
@@ -346,20 +346,21 @@ bool ccWindowEventPoll(void)
 	}
 #endif
 
-	if(XPending(XD->display) == 0) {
-		return false;
-	}
-
-	XEvent event;
-	XNextEvent(XD->display, &event);
-#if 0 && defined CC_USE_ALL || defined CC_USE_TEXT
-	ccTextEvent te = ccTextEventHandle(event);
+#if defined CC_USE_ALL || defined CC_USE_TEXT
+	ccTextEvent te = ccTextEventPoll();
 	if(te.type != CC_TEXT_UNHANDLED){
 		_ccWindow->event.type = CC_EVENT_TEXT;
 		_ccWindow->event.textEvent = te;
 		return true;
 	}
 #endif
+
+	if(XPending(XD->display) == 0) {
+		return false;
+	}
+
+	XEvent event;
+	XNextEvent(XD->display, &event);
 	switch(event.type) {
 		case GenericEvent:
 			if(CC_UNLIKELY(!_ccWindow->supportsRawInput)) {
