@@ -17,6 +17,8 @@
 //      this program. If not, see <http://opensource.org/licenses/>.                //
 //__________________________________________________________________________________//
 
+#if defined CC_USE_ALL || defined CC_USE_TEXT
+
 #pragma once
 
 #include "core.h"
@@ -43,11 +45,17 @@ typedef struct {
 	int start, length;
 } ccTextEvent;
 
-ccReturn ccTextInputStart();
-ccReturn ccTextInputStop();
+ccReturn ccTextInputStart(void);
+ccReturn ccTextInputStop(void);
 ccReturn ccTextInputRect(ccRect rect);
-bool ccTextInputIsActive();
+bool ccTextInputIsActive(void);
+
+#ifdef X11
+ccTextEvent ccTextEventPoll(void);
+#endif
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
