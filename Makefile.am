@@ -12,7 +12,6 @@ pkginclude_HEADERS += include/ccore/opengl.h
 pkginclude_HEADERS += include/ccore/print.h
 pkginclude_HEADERS += include/ccore/string.h
 pkginclude_HEADERS += include/ccore/sysinfo.h
-#pkginclude_HEADERS += include/ccore/text.h
 pkginclude_HEADERS += include/ccore/thread.h
 pkginclude_HEADERS += include/ccore/time.h
 pkginclude_HEADERS += include/ccore/types.h
@@ -44,7 +43,6 @@ libccore_la_SOURCES += src/ccore/windows/utils/win_time.c
 endif
 if BUILD_LINUX
 libccore_la_SOURCES += src/ccore/linux/interface/lin_gamepad.c
-libccore_la_SOURCES += src/ccore/linux/interface/lin_text.c
 
 libccore_la_SOURCES += src/ccore/linux/utils/lin_file.c
 libccore_la_SOURCES += src/ccore/linux/utils/lin_sysinfo.c
@@ -68,13 +66,9 @@ TESTS = check_ccore
 endif
 
 if BUILD_EXAMPLES
-bin_PROGRAMS = bin/framebuffer bin/text
+bin_PROGRAMS = bin/framebuffer
 
 bin_framebuffer_SOURCES = examples/framebuffer.c
 bin_framebuffer_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
 bin_framebuffer_LDADD = $(top_builddir)/.libs/libccore.la
-
-bin_text_SOURCES = examples/text.c
-bin_text_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
-bin_text_LDADD = $(top_builddir)/.libs/libccore.la
 endif
