@@ -9,13 +9,12 @@
 #include <ccore/window.h>
 #include <ccore/display.h>
 
-#define MAX_CYCLES 500
 #define CYCLE_DURATION 10
 
 int main(int argc, char **argv)
 {
 	ccDisplayInitialize();
-	ccWindowCreate((ccRect){0, 0, 100, 100}, "ccore examples: framebuffer", 0);
+	ccWindowCreate((ccRect){0, 0, 300, 100}, "☐ccore examples: framebuffer", 0);
 
 	void *pixels;
 	ccFramebufferFormat format;
@@ -29,21 +28,23 @@ int main(int argc, char **argv)
 	int npixels = ccWindowGetRect().width * ccWindowGetRect().height;
 
 	int cycles = 0;
-	while(cycles++ < MAX_CYCLES){
-		// Resize after a quarter of the time
-		if(cycles == MAX_CYCLES / 4){
+	bool loop = true;
+	while(loop){
+		// Resize and rename after a second
+		if(cycles == 1000 / CYCLE_DURATION){
 			ccRect r = ccWindowGetRect();
 			r.width += 100;
 			r.height += 100;
 			ccWindowResizeMove(r);
+
+			ccWindowSetTitle("☑ccore examples: framebuffer");
 		}
 
 		while(ccWindowEventPoll()){
 			ccEvent ev = ccWindowEventGet();
 			switch(ev.type){
-				// Loop terminates when cycles == MAX_CYCLES
 				case CC_EVENT_WINDOW_QUIT:
-					cycles = MAX_CYCLES;
+					loop = false;
 					break;
 				// Recalculate the amount of pixels for the framebuffer on a resize event
 				case CC_EVENT_WINDOW_RESIZE:
@@ -68,6 +69,7 @@ int main(int argc, char **argv)
 		}
 
 		ccTimeDelay(CYCLE_DURATION);
+		cycles++;
 	}
 
 	ccFree();

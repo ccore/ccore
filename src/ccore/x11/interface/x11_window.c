@@ -277,7 +277,8 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	}
 
 	XMapWindow(XD->display, XD->win);
-	XStoreName(XD->display, XD->win, title);
+	XStoreName(XD->display, XD->win, "");
+	ccWindowSetTitle(title);
 
 	XSetWMProtocols(XD->display, XD->win, &DELETE, 1);
 
@@ -617,6 +618,11 @@ ccReturn ccWindowSetBlink(void)
 
 ccReturn ccWindowSetTitle(const char *title)
 {
+#ifdef X_HAVE_UTF8_STRING
+	size_t len = strlen(title);
+	XChangeProperty(XD->display, XD->win, XD->WM_NAME, XD->UTF8_STRING, 8, PropModeReplace, (unsigned char*)title, len);
+	XChangeProperty(XD->display, XD->win, XD->WM_ICON_NAME, XD->UTF8_STRING, 8, PropModeReplace, (unsigned char*)title, len);
+#else
 	char *titleCopy = strdup(title);
 
 	XTextProperty titleProperty;
@@ -626,11 +632,12 @@ ccReturn ccWindowSetTitle(const char *title)
 	}
 	free(titleCopy);
 
-	XSetTextProperty( XD->display, XD->win, &titleProperty, XD->WM_NAME);
+	XSetTextProperty(XD->display, XD->win, &titleProperty, XD->WM_NAME);
 	XSetTextProperty(XD->display, XD->win, &titleProperty, XD->WM_ICON_NAME);
 	XSetWMName(XD->display, XD->win, &titleProperty);
 	XSetWMIconName(XD->display, XD->win, &titleProperty);
 	XFree(titleProperty.value);
+#endif
 
 	return CC_SUCCESS;
 }
