@@ -33,6 +33,7 @@
 
 #include <check.h>
 
+#include <ccore/core.h>
 #include <ccore/sysinfo.h>
 #include <ccore/print.h>
 #include <ccore/file.h>
@@ -42,26 +43,44 @@
 #include <ccore/window.h>
 #include <ccore/display.h>
 
-#define CC_ERROR_CHECK(){ \
-	ccError error = ccErrorPop(); \
-	ck_assert_msg(error == CC_ERROR_NONE, "ccore err: \"%s\"", ccErrorString(error)); }
+#define CHECK_ERROR(x) ck_assert_str_eq(ccErrorString(x), ccErrorString(CC_E_NONE))
 
 START_TEST(test_sysinfo_ram)
 {
-	ccSysinfoInitialize();
-
-	ck_assert(ccSysinfoGetRamTotal() > 0);
-
+	CHECK_ERROR(ccSysinfoInitialize());
+	ck_assert_int_gt(ccSysinfoGetRamTotal(), 0);
+	
 	ccSysinfoFree();
-	CC_ERROR_CHECK();
 }
 END_TEST
 
-START_TEST(test_extras_free)
+START_TEST(test_extras_keys)
 {
-	ck_assert(ccFree() == CC_FAIL);
+	ck_assert_int_eq(ccEventKeyToChar(CC_KEY_0), '0');
+	ck_assert_int_eq(ccEventKeyToChar(CC_KEY_NUM1), '1');
+	ck_assert_int_eq(ccEventKeyToChar(CC_KEY_C), 'c');
+	ck_assert_int_eq(ccEventKeyToChar(CC_KEY_EXCLAM), '!');
+	ck_assert_int_eq(ccEventKeyToChar(CC_KEY_TAB), '\t');
+	ck_assert_int_eq(ccEventKeyToChar(CC_KEY_RETURN), '\n');
+	ck_assert_int_eq(ccEventKeyToChar(CC_KEY_SPACE), ' ');
+	ck_assert_int_eq(ccEventKeyToChar(CC_KEY_BAR), '|');
+	ck_assert_int_eq(ccEventKeyToChar(0), '\0');
+}
+END_TEST
 
-	CC_ERROR_CHECK();
+START_TEST(test_extras_rect)
+{
+	ccRect r[] = {{0, 0, 100, 100}, {50, 50, 100, 100}, {100, 100, 100, 100}};
+
+	ccRect concat = ccRectConcatenate(3, r);
+	ck_assert_int_eq(concat.x, 0);
+	ck_assert_int_eq(concat.y, 0);
+	ck_assert_int_eq(concat.width, 200);
+	ck_assert_int_eq(concat.height, 200);
+
+	ck_assert_int_eq(ccRectIntersectionArea(r + 0, r + 1), 50 * 50);
+	ck_assert_int_eq(ccRectIntersectionArea(r + 1, r + 2), 50 * 50);
+	ck_assert_int_eq(ccRectIntersectionArea(r + 0, r + 2), 0);
 }
 END_TEST
 
@@ -80,9 +99,13 @@ Suite *extras_suite(void)
 {
 	Suite *s = suite_create("Extras");
 
-	TCase *tfree = tcase_create("Free");
-	tcase_add_test(tfree, test_extras_free);
-	suite_add_tcase(s, tfree);
+	TCase *tkeys = tcase_create("Keys");
+	tcase_add_test(tkeys, test_extras_keys);
+	suite_add_tcase(s, tkeys);
+
+	TCase *trect = tcase_create("Rect");
+	tcase_add_test(trect, test_extras_rect);
+	suite_add_tcase(s, trect);
 
 	return s;
 }

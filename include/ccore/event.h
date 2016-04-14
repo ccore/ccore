@@ -229,7 +229,7 @@ typedef struct {
 #define CC_KEY_QUOTELEFT    KEYDEF(XK_quoteleft, '"')
 
 #define CC_KEY_BRACELEFT  KEYDEF(XK_braceleft, '[')
-#define CC_KEY_BAR        KEYDEF(XK_bar, '-')
+#define CC_KEY_BAR        KEYDEF(XK_bar, '|')
 #define CC_KEY_BRACERIGHT KEYDEF(XK_braceright, ']')
 #define CC_KEY_ASCIITILDE KEYDEF(XK_asciitilde, VK_OEM_3)
 

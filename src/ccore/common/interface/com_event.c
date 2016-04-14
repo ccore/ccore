@@ -37,6 +37,8 @@ char ccEventKeyToChar(int key)
 			return '\n';
 		case CC_KEY_SPACE:
 			return ' ';
+		case CC_KEY_BAR:
+			return '-';
 		default:
 			return '\0';
 	}
