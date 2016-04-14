@@ -9,13 +9,13 @@ ccError ccThreadStart(ccThread *thread, void *function, void *data)
 		return CC_FAIL;
 	}
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccThreadJoin(ccThread *thread)
 {
 	if(CC_UNLIKELY(pthread_join(*thread, NULL) == 0)){
-		return CC_SUCCESS;  
+		return CC_E_NONE;  
 	}else{
 		ccErrorPush(CC_ERROR_THREAD_CREATE);
 		return CC_FAIL;
@@ -38,7 +38,7 @@ ccError ccThreadMutexCreate(ccMutex *mutex, unsigned int spinCount)
 		return CC_FAIL;
 	}
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccThreadMutexJoin(ccMutex *mutex)
@@ -48,7 +48,7 @@ ccError ccThreadMutexJoin(ccMutex *mutex)
 		return CC_FAIL;
 	}
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccThreadMutexRelease(ccMutex *mutex)
@@ -58,7 +58,7 @@ ccError ccThreadMutexRelease(ccMutex *mutex)
 		return CC_FAIL;
 	}
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccThreadMutexFree(ccMutex *mutex)
@@ -68,7 +68,7 @@ ccError ccThreadMutexFree(ccMutex *mutex)
 		return CC_FAIL;
 	}
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 #endif

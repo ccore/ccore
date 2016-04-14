@@ -129,7 +129,7 @@ static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
 
 	XRRFreeScreenResources(resources);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccDisplayInitialize(void)
@@ -165,7 +165,7 @@ ccError ccDisplayInitialize(void)
 		}
 	}
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccDisplayFree(void)
@@ -193,7 +193,7 @@ ccError ccDisplayFree(void)
 
 	_ccDisplays = NULL;
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
@@ -209,7 +209,7 @@ ccError ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
 	}
 
 	if(resolutionIndex == display->current) {
-		return CC_SUCCESS;
+		return CC_E_NONE;
 	}
 
 	Display *XDisplay = XOpenDisplay(display->deviceName);
@@ -287,7 +287,7 @@ ccError ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
 	XUngrabServer(XDisplay);
 	XCloseDisplay(XDisplay);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 
 fail:
 	XRRFreeScreenResources(resources);

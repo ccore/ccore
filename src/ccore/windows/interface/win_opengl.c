@@ -46,7 +46,7 @@ ccError ccGLContextBind(void)
 		return CC_FAIL;
 	}
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccGLContextFree(void)
@@ -56,14 +56,14 @@ ccError ccGLContextFree(void)
 	wglDeleteContext(_CC_WINDOW_DATA->renderContext);
 	_CC_WINDOW_DATA->renderContext = NULL;
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccGLBuffersSwap(void)
 {
 	ccAssert(_ccWindow != NULL);
 	if(SwapBuffers(_CC_WINDOW_DATA->hdc) == TRUE) {
-		return CC_SUCCESS;
+		return CC_E_NONE;
 	}
 	else{
 		ccErrorPush(CC_ERROR_GL_BUFFERSWAP);

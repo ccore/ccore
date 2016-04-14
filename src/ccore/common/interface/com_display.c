@@ -37,7 +37,7 @@ ccError ccDisplayRevertModes(void)
 
 	for(i = 0; i < _ccDisplays->amount; i++){
 		output = ccDisplayResolutionSet(_ccDisplays->display + i, CC_DEFAULT_RESOLUTION);
-		if(output != CC_SUCCESS){
+		if(output != CC_E_NONE){
 			return output;
 		}
 	}

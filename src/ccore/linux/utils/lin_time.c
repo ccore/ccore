@@ -6,7 +6,7 @@ ccError ccTimeDelay(int ms)
 {
 	usleep(ms * _CC_TO_MICROSECONDS);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 uint64_t ccTimeNanoseconds(void)

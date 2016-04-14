@@ -84,7 +84,7 @@ ccError ccFileDirFindFirst(ccFileDir *dir, const char *dirPath)
 
 	dir->name = buffer;
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccFileDirFind(ccFileDir *dir)
@@ -96,7 +96,7 @@ ccError ccFileDirFind(ccFileDir *dir)
 	if(FindNextFile(dir->handle, &findData) == 0) {
 		if(GetLastError() == ERROR_NO_MORE_FILES) {
 			dir->name = NULL;
-			return CC_SUCCESS;
+			return CC_E_NONE;
 		}
 		return CC_FAIL;
 	}
@@ -110,12 +110,12 @@ ccError ccFileDirFind(ccFileDir *dir)
 
 	dir->name = buffer;
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccFileDirClose(ccFileDir *dir)
 {
-	return FindClose(dir->handle) == 0?CC_FAIL:CC_SUCCESS;
+	return FindClose(dir->handle) == 0?CC_FAIL:CC_E_NONE;
 }
 
 #endif

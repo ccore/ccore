@@ -65,7 +65,7 @@ ccError ccFileDirFind(ccFileDir *dir)
 	dir->name = dir->entry->d_name;
 	dir->isDirectory = dir->entry->d_type == DT_DIR;
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccFileDirClose(ccFileDir *dir)
@@ -76,7 +76,7 @@ ccError ccFileDirClose(ccFileDir *dir)
 	}
 	closedir(dir->dir);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 #endif

@@ -58,7 +58,7 @@ ccError ccSysinfoInitialize(void)
 
 	_ccSysinfo->fileMaxOpen = sysconf(_SC_OPEN_MAX);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 uint_fast64_t ccSysinfoGetRamAvailable(void)

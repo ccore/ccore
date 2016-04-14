@@ -312,11 +312,11 @@ void testReadDirectories(int *test)
 	ccFileDir file;
 
 	ccPrintf("Test %d: Read %s directory\n", ++(*test), ccFileTempDirGet());
-	if(ccFileDirFindFirst(&file, ccFileTempDirGet()) != CC_SUCCESS){
+	if(ccFileDirFindFirst(&file, ccFileTempDirGet()) != CC_E_NONE){
 		reportDiscrepancy("Temporary directory should be accesible");
 	}
 	err();
-	while(ccFileDirFind(&file) == CC_SUCCESS){
+	while(ccFileDirFind(&file) == CC_E_NONE){
 		err();
 		ccPrintf("Found %s: %s\n", file.isDirectory ? "dir" : "file", file.name);
 	}

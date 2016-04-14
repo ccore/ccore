@@ -21,7 +21,7 @@ ccError ccSysinfoInitialize(void)
 
 	_ccSysinfo->fileMaxOpen = _getmaxstdio();
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 
 fail:
 	free(_ccSysinfo);

@@ -374,7 +374,7 @@ ccError ccWindowCreate(ccRect rect, const char* title, int flags)
 		}
 	}
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccWindowFree(void)
@@ -405,7 +405,7 @@ ccError ccWindowFree(void)
 
 	_ccWindow = NULL;
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccWindowSetWindowed(ccRect *rect)
@@ -417,7 +417,7 @@ ccError ccWindowSetWindowed(ccRect *rect)
 	}
 	
 	if(rect == NULL){
-		return CC_SUCCESS;
+		return CC_E_NONE;
 	}else{
 		return ccWindowResizeMove(*rect);
 	}
@@ -444,7 +444,7 @@ ccError ccWindowSetMaximized(void)
 		}
 	}
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 static ccError _ccWindowResizeMove(ccRect rect, bool addBorder)
@@ -476,7 +476,7 @@ static ccError _ccWindowResizeMove(ccRect rect, bool addBorder)
 		}
 	}
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccWindowSetFullscreen(int displayCount, ...)
@@ -522,7 +522,7 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 
 ccError ccWindowSetTitle(const char *title)
 {
-	return SetWindowText(_CC_WINDOW_DATA->winHandle, title) == TRUE?CC_SUCCESS:CC_FAIL;
+	return SetWindowText(_CC_WINDOW_DATA->winHandle, title) == TRUE?CC_E_NONE:CC_FAIL;
 }
 
 ccError ccWindowResizeMove(ccRect rect)
@@ -559,7 +559,7 @@ ccError ccWindowSetBlink(void)
 	flash.dwTimeout = 0;
 	FlashWindowEx(&flash);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccWindowIconSet(ccPoint size, unsigned long *data)
@@ -599,7 +599,7 @@ ccError ccWindowIconSet(ccPoint size, unsigned long *data)
 
 	free(bmp);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccWindowMouseSetPosition(ccPoint target)
@@ -618,7 +618,7 @@ ccError ccWindowMouseSetPosition(ccPoint target)
 		return CC_FAIL;
 	}
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccWindowMouseSetCursor(ccCursor cursor)
@@ -637,7 +637,7 @@ ccError ccWindowMouseSetCursor(ccCursor cursor)
 
 	_CC_WINDOW_DATA->cursor = cursor;
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccWindowClipboardSet(const char *data)
@@ -691,7 +691,7 @@ ccError ccWindowClipboardSet(const char *data)
 
 	GlobalFree(clipboardData);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 char *ccWindowClipboardGet(void)

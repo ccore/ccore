@@ -90,7 +90,7 @@ ccError ccDisplayInitialize(void)
 		deviceCount++;
 	}
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccDisplayFree(void) {
@@ -109,7 +109,7 @@ ccError ccDisplayFree(void) {
 	
 	_ccDisplays = NULL;
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
@@ -121,7 +121,7 @@ ccError ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
 	ccAssert(resolutionIndex < display->amount);
 
 	if(resolutionIndex == CC_DEFAULT_RESOLUTION) resolutionIndex = display->initial;
-	if(resolutionIndex == display->current) return CC_SUCCESS;
+	if(resolutionIndex == display->current) return CC_E_NONE;
 
 	ZeroMemory(&devMode, sizeof(DEVMODE));
 	devMode.dmSize = sizeof(DEVMODE);
@@ -147,5 +147,5 @@ ccError ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
 
 	display->current = (unsigned short)resolutionIndex;
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }

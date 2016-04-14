@@ -18,7 +18,7 @@ int main(int argc, char **argv)
 
 	void *pixels;
 	ccFramebufferFormat format;
-	if(ccWindowFramebufferCreate(&format) != CC_SUCCESS){
+	if(ccWindowFramebufferCreate(&format) != CC_E_NONE){
 		fprintf(stderr, "Something went wrong creating a framebuffer:\n");
 		fprintf(stderr, "%s\n", ccErrorString(ccErrorPop()));
 		exit(1);
@@ -62,7 +62,7 @@ int main(int argc, char **argv)
 			pixels[i + 2] = i / 200 + cycles;
 		}
 
-		if(ccWindowFramebufferUpdate() != CC_SUCCESS){
+		if(ccWindowFramebufferUpdate() != CC_E_NONE){
 			fprintf(stderr, "Something went wrong updating the framebuffer:\n");
 			fprintf(stderr, "%s\n", ccErrorString(ccErrorPop()));
 			exit(1);

@@ -88,7 +88,7 @@ static ccError initHaptic(int joyId, char *locName)
 
 	_ccGamepads->gamepad[joyId].outputAmount++;
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 static ccError createGamepad(char *locName, int i)
@@ -133,7 +133,7 @@ static ccError createGamepad(char *locName, int i)
 
 	initHaptic(i, locName);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 static bool canReadINotify(void)
@@ -197,7 +197,7 @@ ccGamepadEvent ccGamepadEventPoll(void)
 					event.type = CC_GAMEPAD_CONNECT;
 					return event;
 				}else{
-					if(createGamepad(ne.name, _ccGamepads->amount) == CC_SUCCESS){
+					if(createGamepad(ne.name, _ccGamepads->amount) == CC_E_NONE){
 						event.id = _ccGamepads->amount;
 						_ccGamepads->amount++;
 						event.type = CC_GAMEPAD_CONNECT;
@@ -291,7 +291,7 @@ ccError ccGamepadInitialize(void)
 	if(_ccGamepads->amount == 0){
 		ccErrorPush(CC_ERROR_GAMEPAD_NONE);
 	}else{
-		return CC_SUCCESS;
+		return CC_E_NONE;
 	}
 
 error:
@@ -332,13 +332,13 @@ ccError ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force)
 		write(GAMEPAD_DATA(gamepad)->fffd, (const void*)&ffev, sizeof(ffev));
 	}
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccGamepadFree(void)
 {
 	if(CC_UNLIKELY(_ccGamepads == NULL)){
-		return CC_SUCCESS;
+		return CC_E_NONE;
 	}
 
 	inotify_rm_watch(GAMEPADS_DATA()->fd, GAMEPADS_DATA()->watch);
@@ -369,7 +369,7 @@ ccError ccGamepadFree(void)
 
 	_ccGamepads = NULL;
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 #endif

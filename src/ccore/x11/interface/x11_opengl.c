@@ -33,7 +33,7 @@ ccError ccGLContextBind(void)
 	XD->context = glXCreateContext(XD->display, visual, NULL, GL_TRUE);
 	glXMakeCurrent(XD->display, XD->win, XD->context);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccGLContextFree(void)
@@ -45,7 +45,7 @@ ccError ccGLContextFree(void)
 
 	glXDestroyContext(XD->display, XD->context);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccGLBuffersSwap(void)
@@ -57,7 +57,7 @@ ccError ccGLBuffersSwap(void)
 
 	glXSwapBuffers(XD->display, XD->win);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 bool ccGLContextIsActive(void)

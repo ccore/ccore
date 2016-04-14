@@ -44,7 +44,7 @@ static ccError setWindowState(const char *type, bool value)
 
 	XSendEvent(XD->display, DefaultRootWindow(XD->display), false, SubstructureNotifyMask, &event);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 static ccError setResizable(bool resizable)
@@ -56,7 +56,7 @@ static ccError setResizable(bool resizable)
 
 	if(XD->resizable == resizable) {
 		XFree(sizeHints);
-		return CC_SUCCESS;
+		return CC_E_NONE;
 	}
 
 	XD->resizable = resizable;
@@ -75,7 +75,7 @@ static ccError setResizable(bool resizable)
 
 	XFree(sizeHints);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 static ccError checkRawSupport()
@@ -91,7 +91,7 @@ static ccError checkRawSupport()
 		return CC_FAIL;
 	}
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 static ccError initRawSupport()
@@ -120,7 +120,7 @@ static ccError initRawSupport()
 
 	free(mask.mask);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 static ccPoint getRawMouseMovement(XIRawEvent *event)
@@ -302,7 +302,7 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 
 	_ccWindow->mouse.x = _ccWindow->mouse.y = 0;
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccWindowFree(void)
@@ -326,7 +326,7 @@ ccError ccWindowFree(void)
 	free(_ccWindow);
 	_ccWindow = NULL;
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 bool ccWindowEventPoll(void)
@@ -502,7 +502,7 @@ ccError ccWindowSetWindowed(ccRect *rect)
 	setWindowState("_NET_WM_STATE_MAXIMIZED_HORZ", false);
 
 	if(rect == NULL) {
-		return CC_SUCCESS;
+		return CC_E_NONE;
 	} else {
 		return ccWindowResizeMove(*rect);
 	}
@@ -517,7 +517,7 @@ ccError ccWindowSetMaximized(void)
 	setWindowState("_NET_WM_STATE_MAXIMIZED_VERT", true);
 	setWindowState("_NET_WM_STATE_MAXIMIZED_HORZ", true);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccWindowSetFullscreen(int displayCount, ...)
@@ -572,7 +572,7 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 	setResizable(true);
 	setWindowState("_NET_WM_STATE_FULLSCREEN", true);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccWindowResizeMove(ccRect rect)
@@ -589,7 +589,7 @@ ccError ccWindowResizeMove(ccRect rect)
 
 	ccWindowUpdateDisplay();
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccWindowSetCentered(void)
@@ -606,7 +606,7 @@ ccError ccWindowSetCentered(void)
 
 	ccWindowResizeMove(newRect);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccWindowSetBlink(void)
@@ -639,7 +639,7 @@ ccError ccWindowSetTitle(const char *title)
 	XFree(titleProperty.value);
 #endif
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccWindowIconSet(ccPoint size, unsigned long *icon)
@@ -664,7 +664,7 @@ ccError ccWindowIconSet(ccPoint size, unsigned long *icon)
 
 	free(data);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccWindowMouseSetPosition(ccPoint target)
@@ -673,7 +673,7 @@ ccError ccWindowMouseSetPosition(ccPoint target)
 
 	XWarpPointer(XD->display, None, XD->win, 0, 0, 0, 0, target.x, target.y);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccWindowMouseSetCursor(ccCursor cursor)
@@ -696,7 +696,7 @@ ccError ccWindowMouseSetCursor(ccCursor cursor)
 
 	XDefineCursor(XD->display, XD->win, XD->cursor);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
@@ -795,7 +795,7 @@ ccError ccWindowFramebufferCreate(ccFramebufferFormat *format)
 	XD->w = _ccWindow->rect.width;
 	XD->h = _ccWindow->rect.height;
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccWindowFramebufferUpdate()
@@ -807,7 +807,7 @@ ccError ccWindowFramebufferUpdate()
 	XShmPutImage(XD->display, XD->win, XD->gc, XD->fb, 0, 0, 0, 0, XD->w, XD->h, False);
 	XSync(XD->display, False);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccWindowFramebufferFree()
@@ -829,7 +829,7 @@ ccError ccWindowFramebufferFree()
 
 	_ccWindow->pixels = NULL;
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 #endif
 
@@ -853,7 +853,7 @@ ccError ccWindowClipboardSet(const char *text)
 	}
 	strcpy(XD->clipstr, text);
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 char *ccWindowClipboardGet()

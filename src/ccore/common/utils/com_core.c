@@ -29,8 +29,6 @@ ccError ccInitialize(void)
 
 ccError ccFree(void)
 {
-	_ccErrorFree();
-
 #if defined CC_USE_ALL || defined CC_USE_FILE
 	_ccFileFree();
 #endif
@@ -115,10 +113,6 @@ const char *ccErrorString(ccError error)
 			return "A mutex object couldn't be created";
 		case CC_E_THREAD_MUTEX:
 			return "Error working with a mutex";
-
-			// Networking related
-		case CC_E_NET:
-			return "A network function failed";
 
 			// Gamepad related
 		case CC_E_GAMEPAD_NONE:

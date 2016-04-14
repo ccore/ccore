@@ -60,7 +60,7 @@ ccError ccGamepadOutputSet(ccGamepad *gamepad, int hapticIndex, int force)
 		free(buf);
 	}
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccError ccGamepadInitialize(void)
@@ -86,7 +86,7 @@ ccError ccGamepadInitialize(void)
 	_CC_WINDOW_DATA->rid[_CC_RAWINPUT_GAMEPAD].hwndTarget = _CC_WINDOW_DATA->winHandle;
 
 	if(RegisterRawInputDevices(&_CC_WINDOW_DATA->rid[_CC_RAWINPUT_GAMEPAD], _CC_RAWINPUT_GAMEPADCOUNT, sizeof(RAWINPUTDEVICE)) == TRUE) {
-		return CC_SUCCESS;
+		return CC_E_NONE;
 	}
 	else{
 		ccErrorPush(CC_ERROR_GAMEPAD_NONE);
@@ -134,7 +134,7 @@ ccError ccGamepadFree(void)
 
 	_ccGamepads = NULL;
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 void _queryXinput()
