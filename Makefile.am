@@ -4,7 +4,6 @@ AM_CPPFLAGS += -I$(top_srcdir)/include
 pkginclude_HEADERS = include/ccore/assert.h
 pkginclude_HEADERS += include/ccore/core.h
 pkginclude_HEADERS += include/ccore/display.h
-pkginclude_HEADERS += include/ccore/error.h
 pkginclude_HEADERS += include/ccore/event.h
 pkginclude_HEADERS += include/ccore/file.h
 pkginclude_HEADERS += include/ccore/gamepad.h
@@ -24,7 +23,6 @@ libccore_la_SOURCES += src/ccore/common/interface/com_event.c
 libccore_la_SOURCES += src/ccore/common/interface/com_window.c
 
 libccore_la_SOURCES += src/ccore/common/utils/com_core.c
-libccore_la_SOURCES += src/ccore/common/utils/com_error.c
 libccore_la_SOURCES += src/ccore/common/utils/com_file.c
 libccore_la_SOURCES += src/ccore/common/utils/com_rect.c
 libccore_la_SOURCES += src/ccore/common/utils/com_string.c

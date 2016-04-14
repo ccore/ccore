@@ -40,11 +40,6 @@ extern "C"
      _a < _b ? _a : _b; })
 #endif
 
-#define CC_SUCCESS 0
-#define CC_FAIL -1
-
-typedef int ccReturn;
-
 typedef struct {
 	int x, y;
 } ccPoint;
