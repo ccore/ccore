@@ -24,7 +24,6 @@
 #include "core.h"
 
 #include "types.h"
-#include "error.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -57,14 +56,14 @@ typedef pthread_mutex_t ccMutex;
 
 #endif
 
-ccReturn ccThreadStart(ccThread *thread, void *function, void *data);
-ccReturn ccThreadJoin(ccThread *thread);
+ccError ccThreadStart(ccThread *thread, void *function, void *data);
+ccError ccThreadJoin(ccThread *thread);
 bool ccThreadFinished(ccThread *thread);
 
-ccReturn ccThreadMutexCreate(ccMutex *mutex, unsigned int spinCount);
-ccReturn ccThreadMutexJoin(ccMutex *mutex);
-ccReturn ccThreadMutexRelease(ccMutex *mutex);
-ccReturn ccThreadMutexFree(ccMutex *mutex);
+ccError ccThreadMutexCreate(ccMutex *mutex, unsigned int spinCount);
+ccError ccThreadMutexJoin(ccMutex *mutex);
+ccError ccThreadMutexRelease(ccMutex *mutex);
+ccError ccThreadMutexFree(ccMutex *mutex);
 
 #ifdef __cplusplus
 }

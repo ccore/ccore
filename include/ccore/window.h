@@ -23,7 +23,6 @@
 
 #include "core.h"
 
-#include "error.h"
 #include "display.h"
 #include "types.h"
 #include "event.h"
@@ -84,31 +83,31 @@ ccWindow *_ccWindow;
 #define ccWindowSupportsRawInput() _ccWindow->supportsRawInput
 
 // Window functions
-ccReturn ccWindowCreate(ccRect rect, const char *title, int flags);
-ccReturn ccWindowFree(void);
+ccError ccWindowCreate(ccRect rect, const char *title, int flags);
+ccError ccWindowFree(void);
 bool ccWindowEventPoll(void); // Poll an event from the events that currently need to be processed in the window
-ccReturn ccWindowResizeMove(ccRect rect);
-ccReturn ccWindowSetCentered(void);
+ccError ccWindowResizeMove(ccRect rect);
+ccError ccWindowSetCentered(void);
 
-ccReturn ccWindowSetWindowed(ccRect *rect);
-ccReturn ccWindowSetMaximized(void);
-ccReturn ccWindowSetFullscreen(int displayCount, ...);
-ccReturn ccWindowSetTitle(const char *title);
+ccError ccWindowSetWindowed(ccRect *rect);
+ccError ccWindowSetMaximized(void);
+ccError ccWindowSetFullscreen(int displayCount, ...);
+ccError ccWindowSetTitle(const char *title);
 
-ccReturn ccWindowSetBlink(void);
-ccReturn ccWindowIconSet(ccPoint size, unsigned long *icon);
-ccReturn ccWindowMouseSetPosition(ccPoint target);
-ccReturn ccWindowMouseSetCursor(ccCursor cursor);
+ccError ccWindowSetBlink(void);
+ccError ccWindowIconSet(ccPoint size, unsigned long *icon);
+ccError ccWindowMouseSetPosition(ccPoint target);
+ccError ccWindowMouseSetCursor(ccCursor cursor);
 
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 // Create a framebuffer object, sets the format
-ccReturn ccWindowFramebufferCreate(ccFramebufferFormat *format);
-ccReturn ccWindowFramebufferUpdate();
-ccReturn ccWindowFramebufferFree();
+ccError ccWindowFramebufferCreate(ccFramebufferFormat *format);
+ccError ccWindowFramebufferUpdate();
+ccError ccWindowFramebufferFree();
 void *ccWindowFramebufferGetPixels();
 #endif
 
-ccReturn ccWindowClipboardSet(const char *data);
+ccError ccWindowClipboardSet(const char *data);
 char *ccWindowClipboardGet(void);
 
 // Getters

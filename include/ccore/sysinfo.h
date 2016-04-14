@@ -26,7 +26,7 @@
 #include "core.h"
 
 #include "types.h"
-#include "error.h"
+
 #include "assert.h"
 
 #ifdef __cplusplus

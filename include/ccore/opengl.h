@@ -22,7 +22,6 @@
 #include "core.h"
 
 #include "window.h"
-#include "error.h"
 #include "types.h"
 
 #ifdef __cplusplus
@@ -30,9 +29,9 @@ extern "C"
 {
 #endif
 // opengl
-ccReturn ccGLContextBind(void); // Bind the openGl context to window
-ccReturn ccGLContextFree(void); // Free context
-ccReturn ccGLBuffersSwap(void); // Swap the buffers
+ccError ccGLContextBind(void); // Bind the openGl context to window
+ccError ccGLContextFree(void); // Free context
+ccError ccGLBuffersSwap(void); // Swap the buffers
 bool ccGLContextIsActive(void);
 
 #ifdef __cplusplus

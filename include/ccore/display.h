@@ -23,7 +23,6 @@
 
 #include "core.h"
 
-#include "error.h"
 #include "types.h"
 #include "assert.h"
 
@@ -67,9 +66,9 @@ ccDisplays *_ccDisplays;
 #define ccDisplayResolutionGetAmount(display) (display->amount)
 
 // Display
-ccReturn ccDisplayInitialize(void); // Get all displays currently connected and active
-ccReturn ccDisplayFree(void);
-ccReturn ccDisplayRevertModes(void);
+ccError ccDisplayInitialize(void); // Get all displays currently connected and active
+ccError ccDisplayFree(void);
+ccError ccDisplayRevertModes(void);
 
 // Getters
 ccRect ccDisplayGetRect(ccDisplay *display);
@@ -78,7 +77,7 @@ ccDisplay *ccDisplayGet(int index);
 ccDisplay *ccDisplayGetDefault(void);
 
 // Resolution
-ccReturn ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex);
+ccError ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex);
 bool ccDisplayResolutionExists(ccDisplay *display, ccDisplayData *resolution);
 bool ccDisplayResolutionEqual(ccDisplayData *resolutionA, ccDisplayData *resolutionB);
 

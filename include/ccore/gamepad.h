@@ -24,7 +24,6 @@
 #include <limits.h>
 
 #include "core.h"
-#include "error.h"
 #include "types.h"
 
 #ifdef __cplusplus
@@ -82,9 +81,9 @@ ccGamepads *_ccGamepads;
 #define ccGamepadGetAmount() _ccGamepads->amount
 #define ccGamepadGet(index) (&_ccGamepads->gamepad[index])
 
-ccReturn ccGamepadInitialize(void); // Initializes gamepad input
-ccReturn ccGamepadFree(void); // Stops gamepad input
-ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force);
+ccError ccGamepadInitialize(void); // Initializes gamepad input
+ccError ccGamepadFree(void); // Stops gamepad input
+ccError ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force);
 
 #ifdef X11
 ccGamepadEvent ccGamepadEventPoll(void);

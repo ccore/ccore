@@ -39,7 +39,7 @@ extern "C"
 {
 #endif
 
-ccReturn ccTimeDelay(int ms);
+ccError ccTimeDelay(int ms);
 uint64_t ccTimeNanoseconds(void);
 
 #ifdef __cplusplus
