@@ -50,9 +50,17 @@ START_TEST(test_sysinfo_ram)
 {
 	ccSysinfoInitialize();
 
-	ccPrintf("\tccSysInfoGetRamTotal output:\t%lld\n", (long long int)ccSysinfoGetRamTotal());
+	ck_assert(ccSysinfoGetRamTotal() > 0);
 
-	ccFree();
+	ccSysinfoFree();
+	CC_ERROR_CHECK();
+}
+END_TEST
+
+START_TEST(test_extras_free)
+{
+	ck_assert(ccFree() == CC_FAIL);
+
 	CC_ERROR_CHECK();
 }
 END_TEST
@@ -71,6 +79,10 @@ Suite *sysinfo_suite(void)
 Suite *extras_suite(void)
 {
 	Suite *s = suite_create("Extras");
+
+	TCase *tfree = tcase_create("Free");
+	tcase_add_test(tfree, test_extras_free);
+	suite_add_tcase(s, tfree);
 
 	return s;
 }
