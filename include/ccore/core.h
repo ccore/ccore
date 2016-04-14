@@ -55,6 +55,7 @@ typedef enum {
 	// Global
 	CC_E_INVALID_ARGUMENT,
 	CC_E_WM, // A error caused by the window manager
+	CC_E_OS, // A error caused by the operating system
 
 	// Display related
 	CC_E_DISPLAY_NONE, // The window couldn't find a display to attach to

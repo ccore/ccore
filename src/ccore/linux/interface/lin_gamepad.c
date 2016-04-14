@@ -66,7 +66,7 @@ static ccError initHaptic(int joyId, char *locName)
 	closedir(d);
 
 	if(fd < 0){
-		return CC_FAIL;
+		return CC_E_GAMEPAD_HAPTICNONE;
 	}
 
 	struct ff_effect effect = {
@@ -80,7 +80,7 @@ static ccError initHaptic(int joyId, char *locName)
 
 	if(ioctl(fd, EVIOCSFF, &effect) < 0){
 		close(fd);
-		return CC_FAIL;
+		return CC_E_GAMEPAD_DATA;
 	}
 
 	GAMEPAD_DATA(_ccGamepads->gamepad + joyId)->fffd = fd;
@@ -95,20 +95,24 @@ static ccError createGamepad(char *locName, int i)
 {
 	int fd = openGamepadDescriptor(locName);
 	if(fd < 0){
-		if(errno != EACCES){
-			ccErrorPush(CC_ERROR_GAMEPAD_DATA);
-			return CC_FAIL;
-		}else{
-			return CC_FAIL;
-		}
+		return CC_E_GAMEPAD_DATA;
 	}
 
 	if(i == 0){
-		ccMalloc(_ccGamepads->gamepad, sizeof(ccGamepad));
+		_ccGamepads->gamepad = malloc(sizeof(ccGamepad));
+		if(_ccGamepads->gamepad == NULL){
+			return CC_E_MEMORY_OVERFLOW;
+		}
 	}else{
-		ccRealloc(_ccGamepads->gamepad, (i + 1) * sizeof(ccGamepad));
+		_ccGamepads->gamepad = realloc(_ccGamepads->gamepad, (i + 1) * sizeof(ccGamepad));
+		if(_ccGamepads->gamepad == NULL){
+			return CC_E_MEMORY_OVERFLOW;
+		}
 	}
-	ccMalloc((_ccGamepads->gamepad + i)->data, sizeof(ccGamepad_lin));
+	(_ccGamepads->gamepad + i)->data = malloc(sizeof(ccGamepad_lin));
+	if((_ccGamepads->gamepad + i)->data == NULL){
+		return CC_E_MEMORY_OVERFLOW;
+	}
 
 	// Clear gamepad buffer
 	char buf[64];
@@ -118,14 +122,23 @@ static ccError createGamepad(char *locName, int i)
 	_ccGamepads->gamepad[i].axisAmount = 
 		_ccGamepads->gamepad[i].buttonAmount = 
 		_ccGamepads->gamepad[i].outputAmount = 0;
-	ccMalloc(_ccGamepads->gamepad[i].name, 80);
+	_ccGamepads->gamepad[i].name = malloc(80);
+	if(_ccGamepads->gamepad[i].name == NULL){
+		return CC_E_MEMORY_OVERFLOW;
+	}
 
 	ioctl(fd, JSIOCGAXES, &_ccGamepads->gamepad[i].axisAmount);
 	ioctl(fd, JSIOCGBUTTONS, &_ccGamepads->gamepad[i].buttonAmount);
 	ioctl(fd, JSIOCGNAME(80), _ccGamepads->gamepad[i].name);
 
-	ccCalloc(_ccGamepads->gamepad[i].axis, _ccGamepads->gamepad[i].axisAmount, sizeof(int));
-	ccCalloc(_ccGamepads->gamepad[i].button, _ccGamepads->gamepad[i].buttonAmount, sizeof(char));
+	_ccGamepads->gamepad[i].axis = calloc(_ccGamepads->gamepad[i].axisAmount, sizeof(int));
+	if(_ccGamepads->gamepad[i].axis == NULL){
+		return CC_E_MEMORY_OVERFLOW;
+	}
+	_ccGamepads->gamepad[i].button = calloc(_ccGamepads->gamepad[i].buttonAmount, sizeof(char));
+	if(_ccGamepads->gamepad[i].button == NULL){
+		return CC_E_MEMORY_OVERFLOW;
+	}
 
 	GAMEPAD_DATA(_ccGamepads->gamepad + i)->fd = fd;
 	GAMEPAD_DATA(_ccGamepads->gamepad + i)->fffd = -1;
@@ -175,8 +188,7 @@ ccGamepadEvent ccGamepadEventPoll(void)
 
 					// Close haptic when available
 					if(GAMEPAD_DATA(_ccGamepads->gamepad + event.id)->fffd > 0){
-						ioctl(GAMEPAD_DATA(_ccGamepads->gamepad + event.id)->fffd, 
-								EVIOCRMFF, GAMEPAD_DATA(_ccGamepads->gamepad + event.id)->ffid);
+						ioctl(GAMEPAD_DATA(_ccGamepads->gamepad + event.id)->fffd, EVIOCRMFF, GAMEPAD_DATA(_ccGamepads->gamepad + event.id)->ffid);
 						close(GAMEPAD_DATA(_ccGamepads->gamepad + event.id)->fffd);
 					}
 				}
@@ -256,19 +268,23 @@ ccError ccGamepadInitialize(void)
 	// Attach notifications to check if a device connects/disconnects
 	int fd = inotify_init();
 	if(CC_UNLIKELY(fd < 0)){
-		ccErrorPush(CC_ERROR_GAMEPAD_DATA);
 		goto error;
 	}
 
 	int watch = inotify_add_watch(fd, "/dev/input", IN_DELETE | IN_ATTRIB);
 	if(CC_UNLIKELY(watch < 0)){
-		ccErrorPush(CC_ERROR_GAMEPAD_DATA);
 		goto error;
 	}
 
 	if(CC_LIKELY(_ccGamepads == NULL)){
-		ccMalloc(_ccGamepads, sizeof(ccGamepads));
-		ccMalloc(_ccGamepads->data, sizeof(ccGamepads_lin));
+		_ccGamepads = malloc(sizeof(ccGamepads));
+		if(_ccGamepads == NULL){
+			return CC_E_MEMORY_OVERFLOW;
+		}
+		_ccGamepads->data = malloc(sizeof(ccGamepads_lin));
+		if(_ccGamepads->data == NULL){
+			return CC_E_MEMORY_OVERFLOW;
+		}
 	}
 	_ccGamepads->amount = 0;
 
@@ -280,7 +296,7 @@ ccError ccGamepadInitialize(void)
 	struct dirent *dir;
 	while((dir = readdir(d)) != NULL){
 		if(*dir->d_name == 'j'){
-			if(CC_UNLIKELY(createGamepad(dir->d_name, _ccGamepads->amount) == CC_FAIL)){
+			if(CC_UNLIKELY(createGamepad(dir->d_name, _ccGamepads->amount) != CC_E_NONE)){
 				goto error;
 			}
 			_ccGamepads->amount++;
@@ -288,11 +304,16 @@ ccError ccGamepadInitialize(void)
 	}
 	closedir(d);
 
-	if(_ccGamepads->amount == 0){
-		ccErrorPush(CC_ERROR_GAMEPAD_NONE);
-	}else{
+	if(_ccGamepads->amount != 0){
 		return CC_E_NONE;
 	}
+
+	free(_ccGamepads->data);
+	free(_ccGamepads);
+	closedir(d);
+	close(fd);
+	close(watch);
+	return CC_E_GAMEPAD_NONE;
 
 error:
 	free(_ccGamepads->data);
@@ -300,13 +321,13 @@ error:
 	closedir(d);
 	close(fd);
 	close(watch);
-	return CC_FAIL;
+	return CC_E_GAMEPAD_DATA;
 }
 
 ccError ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force)
 {
 	if(GAMEPAD_DATA(gamepad)->fffd < 0){
-		return CC_FAIL;
+		return CC_E_GAMEPAD_DATA;
 	}	
 
 	struct input_event ffev= {

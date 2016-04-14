@@ -19,7 +19,6 @@ ccFileInfo ccFileInfoGet(const char *file)
 	ccFileInfo info;
 
 	if(ccStat(file, &sb) != 0){
-		ccErrorPush(CC_ERROR_FILE_OPEN);
 		info.size = 0;
 		info.modified = 0;
 		return info;

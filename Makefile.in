@@ -162,7 +162,6 @@ am__libccore_la_SOURCES_DIST =  \
 	src/ccore/common/interface/com_event.c \
 	src/ccore/common/interface/com_window.c \
 	src/ccore/common/utils/com_core.c \
-	src/ccore/common/utils/com_error.c \
 	src/ccore/common/utils/com_file.c \
 	src/ccore/common/utils/com_rect.c \
 	src/ccore/common/utils/com_string.c \
@@ -206,7 +205,6 @@ am_libccore_la_OBJECTS = src/ccore/common/interface/com_display.lo \
 	src/ccore/common/interface/com_event.lo \
 	src/ccore/common/interface/com_window.lo \
 	src/ccore/common/utils/com_core.lo \
-	src/ccore/common/utils/com_error.lo \
 	src/ccore/common/utils/com_file.lo \
 	src/ccore/common/utils/com_rect.lo \
 	src/ccore/common/utils/com_string.lo \
@@ -625,20 +623,18 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 pkginclude_HEADERS = include/ccore/assert.h include/ccore/core.h \
-	include/ccore/display.h include/ccore/error.h \
-	include/ccore/event.h include/ccore/file.h \
-	include/ccore/gamepad.h include/ccore/opengl.h \
-	include/ccore/print.h include/ccore/string.h \
-	include/ccore/sysinfo.h include/ccore/thread.h \
-	include/ccore/time.h include/ccore/types.h \
-	include/ccore/window.h
+	include/ccore/display.h include/ccore/event.h \
+	include/ccore/file.h include/ccore/gamepad.h \
+	include/ccore/opengl.h include/ccore/print.h \
+	include/ccore/string.h include/ccore/sysinfo.h \
+	include/ccore/thread.h include/ccore/time.h \
+	include/ccore/types.h include/ccore/window.h
 lib_LTLIBRARIES = libccore.la
 libccore_la_LDFLAGS = -version-info $(CCORE_VERSION)
 libccore_la_SOURCES = src/ccore/common/interface/com_display.c \
 	src/ccore/common/interface/com_event.c \
 	src/ccore/common/interface/com_window.c \
 	src/ccore/common/utils/com_core.c \
-	src/ccore/common/utils/com_error.c \
 	src/ccore/common/utils/com_file.c \
 	src/ccore/common/utils/com_rect.c \
 	src/ccore/common/utils/com_string.c \
@@ -745,9 +741,6 @@ src/ccore/common/utils/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/ccore/common/utils/$(DEPDIR)
 	@: > src/ccore/common/utils/$(DEPDIR)/$(am__dirstamp)
 src/ccore/common/utils/com_core.lo:  \
-	src/ccore/common/utils/$(am__dirstamp) \
-	src/ccore/common/utils/$(DEPDIR)/$(am__dirstamp)
-src/ccore/common/utils/com_error.lo:  \
 	src/ccore/common/utils/$(am__dirstamp) \
 	src/ccore/common/utils/$(DEPDIR)/$(am__dirstamp)
 src/ccore/common/utils/com_file.lo:  \
@@ -958,7 +951,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/com_event.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/com_window.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_core.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_error.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_file.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_rect.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_string.Plo@am__quote@

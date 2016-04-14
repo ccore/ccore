@@ -20,14 +20,12 @@ static int attrList[] = {GLX_RGBA,
 ccError ccGLContextBind(void)
 {
 	if(CC_UNLIKELY(_ccWindow == NULL)) {
-		ccErrorPush(CC_ERROR_WINDOW_NONE);
-		return CC_FAIL;
+		return CC_E_WINDOW_NONE;
 	}
 
 	XVisualInfo *visual = glXChooseVisual(XD->display, XD->screen, attrList);
 	if(CC_UNLIKELY(!visual)) {
-		ccErrorPush(CC_ERROR_GL_CONTEXT);
-		return CC_FAIL;
+		return CC_E_GL_CONTEXT;
 	}
 
 	XD->context = glXCreateContext(XD->display, visual, NULL, GL_TRUE);
@@ -39,8 +37,7 @@ ccError ccGLContextBind(void)
 ccError ccGLContextFree(void)
 {
 	if(CC_UNLIKELY(XD->context == NULL)) {
-		ccErrorPush(CC_ERROR_GL_CONTEXT);
-		return CC_FAIL;
+		return CC_E_GL_CONTEXT;
 	}
 
 	glXDestroyContext(XD->display, XD->context);
@@ -51,8 +48,7 @@ ccError ccGLContextFree(void)
 ccError ccGLBuffersSwap(void)
 {
 	if(CC_UNLIKELY(XD->context == NULL)) {
-		ccErrorPush(CC_ERROR_GL_CONTEXT);
-		return CC_FAIL;
+		return CC_E_GL_CONTEXT;
 	}
 
 	glXSwapBuffers(XD->display, XD->win);

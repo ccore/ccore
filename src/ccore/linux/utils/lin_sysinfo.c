@@ -6,7 +6,7 @@ static long parseLineKB(char *line)
 {
 	int i;
 	long value;
-	
+
 	i = strlen(line);
 	while(*line < '0' || *line > '9'){
 		line++;
@@ -46,11 +46,14 @@ ccError ccSysinfoInitialize(void)
 
 	ccAssert(_ccSysinfo == NULL);
 
-	ccMalloc(_ccSysinfo, sizeof(ccSysinfo));
+	_ccSysinfo = malloc(sizeof(ccSysinfo));
+	if(_ccSysinfo == NULL){
+		return CC_E_MEMORY_OVERFLOW;
+	}
 
 	value = getKBValueFromProc("/proc/meminfo", "MemTotal");
 	if(value == -1){
-		return CC_FAIL;
+		return CC_E_OS;
 	}
 	_ccSysinfo->ramTotal = ((uint_fast64_t)value) * 1000;
 

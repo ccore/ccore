@@ -11,21 +11,20 @@
 #include <ccore/opengl.h>
 #include <ccore/types.h>
 #include <ccore/event.h>
-#include <ccore/error.h>
 #include <ccore/assert.h>
 #include <ccore/print.h>
 
 #include "x11_display.h"
 
 static int cursorList[] = {XC_arrow,
-													 XC_crosshair,
-													 XC_xterm,
-													 XC_fleur,
-													 XC_hand1,
-													 XC_sb_h_double_arrow,
-													 XC_sb_v_double_arrow,
-													 XC_X_cursor,
-													 XC_question_arrow};
+	XC_crosshair,
+	XC_xterm,
+	XC_fleur,
+	XC_hand1,
+	XC_sb_h_double_arrow,
+	XC_sb_v_double_arrow,
+	XC_X_cursor,
+	XC_question_arrow};
 
 static char emptyCursorData[] = {0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -82,13 +81,13 @@ static ccError checkRawSupport()
 {
 	int event, error;
 	if(CC_UNLIKELY(!XQueryExtension(XD->display, "XInputExtension", &XD->inputopcode, &event, &error))) {
-		return CC_FAIL;
+		return CC_E_WM;
 	}
 
 	int mayor = 2;
 	int minor = 0;
 	if(CC_UNLIKELY(XIQueryVersion(XD->display, &mayor, &minor) == BadRequest)) {
-		return CC_FAIL;
+		return CC_E_WM;
 	}
 
 	return CC_E_NONE;
@@ -97,7 +96,10 @@ static ccError checkRawSupport()
 static ccError initRawSupport()
 {
 	XIEventMask mask = {.deviceid = XIAllMasterDevices, .mask_len = XIMaskLen(XI_RawMotion)};
-	ccCalloc(mask.mask, mask.mask_len, sizeof(char));
+	mask.mask = calloc(mask.mask_len, sizeof(char));
+	if(mask.mask == NULL){
+		return CC_E_MEMORY_OVERFLOW;
+	}
 
 	XISetMask(mask.mask, XI_Enter);
 	XISetMask(mask.mask, XI_Leave);
@@ -153,7 +155,7 @@ static inline unsigned int getRawKeyboardCode(XIRawEvent *event)
 static int (*origXError)(Display*, XErrorEvent*);
 static int handleXError(Display *display, XErrorEvent *event)
 {
-	ccErrorPush(CC_ERROR_WM);
+	return CC_E_WM;
 
 	char error[256];
 	XGetErrorText(XD->display, event->error_code, error, sizeof(error));
@@ -227,22 +229,26 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	ccAssert(rect.width > 0 && rect.height > 0);
 
 	if(CC_UNLIKELY(_ccWindow != NULL)) {
-		ccErrorPush(CC_ERROR_WINDOW_CREATE);
-		return CC_FAIL;
+		return CC_E_WINDOW_CREATE;
 	}
 
-	ccMalloc(_ccWindow, sizeof(ccWindow));
+	_ccWindow = malloc(sizeof(ccWindow));
+	if(_ccWindow == NULL){
+		return CC_E_MEMORY_OVERFLOW;
+	}
 
 	_ccWindow->rect = rect;
-	ccCalloc(_ccWindow->data, 1, sizeof(ccWindow_x11));
+	_ccWindow->data = calloc(1, sizeof(ccWindow_x11));
+	if(_ccWindow->data == NULL){
+		return CC_E_MEMORY_OVERFLOW;
+	}
 	XD->winflags = flags;
 
 	origXError = XSetErrorHandler(handleXError);
 
 	XD->display = XOpenDisplay(NULL);
 	if(CC_UNLIKELY(XD->display == NULL)) {
-		ccErrorPush(CC_ERROR_WM);
-		return CC_FAIL;
+		return CC_E_WM;
 	}
 
 	XD->screen = DefaultScreen(XD->display);
@@ -596,8 +602,7 @@ ccError ccWindowSetCentered(void)
 {
 	ccAssert(_ccWindow);
 	if(CC_UNLIKELY(_ccWindow->display == NULL)) {
-		ccErrorPush(CC_ERROR_DISPLAY_NONE);
-		return CC_FAIL;
+		return CC_E_DISPLAY_NONE;
 	}
 
 	ccDisplayData *currentResolution = ccDisplayResolutionGetCurrent(_ccWindow->display);
@@ -627,7 +632,7 @@ ccError ccWindowSetTitle(const char *title)
 
 	XTextProperty titleProperty;
 	if(!XStringListToTextProperty(&titleCopy, 1, &titleProperty)) {
-		ccErrorPush(CC_ERROR_WINDOW_MODE);
+		return CC_E_WINDOW_MODE;
 		return CC_FAIL;
 	}
 	free(titleCopy);
@@ -647,14 +652,16 @@ ccError ccWindowIconSet(ccPoint size, unsigned long *icon)
 	ccAssert(_ccWindow);
 
 	if(size.x <= 0 || size.y <= 0) {
-		ccErrorPush(CC_ERROR_WINDOW_MODE);
-		return CC_FAIL;
+		return CC_E_INVALID_ARGUMENT;
 	}
 
 	size_t dataLen = size.x * size.y;
 	size_t totalLen = dataLen + 2;
 	unsigned long *data;
-	ccMalloc(data, totalLen * sizeof(unsigned long));
+	data = malloc(totalLen * sizeof(unsigned long));
+	if(data == NULL){
+		return CC_E_MEMORY_OVERFLOW;
+	}
 
 	data[0] = (unsigned long)size.x;
 	data[1] = (unsigned long)size.y;
@@ -687,7 +694,7 @@ ccError ccWindowMouseSetCursor(ccCursor cursor)
 	if(cursor != CC_CURSOR_NONE) {
 		XD->cursor = XCreateFontCursor(XD->display, cursorList[cursor]);
 		if(!XD->cursor) {
-			ccErrorPush(CC_ERROR_WINDOW_CURSOR);
+			return CC_E_WINDOW_CURSOR;
 		}
 	} else {
 		XColor black = {0};
@@ -706,20 +713,17 @@ ccError ccWindowFramebufferCreate(ccFramebufferFormat *format)
 
 	// There already is a OpenGL context, you can't create both
 	if(XD->context != NULL){
-		ccErrorPush(CC_ERROR_FRAMEBUFFER_CREATE);
-		return CC_FAIL;
+		return CC_E_FRAMEBUFFER_CREATE;
 	}
 
 	int ignore;
 	if(!XQueryExtension(XD->display, "MIT-SHM", &ignore, &ignore, &ignore)){
-		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
-		return CC_FAIL;
+		return CC_E_FRAMEBUFFER_SHAREDMEM;
 	}
 
 	XD->gc = XCreateGC(XD->display, XD->win, 0, 0);
 	if(!XD->gc){
-		ccErrorPush(CC_ERROR_FRAMEBUFFER_CREATE);
-		return CC_FAIL;
+		return CC_E_FRAMEBUFFER_CREATE;
 	}
 
 	XD->shminfo = (XShmSegmentInfo){0};
@@ -727,8 +731,7 @@ ccError ccWindowFramebufferCreate(ccFramebufferFormat *format)
 	if(XD->fb == NULL){
 		XFreeGC(XD->display, XD->gc);
 		XD->gc = NULL;
-		ccErrorPush(CC_ERROR_FRAMEBUFFER_CREATE);
-		return CC_FAIL;
+		return CC_E_FRAMEBUFFER_CREATE;
 	}
 
 	switch(XD->fb->bits_per_pixel){
@@ -743,18 +746,16 @@ ccError ccWindowFramebufferCreate(ccFramebufferFormat *format)
 			XD->gc = NULL;
 			XDestroyImage(XD->fb);
 			XD->fb = NULL;
-			ccErrorPush(CC_ERROR_FRAMEBUFFER_PIXELFORMAT);
-			return CC_FAIL;
+			return CC_E_FRAMEBUFFER_PIXELFORMAT;
 	}
-	
+
 	XD->shminfo.shmid = shmget(IPC_PRIVATE, XD->fb->bytes_per_line * XD->fb->height, IPC_CREAT | 0777);
 	if(XD->shminfo.shmid == -1){
 		XFreeGC(XD->display, XD->gc);
 		XD->gc = NULL;
 		XDestroyImage(XD->fb);
 		XD->fb = NULL;
-		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
-		return CC_FAIL;
+		return CC_E_FRAMEBUFFER_SHAREDMEM;
 	}
 
 	XD->shminfo.shmaddr = (char*)shmat(XD->shminfo.shmid, 0, 0);
@@ -763,8 +764,7 @@ ccError ccWindowFramebufferCreate(ccFramebufferFormat *format)
 		XD->gc = NULL;
 		XDestroyImage(XD->fb);
 		XD->fb = NULL;
-		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
-		return CC_FAIL;
+		return CC_E_FRAMEBUFFER_SHAREDMEM;
 	}
 	XD->fb->data = XD->shminfo.shmaddr;
 	_ccWindow->pixels = XD->shminfo.shmaddr;
@@ -788,8 +788,7 @@ ccError ccWindowFramebufferCreate(ccFramebufferFormat *format)
 		XD->fb = NULL;
 		shmdt(XD->shminfo.shmaddr);
 
-		ccErrorPush(CC_ERROR_FRAMEBUFFER_SHAREDMEM);
-		return CC_FAIL;
+		return CC_E_FRAMEBUFFER_SHAREDMEM;
 	}
 
 	XD->w = _ccWindow->rect.width;
@@ -801,7 +800,7 @@ ccError ccWindowFramebufferCreate(ccFramebufferFormat *format)
 ccError ccWindowFramebufferUpdate()
 {
 	if(CC_UNLIKELY(XD->fb == NULL)){
-		return CC_FAIL;
+		return CC_E_FRAMEBUFFER_CREATE;
 	}
 
 	XShmPutImage(XD->display, XD->win, XD->gc, XD->fb, 0, 0, 0, 0, XD->w, XD->h, False);
@@ -838,7 +837,7 @@ ccError ccWindowClipboardSet(const char *text)
 	ccAssert(_ccWindow);
 
 	if(text == NULL) {
-		return CC_FAIL;
+		return CC_E_INVALID_ARGUMENT;
 	}
 
 	if(XD->CLIPBOARD != None && XGetSelectionOwner(XD->display, XD->CLIPBOARD) != XD->win) {
@@ -847,9 +846,15 @@ ccError ccWindowClipboardSet(const char *text)
 
 	XD->clipstrlen = strlen(text);
 	if(!XD->clipstr) {
-		ccMalloc(XD->clipstr, XD->clipstrlen);
+		XD->clipstr = malloc(XD->clipstrlen);
+		if(XD->clipstr == NULL){
+			return CC_E_MEMORY_OVERFLOW;
+		}
 	} else {
-		ccRealloc(XD->clipstr, XD->clipstrlen);
+		XD->clipstr = realloc(XD->clipstr, XD->clipstrlen);
+		if(XD->clipstr == NULL){
+			return CC_E_MEMORY_OVERFLOW;
+		}
 	}
 	strcpy(XD->clipstr, text);
 
@@ -891,7 +896,6 @@ char *ccWindowClipboardGet()
 		char *output = malloc(length + 1);
 		if(!output) {
 			XFree(data);
-			ccErrorPush(CC_ERROR_MEMORY_OVERFLOW);
 			return NULL;
 		}
 		memcpy(output, data, length);

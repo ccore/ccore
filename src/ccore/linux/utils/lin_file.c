@@ -43,8 +43,7 @@ ccError ccFileDirFindFirst(ccFileDir *dir, const char *dirPath)
 {
 	dir->dir = opendir(dirPath);
 	if(!dir->dir){
-		ccErrorPush(CC_ERROR_FILE_OPEN);
-		return CC_FAIL;
+		return CC_E_FILE_OPEN;
 	}
 
 	return ccFileDirFind(dir);
@@ -53,13 +52,12 @@ ccError ccFileDirFindFirst(ccFileDir *dir, const char *dirPath)
 ccError ccFileDirFind(ccFileDir *dir)
 {
 	if(CC_UNLIKELY(!dir->dir)){
-		ccErrorPush(CC_ERROR_FILE_OPEN);
-		return CC_FAIL;
+		return CC_E_INVALID_ARGUMENT;
 	}
 
 	if((dir->entry = readdir(dir->dir)) == NULL){
 		dir->name = NULL;
-		return CC_FAIL;
+		return CC_E_FILE_OPEN;
 	}
 
 	dir->name = dir->entry->d_name;
