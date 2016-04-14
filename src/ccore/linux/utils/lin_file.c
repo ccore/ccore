@@ -39,7 +39,7 @@ void _ccFileFree(void)
 
 }
 
-ccReturn ccFileDirFindFirst(ccFileDir *dir, const char *dirPath)
+ccError ccFileDirFindFirst(ccFileDir *dir, const char *dirPath)
 {
 	dir->dir = opendir(dirPath);
 	if(!dir->dir){
@@ -50,7 +50,7 @@ ccReturn ccFileDirFindFirst(ccFileDir *dir, const char *dirPath)
 	return ccFileDirFind(dir);
 }
 
-ccReturn ccFileDirFind(ccFileDir *dir)
+ccError ccFileDirFind(ccFileDir *dir)
 {
 	if(CC_UNLIKELY(!dir->dir)){
 		ccErrorPush(CC_ERROR_FILE_OPEN);
@@ -68,7 +68,7 @@ ccReturn ccFileDirFind(ccFileDir *dir)
 	return CC_SUCCESS;
 }
 
-ccReturn ccFileDirClose(ccFileDir *dir)
+ccError ccFileDirClose(ccFileDir *dir)
 {
 	if(dir->entry){
 		free(dir->entry->d_name);

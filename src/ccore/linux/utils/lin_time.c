@@ -2,7 +2,7 @@
 
 #include "lin_time.h"
 
-ccReturn ccTimeDelay(int ms)
+ccError ccTimeDelay(int ms)
 {
 	usleep(ms * _CC_TO_MICROSECONDS);
 

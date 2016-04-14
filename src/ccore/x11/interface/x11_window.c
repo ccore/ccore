@@ -29,7 +29,7 @@ static int cursorList[] = {XC_arrow,
 
 static char emptyCursorData[] = {0, 0, 0, 0, 0, 0, 0, 0};
 
-static ccReturn setWindowState(const char *type, bool value)
+static ccError setWindowState(const char *type, bool value)
 {
 	Atom wmState = XInternAtom(XD->display, "_NET_WM_STATE", 1);
 	Atom newWmState = XInternAtom(XD->display, type, 1);
@@ -47,7 +47,7 @@ static ccReturn setWindowState(const char *type, bool value)
 	return CC_SUCCESS;
 }
 
-static ccReturn setResizable(bool resizable)
+static ccError setResizable(bool resizable)
 {
 	ccAssert(_ccWindow != NULL);
 
@@ -78,7 +78,7 @@ static ccReturn setResizable(bool resizable)
 	return CC_SUCCESS;
 }
 
-static ccReturn checkRawSupport()
+static ccError checkRawSupport()
 {
 	int event, error;
 	if(CC_UNLIKELY(!XQueryExtension(XD->display, "XInputExtension", &XD->inputopcode, &event, &error))) {
@@ -94,7 +94,7 @@ static ccReturn checkRawSupport()
 	return CC_SUCCESS;
 }
 
-static ccReturn initRawSupport()
+static ccError initRawSupport()
 {
 	XIEventMask mask = {.deviceid = XIAllMasterDevices, .mask_len = XIMaskLen(XI_RawMotion)};
 	ccCalloc(mask.mask, mask.mask_len, sizeof(char));
@@ -222,7 +222,7 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 	return true;
 }
 
-ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
+ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 {
 	ccAssert(rect.width > 0 && rect.height > 0);
 
@@ -305,7 +305,7 @@ ccReturn ccWindowCreate(ccRect rect, const char *title, int flags)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowFree(void)
+ccError ccWindowFree(void)
 {
 	ccAssert(_ccWindow);
 
@@ -492,7 +492,7 @@ bool ccWindowEventPoll(void)
 	return true;
 }
 
-ccReturn ccWindowSetWindowed(ccRect *rect)
+ccError ccWindowSetWindowed(ccRect *rect)
 {
 	ccAssert(_ccWindow);
 
@@ -508,7 +508,7 @@ ccReturn ccWindowSetWindowed(ccRect *rect)
 	}
 }
 
-ccReturn ccWindowSetMaximized(void)
+ccError ccWindowSetMaximized(void)
 {
 	ccAssert(_ccWindow);
 
@@ -520,7 +520,7 @@ ccReturn ccWindowSetMaximized(void)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowSetFullscreen(int displayCount, ...)
+ccError ccWindowSetFullscreen(int displayCount, ...)
 {
 	ccAssert(_ccWindow);
 
@@ -575,7 +575,7 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowResizeMove(ccRect rect)
+ccError ccWindowResizeMove(ccRect rect)
 {
 	ccAssert(_ccWindow);
 	ccAssert(rect.width > 0 && rect.height > 0);
@@ -592,7 +592,7 @@ ccReturn ccWindowResizeMove(ccRect rect)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowSetCentered(void)
+ccError ccWindowSetCentered(void)
 {
 	ccAssert(_ccWindow);
 	if(CC_UNLIKELY(_ccWindow->display == NULL)) {
@@ -609,14 +609,14 @@ ccReturn ccWindowSetCentered(void)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowSetBlink(void)
+ccError ccWindowSetBlink(void)
 {
 	ccAssert(_ccWindow);
 
 	return setWindowState("_NET_WM_STATE_DEMANDS_ATTENTION", true);
 }
 
-ccReturn ccWindowSetTitle(const char *title)
+ccError ccWindowSetTitle(const char *title)
 {
 #ifdef X_HAVE_UTF8_STRING
 	size_t len = strlen(title);
@@ -642,7 +642,7 @@ ccReturn ccWindowSetTitle(const char *title)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowIconSet(ccPoint size, unsigned long *icon)
+ccError ccWindowIconSet(ccPoint size, unsigned long *icon)
 {
 	ccAssert(_ccWindow);
 
@@ -667,7 +667,7 @@ ccReturn ccWindowIconSet(ccPoint size, unsigned long *icon)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowMouseSetPosition(ccPoint target)
+ccError ccWindowMouseSetPosition(ccPoint target)
 {
 	ccAssert(_ccWindow);
 
@@ -676,7 +676,7 @@ ccReturn ccWindowMouseSetPosition(ccPoint target)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowMouseSetCursor(ccCursor cursor)
+ccError ccWindowMouseSetCursor(ccCursor cursor)
 {
 	ccAssert(_ccWindow);
 
@@ -700,7 +700,7 @@ ccReturn ccWindowMouseSetCursor(ccCursor cursor)
 }
 
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
-ccReturn ccWindowFramebufferCreate(ccFramebufferFormat *format)
+ccError ccWindowFramebufferCreate(ccFramebufferFormat *format)
 {
 	ccAssert(_ccWindow);
 
@@ -798,7 +798,7 @@ ccReturn ccWindowFramebufferCreate(ccFramebufferFormat *format)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowFramebufferUpdate()
+ccError ccWindowFramebufferUpdate()
 {
 	if(CC_UNLIKELY(XD->fb == NULL)){
 		return CC_FAIL;
@@ -810,7 +810,7 @@ ccReturn ccWindowFramebufferUpdate()
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowFramebufferFree()
+ccError ccWindowFramebufferFree()
 {
 	ccAssert(_ccWindow);
 
@@ -833,7 +833,7 @@ ccReturn ccWindowFramebufferFree()
 }
 #endif
 
-ccReturn ccWindowClipboardSet(const char *text)
+ccError ccWindowClipboardSet(const char *text)
 {
 	ccAssert(_ccWindow);
 

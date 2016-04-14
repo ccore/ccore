@@ -10,7 +10,7 @@
 #include <ccore/assert.h>
 #include <ccore/print.h>
 
-static ccReturn ccXFindDisplaysXinerama(Display *display, char *displayName)
+static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
 {
 	int eventBase, errorBase;
 	if(CC_UNLIKELY(!XineramaQueryExtension(display, &eventBase, &errorBase) || !XineramaIsActive(display))) {
@@ -132,7 +132,7 @@ static ccReturn ccXFindDisplaysXinerama(Display *display, char *displayName)
 	return CC_SUCCESS;
 }
 
-ccReturn ccDisplayInitialize(void)
+ccError ccDisplayInitialize(void)
 {
 	if(CC_UNLIKELY(_ccDisplays != NULL)) {
 		ccErrorPush(CC_ERROR_DISPLAY_NONE);
@@ -168,7 +168,7 @@ ccReturn ccDisplayInitialize(void)
 	return CC_SUCCESS;
 }
 
-ccReturn ccDisplayFree(void)
+ccError ccDisplayFree(void)
 {
 	if(CC_UNLIKELY(_ccDisplays == NULL)) {
 		ccErrorPush(CC_ERROR_DISPLAY_NONE);
@@ -196,7 +196,7 @@ ccReturn ccDisplayFree(void)
 	return CC_SUCCESS;
 }
 
-ccReturn ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
+ccError ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
 {
 	if(CC_UNLIKELY(display == NULL)) {
 		ccErrorPush(CC_ERROR_DISPLAY_NONE);

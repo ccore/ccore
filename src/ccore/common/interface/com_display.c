@@ -28,10 +28,10 @@ bool ccDisplayResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 	return false;
 }
 
-ccReturn ccDisplayRevertModes(void)
+ccError ccDisplayRevertModes(void)
 {
 	int i;
-	ccReturn output;
+	ccError output;
 
 	ccAssert(_ccDisplays != NULL);
 
@@ -42,7 +42,7 @@ ccReturn ccDisplayRevertModes(void)
 		}
 	}
 
-	return CC_SUCCESS;
+	return CC_E_NONE;
 }
 
 ccDisplay *ccDisplayGetDefault(void)

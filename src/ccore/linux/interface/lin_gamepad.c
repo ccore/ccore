@@ -28,7 +28,7 @@ static int openGamepadDescriptor(char *locName)
 	return fd;
 }
 
-static ccReturn initHaptic(int joyId, char *locName)
+static ccError initHaptic(int joyId, char *locName)
 {
 	unsigned long features[1 + FF_MAX / sizeof(unsigned long)];	
 
@@ -91,7 +91,7 @@ static ccReturn initHaptic(int joyId, char *locName)
 	return CC_SUCCESS;
 }
 
-static ccReturn createGamepad(char *locName, int i)
+static ccError createGamepad(char *locName, int i)
 {
 	int fd = openGamepadDescriptor(locName);
 	if(fd < 0){
@@ -249,7 +249,7 @@ ccGamepadEvent ccGamepadEventPoll(void)
 	return event;
 }
 
-ccReturn ccGamepadInitialize(void)
+ccError ccGamepadInitialize(void)
 {
 	ccGamepadFree();
 
@@ -303,7 +303,7 @@ error:
 	return CC_FAIL;
 }
 
-ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force)
+ccError ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force)
 {
 	if(GAMEPAD_DATA(gamepad)->fffd < 0){
 		return CC_FAIL;
@@ -335,7 +335,7 @@ ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force)
 	return CC_SUCCESS;
 }
 
-ccReturn ccGamepadFree(void)
+ccError ccGamepadFree(void)
 {
 	if(CC_UNLIKELY(_ccGamepads == NULL)){
 		return CC_SUCCESS;

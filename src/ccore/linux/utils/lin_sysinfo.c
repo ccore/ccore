@@ -40,7 +40,7 @@ static long getKBValueFromProc(char *proc, char *value)
 	return result;
 }
 
-ccReturn ccSysinfoInitialize(void)
+ccError ccSysinfoInitialize(void)
 {
 	long value;
 

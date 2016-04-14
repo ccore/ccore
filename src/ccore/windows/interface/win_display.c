@@ -1,6 +1,6 @@
 #include "win_display.h"
 
-ccReturn ccDisplayInitialize(void)
+ccError ccDisplayInitialize(void)
 {
 	DISPLAY_DEVICE device;
 	DISPLAY_DEVICE display;
@@ -93,7 +93,7 @@ ccReturn ccDisplayInitialize(void)
 	return CC_SUCCESS;
 }
 
-ccReturn ccDisplayFree(void) {
+ccError ccDisplayFree(void) {
 	int i;
 
 	ccAssert(_ccDisplays != NULL);
@@ -112,7 +112,7 @@ ccReturn ccDisplayFree(void) {
 	return CC_SUCCESS;
 }
 
-ccReturn ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
+ccError ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
 {
 	DEVMODE devMode;
 	ccDisplayData displayData;

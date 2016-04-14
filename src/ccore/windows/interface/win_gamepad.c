@@ -20,7 +20,7 @@ static int _gamepadXinputButtons[] =
 	XINPUT_GAMEPAD_START
 };
 
-ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int hapticIndex, int force)
+ccError ccGamepadOutputSet(ccGamepad *gamepad, int hapticIndex, int force)
 {	
 	int i;
 
@@ -63,7 +63,7 @@ ccReturn ccGamepadOutputSet(ccGamepad *gamepad, int hapticIndex, int force)
 	return CC_SUCCESS;
 }
 
-ccReturn ccGamepadInitialize(void)
+ccError ccGamepadInitialize(void)
 {
 	int i;
 	ccAssert(_ccWindow != NULL);
@@ -94,7 +94,7 @@ ccReturn ccGamepadInitialize(void)
 	}
 }
 
-ccReturn ccGamepadFree(void)
+ccError ccGamepadFree(void)
 {
 	ccAssert(_ccGamepads != NULL);
 	

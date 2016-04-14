@@ -1,6 +1,6 @@
 #include "win_opengl.h"
 
-ccReturn ccGLContextBind(void)
+ccError ccGLContextBind(void)
 {
 	int pixelFormatIndex;
 
@@ -49,7 +49,7 @@ ccReturn ccGLContextBind(void)
 	return CC_SUCCESS;
 }
 
-ccReturn ccGLContextFree(void)
+ccError ccGLContextFree(void)
 {
 	ccAssert(_ccWindow != NULL);
 
@@ -59,7 +59,7 @@ ccReturn ccGLContextFree(void)
 	return CC_SUCCESS;
 }
 
-ccReturn ccGLBuffersSwap(void)
+ccError ccGLBuffersSwap(void)
 {
 	ccAssert(_ccWindow != NULL);
 	if(SwapBuffers(_CC_WINDOW_DATA->hdc) == TRUE) {

@@ -2,13 +2,15 @@
 
 #ifdef CC_USE_SYSINFO
 
-void ccSysinfoFree(void)
+ccError ccSysinfoFree(void)
 {
 	ccAssert(_ccSysinfo != NULL);
 
 	free(_ccSysinfo);
 
 	_ccSysinfo = NULL;
+
+	return CC_E_NONE;
 }
 
 #endif

@@ -2,7 +2,7 @@
 
 #if defined CC_USE_ALL || defined CC_USE_SYSINFO
 
-ccReturn ccSysinfoInitialize(void)
+ccError ccSysinfoInitialize(void)
 {
 	SYSTEM_INFO sysinfo;
 	MEMORYSTATUSEX memstat;

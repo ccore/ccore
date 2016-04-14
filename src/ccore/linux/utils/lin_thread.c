@@ -2,7 +2,7 @@
 
 #if defined CC_USE_ALL || defined CC_USE_THREAD
 
-ccReturn ccThreadStart(ccThread *thread, void *function, void *data)
+ccError ccThreadStart(ccThread *thread, void *function, void *data)
 {
 	if(CC_UNLIKELY(pthread_create(thread, NULL, function, data) != 0)) {
 		ccErrorPush(CC_ERROR_THREAD_CREATE);
@@ -12,7 +12,7 @@ ccReturn ccThreadStart(ccThread *thread, void *function, void *data)
 	return CC_SUCCESS;
 }
 
-ccReturn ccThreadJoin(ccThread *thread)
+ccError ccThreadJoin(ccThread *thread)
 {
 	if(CC_UNLIKELY(pthread_join(*thread, NULL) == 0)){
 		return CC_SUCCESS;  
@@ -31,7 +31,7 @@ bool ccThreadFinished(ccThread *thread)
 	}
 }
 
-ccReturn ccThreadMutexCreate(ccMutex *mutex, unsigned int spinCount)
+ccError ccThreadMutexCreate(ccMutex *mutex, unsigned int spinCount)
 {
 	if(CC_UNLIKELY(pthread_mutex_init(mutex, NULL) != 0)){
 		ccErrorPush(CC_ERROR_THREAD_MUTEXCREATE);
@@ -41,7 +41,7 @@ ccReturn ccThreadMutexCreate(ccMutex *mutex, unsigned int spinCount)
 	return CC_SUCCESS;
 }
 
-ccReturn ccThreadMutexJoin(ccMutex *mutex)
+ccError ccThreadMutexJoin(ccMutex *mutex)
 {
 	if(CC_UNLIKELY(pthread_mutex_lock(mutex) != 0)) {
 		ccErrorPush(CC_ERROR_THREAD_MUTEX);
@@ -51,7 +51,7 @@ ccReturn ccThreadMutexJoin(ccMutex *mutex)
 	return CC_SUCCESS;
 }
 
-ccReturn ccThreadMutexRelease(ccMutex *mutex)
+ccError ccThreadMutexRelease(ccMutex *mutex)
 {
 	if(CC_UNLIKELY(pthread_mutex_unlock(mutex) != 0)){
 		ccErrorPush(CC_ERROR_THREAD_MUTEX);
@@ -61,7 +61,7 @@ ccReturn ccThreadMutexRelease(ccMutex *mutex)
 	return CC_SUCCESS;
 }
 
-ccReturn ccThreadMutexFree(ccMutex *mutex)
+ccError ccThreadMutexFree(ccMutex *mutex)
 {
 	if(CC_UNLIKELY(pthread_mutex_destroy(mutex) != 0)){
 		ccErrorPush(CC_ERROR_THREAD_MUTEX);

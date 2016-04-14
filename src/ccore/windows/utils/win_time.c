@@ -12,7 +12,7 @@ static void calculateConversionFactor(void)
 	_ticksToNanoSeconds = (double)(_CC_TO_SECONDS / ticksPerSecond.QuadPart);
 }
 
-ccReturn ccTimeDelay(int ms)
+ccError ccTimeDelay(int ms)
 {
 	Sleep(ms);
 

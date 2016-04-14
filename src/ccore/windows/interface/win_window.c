@@ -288,7 +288,7 @@ bool ccWindowEventPoll(void)
 	return false;
 }
 
-ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
+ccError ccWindowCreate(ccRect rect, const char* title, int flags)
 {
 	HMODULE moduleHandle = GetModuleHandle(NULL);
 	RECT windowRect;
@@ -377,7 +377,7 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowFree(void)
+ccError ccWindowFree(void)
 {
 	ccAssert(_ccWindow != NULL);
 
@@ -408,7 +408,7 @@ ccReturn ccWindowFree(void)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowSetWindowed(ccRect *rect)
+ccError ccWindowSetWindowed(ccRect *rect)
 {
 	SetWindowLongPtr(_CC_WINDOW_DATA->winHandle, GWL_STYLE, _CC_WINDOW_DATA->style | WS_CAPTION);
 	if(ShowWindow(_CC_WINDOW_DATA->winHandle, SW_SHOW) == FALSE) {
@@ -423,7 +423,7 @@ ccReturn ccWindowSetWindowed(ccRect *rect)
 	}
 }
 
-ccReturn ccWindowSetMaximized(void)
+ccError ccWindowSetMaximized(void)
 {
 	ccAssert(_ccWindow != NULL);
 
@@ -447,7 +447,7 @@ ccReturn ccWindowSetMaximized(void)
 	return CC_SUCCESS;
 }
 
-static ccReturn _ccWindowResizeMove(ccRect rect, bool addBorder)
+static ccError _ccWindowResizeMove(ccRect rect, bool addBorder)
 {
 	ccAssert(_ccWindow != NULL);
 
@@ -479,7 +479,7 @@ static ccReturn _ccWindowResizeMove(ccRect rect, bool addBorder)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowSetFullscreen(int displayCount, ...)
+ccError ccWindowSetFullscreen(int displayCount, ...)
 {
 	ccAssert(_ccWindow);
 
@@ -520,17 +520,17 @@ ccReturn ccWindowSetFullscreen(int displayCount, ...)
 	}
 }
 
-ccReturn ccWindowSetTitle(const char *title)
+ccError ccWindowSetTitle(const char *title)
 {
 	return SetWindowText(_CC_WINDOW_DATA->winHandle, title) == TRUE?CC_SUCCESS:CC_FAIL;
 }
 
-ccReturn ccWindowResizeMove(ccRect rect)
+ccError ccWindowResizeMove(ccRect rect)
 {
 	return _ccWindowResizeMove(rect, true);
 }
 
-ccReturn ccWindowSetCentered(void)
+ccError ccWindowSetCentered(void)
 {
 	RECT windowRect;
 
@@ -549,7 +549,7 @@ ccReturn ccWindowSetCentered(void)
 	}, false);
 }
 
-ccReturn ccWindowSetBlink(void)
+ccError ccWindowSetBlink(void)
 {
 	FLASHWINFO flash;
 	flash.cbSize = sizeof(FLASHWINFO);
@@ -562,7 +562,7 @@ ccReturn ccWindowSetBlink(void)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowIconSet(ccPoint size, unsigned long *data)
+ccError ccWindowIconSet(ccPoint size, unsigned long *data)
 {
 	HICON icon;
 	BYTE *bmp;
@@ -602,7 +602,7 @@ ccReturn ccWindowIconSet(ccPoint size, unsigned long *data)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowMouseSetPosition(ccPoint target)
+ccError ccWindowMouseSetPosition(ccPoint target)
 {
 	POINT p;
 	p.x = target.x;
@@ -621,7 +621,7 @@ ccReturn ccWindowMouseSetPosition(ccPoint target)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowMouseSetCursor(ccCursor cursor)
+ccError ccWindowMouseSetCursor(ccCursor cursor)
 {
 	if(cursor == CC_CURSOR_NONE) {
 		if(_CC_WINDOW_DATA->cursor != CC_CURSOR_NONE) ShowCursor(FALSE);
@@ -640,7 +640,7 @@ ccReturn ccWindowMouseSetCursor(ccCursor cursor)
 	return CC_SUCCESS;
 }
 
-ccReturn ccWindowClipboardSet(const char *data)
+ccError ccWindowClipboardSet(const char *data)
 {
 	HGLOBAL clipboardData;
 	int dataLength;

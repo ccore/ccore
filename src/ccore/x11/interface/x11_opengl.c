@@ -17,7 +17,7 @@ static int attrList[] = {GLX_RGBA,
 												 16,
 												 None};
 
-ccReturn ccGLContextBind(void)
+ccError ccGLContextBind(void)
 {
 	if(CC_UNLIKELY(_ccWindow == NULL)) {
 		ccErrorPush(CC_ERROR_WINDOW_NONE);
@@ -36,7 +36,7 @@ ccReturn ccGLContextBind(void)
 	return CC_SUCCESS;
 }
 
-ccReturn ccGLContextFree(void)
+ccError ccGLContextFree(void)
 {
 	if(CC_UNLIKELY(XD->context == NULL)) {
 		ccErrorPush(CC_ERROR_GL_CONTEXT);
@@ -48,7 +48,7 @@ ccReturn ccGLContextFree(void)
 	return CC_SUCCESS;
 }
 
-ccReturn ccGLBuffersSwap(void)
+ccError ccGLBuffersSwap(void)
 {
 	if(CC_UNLIKELY(XD->context == NULL)) {
 		ccErrorPush(CC_ERROR_GL_CONTEXT);

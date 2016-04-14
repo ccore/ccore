@@ -49,7 +49,7 @@ ccSysinfo *_ccSysinfo;
 
 #define ccSysinfoGetRamTotal() _ccSysinfo->ramTotal
 
-ccReturn ccSysinfoInitialize(void);
+ccError ccSysinfoInitialize(void);
 void ccSysinfoFree(void);
 
 #ifdef __cplusplus

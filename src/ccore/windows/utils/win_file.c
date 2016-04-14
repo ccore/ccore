@@ -59,7 +59,7 @@ void _ccFileFree(void)
 	userDir = NULL;
 }
 
-ccReturn ccFileDirFindFirst(ccFileDir *dir, const char *dirPath)
+ccError ccFileDirFindFirst(ccFileDir *dir, const char *dirPath)
 {
 	WIN32_FIND_DATA findData;
 	unsigned int strLength;
@@ -87,7 +87,7 @@ ccReturn ccFileDirFindFirst(ccFileDir *dir, const char *dirPath)
 	return CC_SUCCESS;
 }
 
-ccReturn ccFileDirFind(ccFileDir *dir)
+ccError ccFileDirFind(ccFileDir *dir)
 {
 	WIN32_FIND_DATA findData;
 	unsigned int strLength;
@@ -113,7 +113,7 @@ ccReturn ccFileDirFind(ccFileDir *dir)
 	return CC_SUCCESS;
 }
 
-ccReturn ccFileDirClose(ccFileDir *dir)
+ccError ccFileDirClose(ccFileDir *dir)
 {
 	return FindClose(dir->handle) == 0?CC_FAIL:CC_SUCCESS;
 }
