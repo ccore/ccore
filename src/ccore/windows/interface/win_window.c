@@ -16,12 +16,12 @@ static LPSTR _cc_cursor[] =
 void _ccEventStackPush(ccEvent event)
 {
 	_CC_WINDOW_DATA->eventStackPos++;
-	
+
 	if(_CC_WINDOW_DATA->eventStackPos >= _CC_WINDOW_DATA->eventStackSize) {
 		_CC_WINDOW_DATA->eventStackSize++;
 		_CC_WINDOW_DATA->eventStack = realloc(_CC_WINDOW_DATA->eventStack, sizeof(ccEvent)*_CC_WINDOW_DATA->eventStackSize);
 	}
-	
+
 	_CC_WINDOW_DATA->eventStack[_CC_WINDOW_DATA->eventStackPos] = event;
 }
 
@@ -42,9 +42,9 @@ static void updateWindowResolution(void)
 {
 	RECT winRect;
 	ccEvent resizeEvent;
-	
+
 	if(GetClientRect(_CC_WINDOW_DATA->winHandle, &winRect) == 0) {
-		ccErrorPush(CC_ERROR_WINDOW_MODE);
+		return CC_E_WINDOW_MODE;
 		return;
 	}
 
@@ -185,47 +185,47 @@ static LRESULT CALLBACK wndProc(HWND winHandle, UINT message, WPARAM wParam, LPA
 {
 	_ccWindow->event.type = CC_EVENT_SKIP;
 	switch(message) {
-	case WM_INPUT:
-		processRid((HRAWINPUT)lParam);
-		break;
-	case WM_CLOSE:
-		_ccWindow->event.type = CC_EVENT_WINDOW_QUIT;
-		break;
-	case WM_SIZE:
-		updateWindowResolution();
-		break;
-	case WM_MOVE:
-		updateWindowDisplay();
-		break;
-	case WM_MOUSEMOVE:
-		_ccWindow->mouse.x = (unsigned short)lParam & 0x0000FFFF;
-		_ccWindow->mouse.y = (unsigned short)((lParam & 0xFFFF0000) >> 16);
-		break;
-	case WM_SETFOCUS:
-	{
-		ccEvent event;
-		event.type = CC_EVENT_FOCUS_GAINED;
-		_ccEventStackPush(event);
-	}
-		break;
-	case WM_KILLFOCUS:
-	{
-		ccEvent event;
-		event.type = CC_EVENT_FOCUS_LOST;
-		_ccEventStackPush(event);
-	}
-		break;
-	case WM_SYSCOMMAND:
-	{
-		LONG_PTR style = GetWindowLongPtr(_CC_WINDOW_DATA->winHandle, GWL_STYLE);
-		if(((wParam & 0xFFF0) == SC_MOVE) && (style & WS_MAXIMIZE) && !(style & WS_MAXIMIZEBOX)) return 0;
-		return DefWindowProc(winHandle, message, wParam, lParam);
-	}
-		break;
-	case WM_SETCURSOR:
-	default:
-		return DefWindowProc(winHandle, message, wParam, lParam);
-		break;
+		case WM_INPUT:
+			processRid((HRAWINPUT)lParam);
+			break;
+		case WM_CLOSE:
+			_ccWindow->event.type = CC_EVENT_WINDOW_QUIT;
+			break;
+		case WM_SIZE:
+			updateWindowResolution();
+			break;
+		case WM_MOVE:
+			updateWindowDisplay();
+			break;
+		case WM_MOUSEMOVE:
+			_ccWindow->mouse.x = (unsigned short)lParam & 0x0000FFFF;
+			_ccWindow->mouse.y = (unsigned short)((lParam & 0xFFFF0000) >> 16);
+			break;
+		case WM_SETFOCUS:
+			{
+				ccEvent event;
+				event.type = CC_EVENT_FOCUS_GAINED;
+				_ccEventStackPush(event);
+			}
+			break;
+		case WM_KILLFOCUS:
+			{
+				ccEvent event;
+				event.type = CC_EVENT_FOCUS_LOST;
+				_ccEventStackPush(event);
+			}
+			break;
+		case WM_SYSCOMMAND:
+			{
+				LONG_PTR style = GetWindowLongPtr(_CC_WINDOW_DATA->winHandle, GWL_STYLE);
+				if(((wParam & 0xFFF0) == SC_MOVE) && (style & WS_MAXIMIZE) && !(style & WS_MAXIMIZEBOX)) return 0;
+				return DefWindowProc(winHandle, message, wParam, lParam);
+			}
+			break;
+		case WM_SETCURSOR:
+		default:
+			return DefWindowProc(winHandle, message, wParam, lParam);
+			break;
 	}
 	return FALSE;
 }
@@ -247,7 +247,7 @@ static bool regHinstance(HINSTANCE instanceHandle)
 	winClass.hIconSm = NULL;
 
 	if((_CC_WINDOW_DATA->winClass = RegisterClassEx(&winClass)) == 0) {
-		ccErrorPush(CC_ERROR_WINDOW_CREATE);
+		return CC_E_WINDOW_CREATE;
 		return false;
 	}
 	return true;
@@ -258,7 +258,7 @@ bool ccWindowEventPoll(void)
 	static bool canPollInput = true;
 
 	ccAssert(_ccWindow != NULL);
-	
+
 	if(canPollInput) {
 		canPollInput = false;
 #if defined CC_USE_ALL || defined CC_USE_GAMEPAD
@@ -277,7 +277,7 @@ bool ccWindowEventPoll(void)
 
 		return true;
 	}
-	
+
 	if(PeekMessage(&_CC_WINDOW_DATA->msg, NULL, 0, 0, PM_REMOVE)){
 		TranslateMessage(&_CC_WINDOW_DATA->msg);
 		DispatchMessage(&_CC_WINDOW_DATA->msg);
@@ -296,17 +296,22 @@ ccError ccWindowCreate(ccRect rect, const char* title, int flags)
 	ccAssert(_ccWindow == NULL);
 
 	if(moduleHandle == NULL) {
-		ccErrorPush(CC_ERROR_WINDOW_CREATE);
-		return CC_FAIL;
+		return CC_E_WINDOW_CREATE;
 	}
 
 	//initialize struct
-	ccMalloc(_ccWindow, sizeof(ccWindow));
+	_ccWindow = malloc(sizeof(ccWindow));
+	if(_ccWindow == NULL){
+		return CC_E_MEMORY_OVERFLOW;
+	}
 
 	_ccWindow->supportsRawInput = true; // Raw input is always supported on windows
 	_ccWindow->rect = rect;
-	ccMalloc(_ccWindow->data, sizeof(ccWindow_win));
-	
+	_ccWindow->data = malloc(sizeof(ccWindow_win));
+	if(_ccWindow->data == NULL){
+		return CC_E_MEMORY_OVERFLOW;
+	}
+
 	_CC_WINDOW_DATA->eventStackSize = 0;
 	_CC_WINDOW_DATA->eventStackPos = -1;
 	_CC_WINDOW_DATA->eventStackIndex = 0;
@@ -330,47 +335,42 @@ ccError ccWindowCreate(ccRect rect, const char* title, int flags)
 	windowRect.right = rect.x + rect.width;
 	windowRect.bottom = rect.y + rect.height;
 	if(AdjustWindowRectEx(&windowRect, _CC_WINDOW_DATA->style, FALSE, WS_EX_APPWINDOW) == FALSE) {
-		ccErrorPush(CC_ERROR_WINDOW_CREATE);
-		return CC_FAIL;
+		return CC_E_WINDOW_CREATE;
 	}
-	
-	if(!regHinstance(moduleHandle)) return CC_FAIL;
+
+	if(!regHinstance(moduleHandle)) return CC_E_WINDOW_CREATE;
 
 	_CC_WINDOW_DATA->winHandle = CreateWindowEx(
-		WS_EX_APPWINDOW,
-		_CC_WINDOW_CLASS_NAME,
-		title,
-		_CC_WINDOW_DATA->style,
-		windowRect.left, windowRect.top,
-		windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
-		NULL,
-		NULL,
-		moduleHandle,
-		NULL);
+			WS_EX_APPWINDOW,
+			_CC_WINDOW_CLASS_NAME,
+			title,
+			_CC_WINDOW_DATA->style,
+			windowRect.left, windowRect.top,
+			windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
+			NULL,
+			NULL,
+			moduleHandle,
+			NULL);
 
 	_CC_WINDOW_DATA->style |= WS_VISIBLE;
-	
+
 	if(ShowWindow(_CC_WINDOW_DATA->winHandle, SW_SHOW) != 0) {
-		ccErrorPush(CC_ERROR_WINDOW_CREATE);
-		return CC_FAIL;
+		return CC_E_WINDOW_CREATE;
 	}
-	
+
 	if(!initializeRawInput()) {
-		ccErrorPush(CC_ERROR_WINDOW_CREATE);
-		return CC_FAIL;
+		return CC_E_WINDOW_CREATE;
 	}
-	
+
 	if(flags & CC_WINDOW_FLAG_ALWAYSONTOP) {
 		RECT rect;
 
 		if(GetWindowRect(_CC_WINDOW_DATA->winHandle, &rect) == FALSE) {
-			ccErrorPush(CC_ERROR_WINDOW_CREATE);
-			return CC_FAIL;
+			return CC_E_WINDOW_CREATE;
 		}
 
 		if(SetWindowPos(_CC_WINDOW_DATA->winHandle, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_SHOWWINDOW) == FALSE) {
-			ccErrorPush(CC_ERROR_WINDOW_CREATE);
-			return CC_FAIL;
+			return CC_E_WINDOW_CREATE;
 		}
 	}
 
@@ -382,20 +382,17 @@ ccError ccWindowFree(void)
 	ccAssert(_ccWindow != NULL);
 
 	if(!freeRawInput()) {
-		ccErrorPush(CC_ERROR_WINDOW_DESTROY);
-		return CC_FAIL;
+		return CC_E_WINDOW_DESTROY;
 	}
 
 	if(_CC_WINDOW_DATA->lpbSize != 0) free(_CC_WINDOW_DATA->lpb);
 
 	if(DestroyWindow(_CC_WINDOW_DATA->winHandle) == FALSE) {
-		ccErrorPush(CC_ERROR_WINDOW_DESTROY);
-		return CC_FAIL;
+		return CC_E_WINDOW_DESTROY;
 	}
 
 	if(UnregisterClass(_CC_WINDOW_DATA->winClass, NULL) == FALSE) {
-		ccErrorPush(CC_ERROR_WINDOW_DESTROY);
-		return CC_FAIL;
+		return CC_E_WINDOW_DESTROY;
 	}
 
 	if(_CC_WINDOW_DATA->eventStackSize != 0) free(_CC_WINDOW_DATA->eventStack);
@@ -412,10 +409,9 @@ ccError ccWindowSetWindowed(ccRect *rect)
 {
 	SetWindowLongPtr(_CC_WINDOW_DATA->winHandle, GWL_STYLE, _CC_WINDOW_DATA->style | WS_CAPTION);
 	if(ShowWindow(_CC_WINDOW_DATA->winHandle, SW_SHOW) == FALSE) {
-		ccErrorPush(CC_ERROR_WINDOW_MODE);
-		return CC_FAIL;
+		return CC_E_WINDOW_MODE;
 	}
-	
+
 	if(rect == NULL){
 		return CC_E_NONE;
 	}else{
@@ -428,19 +424,16 @@ ccError ccWindowSetMaximized(void)
 	ccAssert(_ccWindow != NULL);
 
 	if(SetWindowLongPtr(_CC_WINDOW_DATA->winHandle, GWL_STYLE, _CC_WINDOW_DATA->style | WS_CAPTION | WS_MAXIMIZEBOX) == 0) {
-		ccErrorPush(CC_ERROR_WINDOW_MODE);
-		return CC_FAIL;
+		return CC_E_WINDOW_MODE;
 	}
 
 	if(ShowWindow(_CC_WINDOW_DATA->winHandle, SW_MAXIMIZE) == FALSE) {
-		ccErrorPush(CC_ERROR_WINDOW_MODE);
-		return CC_FAIL;
+		return CC_E_WINDOW_MODE;
 	}
 
 	if(_CC_WINDOW_DATA->flags & CC_WINDOW_FLAG_NORESIZE) {
 		if(SetWindowLongPtr(_CC_WINDOW_DATA->winHandle, GWL_STYLE, GetWindowLongPtr(_CC_WINDOW_DATA->winHandle, GWL_STYLE) &~WS_MAXIMIZEBOX) == 0) {
-			ccErrorPush(CC_ERROR_WINDOW_MODE);
-			return CC_FAIL;
+			return CC_E_WINDOW_MODE;
 		}
 	}
 
@@ -460,19 +453,16 @@ static ccError _ccWindowResizeMove(ccRect rect, bool addBorder)
 		windowRect.bottom = rect.y + rect.height;
 
 		if(AdjustWindowRectEx(&windowRect, _CC_WINDOW_DATA->style, FALSE, WS_EX_APPWINDOW) == FALSE) {
-			ccErrorPush(CC_ERROR_WINDOW_MODE);
-			return CC_FAIL;
+			return CC_E_WINDOW_MODE;
 		}
 
 		if(MoveWindow(_CC_WINDOW_DATA->winHandle, windowRect.left, windowRect.top, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, TRUE) == FALSE) {
-			ccErrorPush(CC_ERROR_WINDOW_MODE);
-			return CC_FAIL;
+			return CC_E_WINDOW_MODE;
 		}
 	}
 	else{
 		if(MoveWindow(_CC_WINDOW_DATA->winHandle, rect.x, rect.y, rect.width, rect.height, TRUE) == FALSE) {
-			ccErrorPush(CC_ERROR_WINDOW_MODE);
-			return CC_FAIL;
+			return CC_E_WINDOW_MODE;
 		}
 	}
 
@@ -484,13 +474,11 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 	ccAssert(_ccWindow);
 
 	if(SetWindowLongPtr(_CC_WINDOW_DATA->winHandle, GWL_STYLE, _CC_WINDOW_DATA->style & ~(WS_CAPTION | WS_THICKFRAME)) == 0) {
-		ccErrorPush(CC_ERROR_WINDOW_MODE);
-		return CC_FAIL;
+		return CC_E_WINDOW_MODE;
 	}
 
 	if(ShowWindow(_CC_WINDOW_DATA->winHandle, SW_SHOW) == FALSE) {
-		ccErrorPush(CC_ERROR_WINDOW_MODE);
-		return CC_FAIL;
+		return CC_E_WINDOW_MODE;
 	}
 
 	if(displayCount == CC_FULLSCREEN_CURRENT_DISPLAY) {
@@ -502,7 +490,10 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 		ccRect spanRect;
 		int i;
 
-		ccMalloc(rectList, displayCount * sizeof(ccRect));
+		rectList = malloc(displayCount * sizeof(ccRect));
+		if(rectList == NULL){
+			return CC_E_MEMORY_OVERFLOW;
+		}
 
 		va_start(displays, displayCount);
 
@@ -511,7 +502,7 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 		}
 
 		spanRect = ccRectConcatenate(displayCount, rectList);
-		
+
 		free(rectList);
 
 		va_end(displays);
@@ -522,7 +513,7 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 
 ccError ccWindowSetTitle(const char *title)
 {
-	return SetWindowText(_CC_WINDOW_DATA->winHandle, title) == TRUE?CC_E_NONE:CC_FAIL;
+	return SetWindowText(_CC_WINDOW_DATA->winHandle, title) == TRUE?CC_E_NONE:CC_E_WINDOW_MODE;
 }
 
 ccError ccWindowResizeMove(ccRect rect)
@@ -537,16 +528,15 @@ ccError ccWindowSetCentered(void)
 	ccAssert(_ccWindow != NULL);
 
 	if(GetWindowRect(_CC_WINDOW_DATA->winHandle, &windowRect) == FALSE) {
-		ccErrorPush(CC_ERROR_WINDOW_MODE);
-		return CC_FAIL;
+		return CC_E_WINDOW_MODE;
 	}
 
 	return _ccWindowResizeMove(
-		(ccRect){_ccWindow->display->x + ((ccDisplayResolutionGetCurrent(_ccWindow->display)->width - (windowRect.right - windowRect.left)) >> 1),
-				 _ccWindow->display->y + ((ccDisplayResolutionGetCurrent(_ccWindow->display)->height - (windowRect.bottom - windowRect.top)) >> 1),
-				 windowRect.right - windowRect.left,
-				 windowRect.bottom - windowRect.top
-	}, false);
+			(ccRect){_ccWindow->display->x + ((ccDisplayResolutionGetCurrent(_ccWindow->display)->width - (windowRect.right - windowRect.left)) >> 1),
+			_ccWindow->display->y + ((ccDisplayResolutionGetCurrent(_ccWindow->display)->height - (windowRect.bottom - windowRect.top)) >> 1),
+			windowRect.right - windowRect.left,
+			windowRect.bottom - windowRect.top
+			}, false);
 }
 
 ccError ccWindowSetBlink(void)
@@ -571,7 +561,10 @@ ccError ccWindowIconSet(ccPoint size, unsigned long *data)
 
 	dataLen = size.x * size.y * sizeof(unsigned long);
 	totalLen = dataLen + 40 * sizeof(int32_t);
-	ccMalloc(bmp, totalLen);
+	bmp = malloc(totalLen);
+	if(bmp == NULL){
+		return CC_E_MEMORY_OVERFLOW;
+	}
 
 	struct {
 		int32_t headerSize, imageWidth, imageHeight;
@@ -609,13 +602,11 @@ ccError ccWindowMouseSetPosition(ccPoint target)
 	p.y = target.y;
 
 	if(ClientToScreen(_CC_WINDOW_DATA->winHandle, &p) == 0) {
-		ccErrorPush(CC_ERROR_WINDOW_CURSOR);
-		return CC_FAIL;
+		return CC_E_WINDOW_CURSOR;
 	}
-	
+
 	if(SetCursorPos(p.x, p.y) == 0) {
-		ccErrorPush(CC_ERROR_WINDOW_CURSOR);
-		return CC_FAIL;
+		return CC_E_WINDOW_CURSOR;
 	}
 
 	return CC_E_NONE;
@@ -647,46 +638,41 @@ ccError ccWindowClipboardSet(const char *data)
 
 	dataLength = (int)strlen(data) + 1;
 	if(dataLength <= 0) {
-		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
-		return CC_FAIL;
+		return CC_E_WINDOW_CLIPBOARD;
 	}
 
 	if(OpenClipboard(NULL) == FALSE) {
-		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
-		return CC_FAIL;
+		return CC_E_WINDOW_CLIPBOARD;
 	}
 
 	if(EmptyClipboard() == FALSE) {
-		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
+		return CC_E_WINDOW_CLIPBOARD;
 		CloseClipboard();
-		return CC_FAIL;
 	}
 
 	clipboardData = GlobalAlloc(GMEM_MOVEABLE, dataLength);
 	if(clipboardData == NULL) {
-		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
+		return CC_E_WINDOW_CLIPBOARD;
 		goto closeFreeAndFail;
 	}
 
 	memcpy(GlobalLock(clipboardData), data, dataLength);
 	if(GlobalUnlock(clipboardData)!=0) {
-		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
+		return CC_E_WINDOW_CLIPBOARD;
 		goto closeFreeAndFail;
 	}
 
 	SetClipboardData(CF_TEXT, clipboardData);
 	if(clipboardData == NULL) {
-		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
+		return CC_E_WINDOW_CLIPBOARD;
 
-		closeFreeAndFail:
+closeFreeAndFail:
 		CloseClipboard();
 		GlobalFree(clipboardData);
-		return CC_FAIL;
 	}
 
 	if(CloseClipboard() == FALSE) {
-		ccErrorPush(CC_ERROR_WINDOW_CLIPBOARD);
-		return CC_FAIL;
+		return CC_E_WINDOW_CLIPBOARD;
 	}
 
 	GlobalFree(clipboardData);

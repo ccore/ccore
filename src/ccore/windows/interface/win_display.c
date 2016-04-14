@@ -14,7 +14,10 @@ ccError ccDisplayInitialize(void)
 
 	ccAssert(_ccDisplays == NULL);
 
-	ccMalloc(_ccDisplays, sizeof(ccDisplays));
+	_ccDisplays = malloc(sizeof(ccDisplays));
+	if(_ccDisplays == NULL){
+		return CC_E_MEMORY_OVERFLOW;
+	}
 	_ccDisplays->display = NULL;
 
 	dm.dmSize = sizeof(dm);
@@ -31,13 +34,25 @@ ccError ccDisplayInitialize(void)
 			}
 
 			_ccDisplays->amount++;
-			ccRealloc(_ccDisplays->display, sizeof(ccDisplay)*_ccDisplays->amount);
+			_ccDisplays->display = realloc(_ccDisplays->display, sizeof(ccDisplay)*_ccDisplays->amount);
+			if(_ccDisplays->display == NULL){
+				return CC_E_MEMORY_OVERFLOW;
+			}
 
 			currentDisplay = &_ccDisplays->display[_ccDisplays->amount - 1];
 
-			ccMalloc(currentDisplay->gpuName, CC_MAXDEVICESTRINGSIZE);
-			ccMalloc(currentDisplay->monitorName, CC_MAXDEVICESTRINGSIZE);
-			ccMalloc(currentDisplay->deviceName, CC_MAXDEVICENAMESIZE);
+			currentDisplay->gpuName = malloc(CC_MAXDEVICESTRINGSIZE);
+			if(currentDisplay->gpuName == NULL){
+				return CC_E_MEMORY_OVERFLOW;
+			}
+			currentDisplay->monitorName = malloc(CC_MAXDEVICESTRINGSIZE);
+			if(currentDisplay->monitorName == NULL){
+				return CC_E_MEMORY_OVERFLOW;
+			}
+			currentDisplay->deviceName = malloc(CC_MAXDEVICENAMESIZE);
+			if(currentDisplay->deviceName == NULL){
+				return CC_E_MEMORY_OVERFLOW;
+			}
 
 			memcpy(currentDisplay->gpuName, device.DeviceString, CC_MAXDEVICESTRINGSIZE);
 			memcpy(currentDisplay->monitorName, display.DeviceString, CC_MAXDEVICESTRINGSIZE);
@@ -66,8 +81,11 @@ ccError ccDisplayInitialize(void)
 
 				if(ccDisplayResolutionExists(currentDisplay, &buffer)) continue;
 
-				ccRealloc(currentDisplay->resolution, sizeof(ccDisplayData)*(currentDisplay->amount + 1));
-				
+				currentDisplay->resolution = realloc(currentDisplay->resolution, sizeof(ccDisplayData)*(currentDisplay->amount + 1));
+				if(currentDisplay->resolution == NULL){
+					return CC_E_MEMORY_OVERFLOW;
+				}
+
 				if(ccDisplayResolutionEqual(&buffer, &initialBuffer)) {
 					currentDisplay->current = currentDisplay->amount;
 					currentDisplay->initial = currentDisplay->current;
@@ -93,7 +111,8 @@ ccError ccDisplayInitialize(void)
 	return CC_E_NONE;
 }
 
-ccError ccDisplayFree(void) {
+ccError ccDisplayFree(void)
+{
 	int i;
 
 	ccAssert(_ccDisplays != NULL);
@@ -106,7 +125,7 @@ ccError ccDisplayFree(void) {
 	}
 	free(_ccDisplays->display);
 	free(_ccDisplays);
-	
+
 	_ccDisplays = NULL;
 
 	return CC_E_NONE;
@@ -125,10 +144,9 @@ ccError ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
 
 	ZeroMemory(&devMode, sizeof(DEVMODE));
 	devMode.dmSize = sizeof(DEVMODE);
-	
+
 	if(EnumDisplaySettings(display->deviceName, ENUM_CURRENT_SETTINGS, &devMode) == 0) {
-		ccErrorPush(CC_ERROR_DISPLAY_RESOLUTIONCHANGE);
-		return CC_FAIL;
+		return CC_E_DISPLAY_RESOLUTIONCHANGE;
 	}
 
 	displayData = display->resolution[resolutionIndex];
@@ -141,8 +159,7 @@ ccError ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
 	devMode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL | DM_DISPLAYFREQUENCY;
 
 	if(ChangeDisplaySettingsEx(display->deviceName, &devMode, NULL, CDS_FULLSCREEN, NULL) != DISP_CHANGE_SUCCESSFUL) {
-		ccErrorPush(CC_ERROR_DISPLAY_RESOLUTIONCHANGE);
-		return CC_FAIL;
+		return CC_E_DISPLAY_RESOLUTIONCHANGE;
 	}
 
 	display->current = (unsigned short)resolutionIndex;
