@@ -48,7 +48,7 @@
 START_TEST(test_sysinfo_ram)
 {
 	CHECK_ERROR(ccSysinfoInitialize());
-	ck_assert_int_gt(ccSysinfoGetRamTotal(), 0);
+	ck_assert(ccSysinfoGetRamTotal() > 0);
 	
 	ccSysinfoFree();
 }
