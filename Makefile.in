@@ -191,57 +191,63 @@ am__libccore_la_SOURCES_DIST =  \
 	src/ccore/gtk3/interface/gtk3_opengl.c \
 	src/ccore/gtk3/interface/gtk3_window.c
 am__dirstamp = $(am__leading_dot)dirstamp
-@BUILD_WINDOWS_TRUE@am__objects_1 = src/ccore/windows/interface/win_display.lo \
-@BUILD_WINDOWS_TRUE@	src/ccore/windows/interface/win_gamepad.lo \
-@BUILD_WINDOWS_TRUE@	src/ccore/windows/interface/win_opengl.lo \
-@BUILD_WINDOWS_TRUE@	src/ccore/windows/interface/win_window.lo \
-@BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/win_file.lo \
-@BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/win_sysinfo.lo \
-@BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/win_thread.lo \
-@BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/win_time.lo
-@BUILD_LINUX_TRUE@am__objects_2 =  \
-@BUILD_LINUX_TRUE@	src/ccore/linux/interface/lin_gamepad.lo \
-@BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_file.lo \
-@BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_sysinfo.lo \
-@BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_thread.lo \
-@BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_time.lo
-@BUILD_X11_TRUE@am__objects_3 =  \
-@BUILD_X11_TRUE@	src/ccore/x11/interface/x11_display.lo \
-@BUILD_X11_TRUE@	src/ccore/x11/interface/x11_opengl.lo \
-@BUILD_X11_TRUE@	src/ccore/x11/interface/x11_window.lo
-@BUILD_GTK3_TRUE@am__objects_4 =  \
-@BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_display.lo \
-@BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_opengl.lo \
-@BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_window.lo
-am_libccore_la_OBJECTS = src/ccore/common/interface/com_display.lo \
-	src/ccore/common/interface/com_event.lo \
-	src/ccore/common/interface/com_window.lo \
-	src/ccore/common/utils/com_core.lo \
-	src/ccore/common/utils/com_file.lo \
-	src/ccore/common/utils/com_rect.lo \
-	src/ccore/common/utils/com_string.lo \
-	src/ccore/common/utils/com_sysinfo.lo $(am__objects_1) \
-	$(am__objects_2) $(am__objects_3) $(am__objects_4)
+@BUILD_WINDOWS_TRUE@am__objects_1 = src/ccore/windows/interface/libccore_la-win_display.lo \
+@BUILD_WINDOWS_TRUE@	src/ccore/windows/interface/libccore_la-win_gamepad.lo \
+@BUILD_WINDOWS_TRUE@	src/ccore/windows/interface/libccore_la-win_opengl.lo \
+@BUILD_WINDOWS_TRUE@	src/ccore/windows/interface/libccore_la-win_window.lo \
+@BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/libccore_la-win_file.lo \
+@BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/libccore_la-win_sysinfo.lo \
+@BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/libccore_la-win_thread.lo \
+@BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/libccore_la-win_time.lo
+@BUILD_LINUX_TRUE@am__objects_2 = src/ccore/linux/interface/libccore_la-lin_gamepad.lo \
+@BUILD_LINUX_TRUE@	src/ccore/linux/utils/libccore_la-lin_file.lo \
+@BUILD_LINUX_TRUE@	src/ccore/linux/utils/libccore_la-lin_sysinfo.lo \
+@BUILD_LINUX_TRUE@	src/ccore/linux/utils/libccore_la-lin_thread.lo \
+@BUILD_LINUX_TRUE@	src/ccore/linux/utils/libccore_la-lin_time.lo
+@BUILD_X11_TRUE@am__objects_3 = src/ccore/x11/interface/libccore_la-x11_display.lo \
+@BUILD_X11_TRUE@	src/ccore/x11/interface/libccore_la-x11_opengl.lo \
+@BUILD_X11_TRUE@	src/ccore/x11/interface/libccore_la-x11_window.lo
+@BUILD_GTK3_TRUE@am__objects_4 = src/ccore/gtk3/interface/libccore_la-gtk3_display.lo \
+@BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/libccore_la-gtk3_opengl.lo \
+@BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/libccore_la-gtk3_window.lo
+am_libccore_la_OBJECTS =  \
+	src/ccore/common/interface/libccore_la-com_display.lo \
+	src/ccore/common/interface/libccore_la-com_event.lo \
+	src/ccore/common/interface/libccore_la-com_window.lo \
+	src/ccore/common/utils/libccore_la-com_core.lo \
+	src/ccore/common/utils/libccore_la-com_file.lo \
+	src/ccore/common/utils/libccore_la-com_rect.lo \
+	src/ccore/common/utils/libccore_la-com_string.lo \
+	src/ccore/common/utils/libccore_la-com_sysinfo.lo \
+	$(am__objects_1) $(am__objects_2) $(am__objects_3) \
+	$(am__objects_4)
 libccore_la_OBJECTS = $(am_libccore_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
 libccore_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(libccore_la_LDFLAGS) $(LDFLAGS) -o $@
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libccore_la_CFLAGS) \
+	$(CFLAGS) $(libccore_la_LDFLAGS) $(LDFLAGS) -o $@
 PROGRAMS = $(bin_PROGRAMS)
 am__bin_framebuffer_SOURCES_DIST = examples/framebuffer.c
 @BUILD_EXAMPLES_TRUE@am_bin_framebuffer_OBJECTS = examples/bin_framebuffer-framebuffer.$(OBJEXT)
 bin_framebuffer_OBJECTS = $(am_bin_framebuffer_OBJECTS)
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_DEPENDENCIES =  \
 @BUILD_EXAMPLES_TRUE@	$(top_builddir)/.libs/libccore.la
+bin_framebuffer_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(bin_framebuffer_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
+	-o $@
 am__bin_window_SOURCES_DIST = examples/window.c
 @BUILD_EXAMPLES_TRUE@am_bin_window_OBJECTS =  \
 @BUILD_EXAMPLES_TRUE@	examples/bin_window-window.$(OBJEXT)
 bin_window_OBJECTS = $(am_bin_window_OBJECTS)
 @BUILD_EXAMPLES_TRUE@bin_window_DEPENDENCIES =  \
 @BUILD_EXAMPLES_TRUE@	$(top_builddir)/.libs/libccore.la
+bin_window_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(bin_window_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am__check_ccore_SOURCES_DIST = test/icon.c test/test.c
 @BUILD_TESTS_TRUE@am_check_ccore_OBJECTS =  \
 @BUILD_TESTS_TRUE@	test/check_ccore-icon.$(OBJEXT) \
@@ -545,6 +551,8 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GREP = @GREP@
+GTK_CFLAGS = @GTK_CFLAGS@
+GTK_LIBS = @GTK_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -648,7 +656,8 @@ pkginclude_HEADERS = include/ccore/assert.h include/ccore/core.h \
 	include/ccore/thread.h include/ccore/time.h \
 	include/ccore/types.h include/ccore/window.h
 lib_LTLIBRARIES = libccore.la
-libccore_la_LDFLAGS = -version-info $(CCORE_VERSION)
+libccore_la_LDFLAGS = @GTK_LIBS@ -version-info $(CCORE_VERSION)
+libccore_la_CFLAGS = @GTK_CFLAGS@
 libccore_la_SOURCES = src/ccore/common/interface/com_display.c \
 	src/ccore/common/interface/com_event.c \
 	src/ccore/common/interface/com_window.c \
@@ -660,14 +669,16 @@ libccore_la_SOURCES = src/ccore/common/interface/com_display.c \
 	$(am__append_2) $(am__append_3) $(am__append_4)
 @BUILD_TESTS_TRUE@check_ccore_SOURCES = test/icon.c test/test.c
 @BUILD_TESTS_TRUE@check_ccore_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
-@BUILD_TESTS_TRUE@check_ccore_CFLAGS = @CHECK_CFLAGS@
-@BUILD_TESTS_TRUE@check_ccore_LDADD = @CHECK_LIBS@ $(top_builddir)/.libs/libccore.la
+@BUILD_TESTS_TRUE@check_ccore_CFLAGS = @CHECK_CFLAGS@ @GTK_CFLAGS@
+@BUILD_TESTS_TRUE@check_ccore_LDADD = @CHECK_LIBS@ @GTK_LIBS@ $(top_builddir)/.libs/libccore.la
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_SOURCES = examples/framebuffer.c
+@BUILD_EXAMPLES_TRUE@bin_framebuffer_CFLAGS = @GTK_CFLAGS@
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
-@BUILD_EXAMPLES_TRUE@bin_framebuffer_LDADD = $(top_builddir)/.libs/libccore.la
+@BUILD_EXAMPLES_TRUE@bin_framebuffer_LDADD = @GTK_LIBS@ $(top_builddir)/.libs/libccore.la
 @BUILD_EXAMPLES_TRUE@bin_window_SOURCES = examples/window.c
+@BUILD_EXAMPLES_TRUE@bin_window_CFLAGS = @GTK_CFLAGS@
 @BUILD_EXAMPLES_TRUE@bin_window_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
-@BUILD_EXAMPLES_TRUE@bin_window_LDADD = $(top_builddir)/.libs/libccore.la
+@BUILD_EXAMPLES_TRUE@bin_window_LDADD = @GTK_LIBS@ $(top_builddir)/.libs/libccore.la
 all: all-am
 
 .SUFFIXES:
@@ -746,13 +757,13 @@ src/ccore/common/interface/$(am__dirstamp):
 src/ccore/common/interface/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/ccore/common/interface/$(DEPDIR)
 	@: > src/ccore/common/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/common/interface/com_display.lo:  \
+src/ccore/common/interface/libccore_la-com_display.lo:  \
 	src/ccore/common/interface/$(am__dirstamp) \
 	src/ccore/common/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/common/interface/com_event.lo:  \
+src/ccore/common/interface/libccore_la-com_event.lo:  \
 	src/ccore/common/interface/$(am__dirstamp) \
 	src/ccore/common/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/common/interface/com_window.lo:  \
+src/ccore/common/interface/libccore_la-com_window.lo:  \
 	src/ccore/common/interface/$(am__dirstamp) \
 	src/ccore/common/interface/$(DEPDIR)/$(am__dirstamp)
 src/ccore/common/utils/$(am__dirstamp):
@@ -761,19 +772,19 @@ src/ccore/common/utils/$(am__dirstamp):
 src/ccore/common/utils/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/ccore/common/utils/$(DEPDIR)
 	@: > src/ccore/common/utils/$(DEPDIR)/$(am__dirstamp)
-src/ccore/common/utils/com_core.lo:  \
+src/ccore/common/utils/libccore_la-com_core.lo:  \
 	src/ccore/common/utils/$(am__dirstamp) \
 	src/ccore/common/utils/$(DEPDIR)/$(am__dirstamp)
-src/ccore/common/utils/com_file.lo:  \
+src/ccore/common/utils/libccore_la-com_file.lo:  \
 	src/ccore/common/utils/$(am__dirstamp) \
 	src/ccore/common/utils/$(DEPDIR)/$(am__dirstamp)
-src/ccore/common/utils/com_rect.lo:  \
+src/ccore/common/utils/libccore_la-com_rect.lo:  \
 	src/ccore/common/utils/$(am__dirstamp) \
 	src/ccore/common/utils/$(DEPDIR)/$(am__dirstamp)
-src/ccore/common/utils/com_string.lo:  \
+src/ccore/common/utils/libccore_la-com_string.lo:  \
 	src/ccore/common/utils/$(am__dirstamp) \
 	src/ccore/common/utils/$(DEPDIR)/$(am__dirstamp)
-src/ccore/common/utils/com_sysinfo.lo:  \
+src/ccore/common/utils/libccore_la-com_sysinfo.lo:  \
 	src/ccore/common/utils/$(am__dirstamp) \
 	src/ccore/common/utils/$(DEPDIR)/$(am__dirstamp)
 src/ccore/windows/interface/$(am__dirstamp):
@@ -782,16 +793,16 @@ src/ccore/windows/interface/$(am__dirstamp):
 src/ccore/windows/interface/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/ccore/windows/interface/$(DEPDIR)
 	@: > src/ccore/windows/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/windows/interface/win_display.lo:  \
+src/ccore/windows/interface/libccore_la-win_display.lo:  \
 	src/ccore/windows/interface/$(am__dirstamp) \
 	src/ccore/windows/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/windows/interface/win_gamepad.lo:  \
+src/ccore/windows/interface/libccore_la-win_gamepad.lo:  \
 	src/ccore/windows/interface/$(am__dirstamp) \
 	src/ccore/windows/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/windows/interface/win_opengl.lo:  \
+src/ccore/windows/interface/libccore_la-win_opengl.lo:  \
 	src/ccore/windows/interface/$(am__dirstamp) \
 	src/ccore/windows/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/windows/interface/win_window.lo:  \
+src/ccore/windows/interface/libccore_la-win_window.lo:  \
 	src/ccore/windows/interface/$(am__dirstamp) \
 	src/ccore/windows/interface/$(DEPDIR)/$(am__dirstamp)
 src/ccore/windows/utils/$(am__dirstamp):
@@ -800,16 +811,16 @@ src/ccore/windows/utils/$(am__dirstamp):
 src/ccore/windows/utils/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/ccore/windows/utils/$(DEPDIR)
 	@: > src/ccore/windows/utils/$(DEPDIR)/$(am__dirstamp)
-src/ccore/windows/utils/win_file.lo:  \
+src/ccore/windows/utils/libccore_la-win_file.lo:  \
 	src/ccore/windows/utils/$(am__dirstamp) \
 	src/ccore/windows/utils/$(DEPDIR)/$(am__dirstamp)
-src/ccore/windows/utils/win_sysinfo.lo:  \
+src/ccore/windows/utils/libccore_la-win_sysinfo.lo:  \
 	src/ccore/windows/utils/$(am__dirstamp) \
 	src/ccore/windows/utils/$(DEPDIR)/$(am__dirstamp)
-src/ccore/windows/utils/win_thread.lo:  \
+src/ccore/windows/utils/libccore_la-win_thread.lo:  \
 	src/ccore/windows/utils/$(am__dirstamp) \
 	src/ccore/windows/utils/$(DEPDIR)/$(am__dirstamp)
-src/ccore/windows/utils/win_time.lo:  \
+src/ccore/windows/utils/libccore_la-win_time.lo:  \
 	src/ccore/windows/utils/$(am__dirstamp) \
 	src/ccore/windows/utils/$(DEPDIR)/$(am__dirstamp)
 src/ccore/linux/interface/$(am__dirstamp):
@@ -818,7 +829,7 @@ src/ccore/linux/interface/$(am__dirstamp):
 src/ccore/linux/interface/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/ccore/linux/interface/$(DEPDIR)
 	@: > src/ccore/linux/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/linux/interface/lin_gamepad.lo:  \
+src/ccore/linux/interface/libccore_la-lin_gamepad.lo:  \
 	src/ccore/linux/interface/$(am__dirstamp) \
 	src/ccore/linux/interface/$(DEPDIR)/$(am__dirstamp)
 src/ccore/linux/utils/$(am__dirstamp):
@@ -827,16 +838,16 @@ src/ccore/linux/utils/$(am__dirstamp):
 src/ccore/linux/utils/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/ccore/linux/utils/$(DEPDIR)
 	@: > src/ccore/linux/utils/$(DEPDIR)/$(am__dirstamp)
-src/ccore/linux/utils/lin_file.lo:  \
+src/ccore/linux/utils/libccore_la-lin_file.lo:  \
 	src/ccore/linux/utils/$(am__dirstamp) \
 	src/ccore/linux/utils/$(DEPDIR)/$(am__dirstamp)
-src/ccore/linux/utils/lin_sysinfo.lo:  \
+src/ccore/linux/utils/libccore_la-lin_sysinfo.lo:  \
 	src/ccore/linux/utils/$(am__dirstamp) \
 	src/ccore/linux/utils/$(DEPDIR)/$(am__dirstamp)
-src/ccore/linux/utils/lin_thread.lo:  \
+src/ccore/linux/utils/libccore_la-lin_thread.lo:  \
 	src/ccore/linux/utils/$(am__dirstamp) \
 	src/ccore/linux/utils/$(DEPDIR)/$(am__dirstamp)
-src/ccore/linux/utils/lin_time.lo:  \
+src/ccore/linux/utils/libccore_la-lin_time.lo:  \
 	src/ccore/linux/utils/$(am__dirstamp) \
 	src/ccore/linux/utils/$(DEPDIR)/$(am__dirstamp)
 src/ccore/x11/interface/$(am__dirstamp):
@@ -845,13 +856,13 @@ src/ccore/x11/interface/$(am__dirstamp):
 src/ccore/x11/interface/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/ccore/x11/interface/$(DEPDIR)
 	@: > src/ccore/x11/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/x11/interface/x11_display.lo:  \
+src/ccore/x11/interface/libccore_la-x11_display.lo:  \
 	src/ccore/x11/interface/$(am__dirstamp) \
 	src/ccore/x11/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/x11/interface/x11_opengl.lo:  \
+src/ccore/x11/interface/libccore_la-x11_opengl.lo:  \
 	src/ccore/x11/interface/$(am__dirstamp) \
 	src/ccore/x11/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/x11/interface/x11_window.lo:  \
+src/ccore/x11/interface/libccore_la-x11_window.lo:  \
 	src/ccore/x11/interface/$(am__dirstamp) \
 	src/ccore/x11/interface/$(DEPDIR)/$(am__dirstamp)
 src/ccore/gtk3/interface/$(am__dirstamp):
@@ -860,13 +871,13 @@ src/ccore/gtk3/interface/$(am__dirstamp):
 src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/ccore/gtk3/interface/$(DEPDIR)
 	@: > src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/gtk3/interface/gtk3_display.lo:  \
+src/ccore/gtk3/interface/libccore_la-gtk3_display.lo:  \
 	src/ccore/gtk3/interface/$(am__dirstamp) \
 	src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/gtk3/interface/gtk3_opengl.lo:  \
+src/ccore/gtk3/interface/libccore_la-gtk3_opengl.lo:  \
 	src/ccore/gtk3/interface/$(am__dirstamp) \
 	src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/gtk3/interface/gtk3_window.lo:  \
+src/ccore/gtk3/interface/libccore_la-gtk3_window.lo:  \
 	src/ccore/gtk3/interface/$(am__dirstamp) \
 	src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp)
 
@@ -944,13 +955,13 @@ bin/$(am__dirstamp):
 
 bin/framebuffer$(EXEEXT): $(bin_framebuffer_OBJECTS) $(bin_framebuffer_DEPENDENCIES) $(EXTRA_bin_framebuffer_DEPENDENCIES) bin/$(am__dirstamp)
 	@rm -f bin/framebuffer$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(bin_framebuffer_OBJECTS) $(bin_framebuffer_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(bin_framebuffer_LINK) $(bin_framebuffer_OBJECTS) $(bin_framebuffer_LDADD) $(LIBS)
 examples/bin_window-window.$(OBJEXT): examples/$(am__dirstamp) \
 	examples/$(DEPDIR)/$(am__dirstamp)
 
 bin/window$(EXEEXT): $(bin_window_OBJECTS) $(bin_window_DEPENDENCIES) $(EXTRA_bin_window_DEPENDENCIES) bin/$(am__dirstamp)
 	@rm -f bin/window$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(bin_window_OBJECTS) $(bin_window_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(bin_window_LINK) $(bin_window_OBJECTS) $(bin_window_LDADD) $(LIBS)
 test/$(am__dirstamp):
 	@$(MKDIR_P) test
 	@: > test/$(am__dirstamp)
@@ -992,33 +1003,33 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@examples/$(DEPDIR)/bin_framebuffer-framebuffer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@examples/$(DEPDIR)/bin_window-window.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/com_display.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/com_event.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/com_window.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_core.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_file.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_rect.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_string.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_sysinfo.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/gtk3/interface/$(DEPDIR)/gtk3_display.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/gtk3/interface/$(DEPDIR)/gtk3_opengl.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/gtk3/interface/$(DEPDIR)/gtk3_window.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/interface/$(DEPDIR)/lin_gamepad.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/utils/$(DEPDIR)/lin_file.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/utils/$(DEPDIR)/lin_sysinfo.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/utils/$(DEPDIR)/lin_thread.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/utils/$(DEPDIR)/lin_time.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/windows/interface/$(DEPDIR)/win_display.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/windows/interface/$(DEPDIR)/win_gamepad.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/windows/interface/$(DEPDIR)/win_opengl.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/windows/interface/$(DEPDIR)/win_window.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/windows/utils/$(DEPDIR)/win_file.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/windows/utils/$(DEPDIR)/win_sysinfo.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/windows/utils/$(DEPDIR)/win_thread.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/windows/utils/$(DEPDIR)/win_time.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/x11/interface/$(DEPDIR)/x11_display.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/x11/interface/$(DEPDIR)/x11_opengl.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/x11/interface/$(DEPDIR)/x11_window.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/libccore_la-com_display.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/libccore_la-com_event.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/libccore_la-com_window.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/libccore_la-com_core.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/libccore_la-com_file.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/libccore_la-com_rect.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/libccore_la-com_string.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/libccore_la-com_sysinfo.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/gtk3/interface/$(DEPDIR)/libccore_la-gtk3_display.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/gtk3/interface/$(DEPDIR)/libccore_la-gtk3_opengl.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/gtk3/interface/$(DEPDIR)/libccore_la-gtk3_window.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/interface/$(DEPDIR)/libccore_la-lin_gamepad.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/utils/$(DEPDIR)/libccore_la-lin_file.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/utils/$(DEPDIR)/libccore_la-lin_sysinfo.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/utils/$(DEPDIR)/libccore_la-lin_thread.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/utils/$(DEPDIR)/libccore_la-lin_time.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/windows/interface/$(DEPDIR)/libccore_la-win_display.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/windows/interface/$(DEPDIR)/libccore_la-win_gamepad.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/windows/interface/$(DEPDIR)/libccore_la-win_opengl.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/windows/interface/$(DEPDIR)/libccore_la-win_window.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/windows/utils/$(DEPDIR)/libccore_la-win_file.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/windows/utils/$(DEPDIR)/libccore_la-win_sysinfo.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/windows/utils/$(DEPDIR)/libccore_la-win_thread.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/windows/utils/$(DEPDIR)/libccore_la-win_time.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/x11/interface/$(DEPDIR)/libccore_la-x11_display.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/x11/interface/$(DEPDIR)/libccore_la-x11_opengl.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/x11/interface/$(DEPDIR)/libccore_la-x11_window.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/check_ccore-icon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/check_ccore-test.Po@am__quote@
 
@@ -1046,33 +1057,222 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
+src/ccore/common/interface/libccore_la-com_display.lo: src/ccore/common/interface/com_display.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/common/interface/libccore_la-com_display.lo -MD -MP -MF src/ccore/common/interface/$(DEPDIR)/libccore_la-com_display.Tpo -c -o src/ccore/common/interface/libccore_la-com_display.lo `test -f 'src/ccore/common/interface/com_display.c' || echo '$(srcdir)/'`src/ccore/common/interface/com_display.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/common/interface/$(DEPDIR)/libccore_la-com_display.Tpo src/ccore/common/interface/$(DEPDIR)/libccore_la-com_display.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/common/interface/com_display.c' object='src/ccore/common/interface/libccore_la-com_display.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/common/interface/libccore_la-com_display.lo `test -f 'src/ccore/common/interface/com_display.c' || echo '$(srcdir)/'`src/ccore/common/interface/com_display.c
+
+src/ccore/common/interface/libccore_la-com_event.lo: src/ccore/common/interface/com_event.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/common/interface/libccore_la-com_event.lo -MD -MP -MF src/ccore/common/interface/$(DEPDIR)/libccore_la-com_event.Tpo -c -o src/ccore/common/interface/libccore_la-com_event.lo `test -f 'src/ccore/common/interface/com_event.c' || echo '$(srcdir)/'`src/ccore/common/interface/com_event.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/common/interface/$(DEPDIR)/libccore_la-com_event.Tpo src/ccore/common/interface/$(DEPDIR)/libccore_la-com_event.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/common/interface/com_event.c' object='src/ccore/common/interface/libccore_la-com_event.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/common/interface/libccore_la-com_event.lo `test -f 'src/ccore/common/interface/com_event.c' || echo '$(srcdir)/'`src/ccore/common/interface/com_event.c
+
+src/ccore/common/interface/libccore_la-com_window.lo: src/ccore/common/interface/com_window.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/common/interface/libccore_la-com_window.lo -MD -MP -MF src/ccore/common/interface/$(DEPDIR)/libccore_la-com_window.Tpo -c -o src/ccore/common/interface/libccore_la-com_window.lo `test -f 'src/ccore/common/interface/com_window.c' || echo '$(srcdir)/'`src/ccore/common/interface/com_window.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/common/interface/$(DEPDIR)/libccore_la-com_window.Tpo src/ccore/common/interface/$(DEPDIR)/libccore_la-com_window.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/common/interface/com_window.c' object='src/ccore/common/interface/libccore_la-com_window.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/common/interface/libccore_la-com_window.lo `test -f 'src/ccore/common/interface/com_window.c' || echo '$(srcdir)/'`src/ccore/common/interface/com_window.c
+
+src/ccore/common/utils/libccore_la-com_core.lo: src/ccore/common/utils/com_core.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/common/utils/libccore_la-com_core.lo -MD -MP -MF src/ccore/common/utils/$(DEPDIR)/libccore_la-com_core.Tpo -c -o src/ccore/common/utils/libccore_la-com_core.lo `test -f 'src/ccore/common/utils/com_core.c' || echo '$(srcdir)/'`src/ccore/common/utils/com_core.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/common/utils/$(DEPDIR)/libccore_la-com_core.Tpo src/ccore/common/utils/$(DEPDIR)/libccore_la-com_core.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/common/utils/com_core.c' object='src/ccore/common/utils/libccore_la-com_core.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/common/utils/libccore_la-com_core.lo `test -f 'src/ccore/common/utils/com_core.c' || echo '$(srcdir)/'`src/ccore/common/utils/com_core.c
+
+src/ccore/common/utils/libccore_la-com_file.lo: src/ccore/common/utils/com_file.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/common/utils/libccore_la-com_file.lo -MD -MP -MF src/ccore/common/utils/$(DEPDIR)/libccore_la-com_file.Tpo -c -o src/ccore/common/utils/libccore_la-com_file.lo `test -f 'src/ccore/common/utils/com_file.c' || echo '$(srcdir)/'`src/ccore/common/utils/com_file.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/common/utils/$(DEPDIR)/libccore_la-com_file.Tpo src/ccore/common/utils/$(DEPDIR)/libccore_la-com_file.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/common/utils/com_file.c' object='src/ccore/common/utils/libccore_la-com_file.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/common/utils/libccore_la-com_file.lo `test -f 'src/ccore/common/utils/com_file.c' || echo '$(srcdir)/'`src/ccore/common/utils/com_file.c
+
+src/ccore/common/utils/libccore_la-com_rect.lo: src/ccore/common/utils/com_rect.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/common/utils/libccore_la-com_rect.lo -MD -MP -MF src/ccore/common/utils/$(DEPDIR)/libccore_la-com_rect.Tpo -c -o src/ccore/common/utils/libccore_la-com_rect.lo `test -f 'src/ccore/common/utils/com_rect.c' || echo '$(srcdir)/'`src/ccore/common/utils/com_rect.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/common/utils/$(DEPDIR)/libccore_la-com_rect.Tpo src/ccore/common/utils/$(DEPDIR)/libccore_la-com_rect.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/common/utils/com_rect.c' object='src/ccore/common/utils/libccore_la-com_rect.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/common/utils/libccore_la-com_rect.lo `test -f 'src/ccore/common/utils/com_rect.c' || echo '$(srcdir)/'`src/ccore/common/utils/com_rect.c
+
+src/ccore/common/utils/libccore_la-com_string.lo: src/ccore/common/utils/com_string.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/common/utils/libccore_la-com_string.lo -MD -MP -MF src/ccore/common/utils/$(DEPDIR)/libccore_la-com_string.Tpo -c -o src/ccore/common/utils/libccore_la-com_string.lo `test -f 'src/ccore/common/utils/com_string.c' || echo '$(srcdir)/'`src/ccore/common/utils/com_string.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/common/utils/$(DEPDIR)/libccore_la-com_string.Tpo src/ccore/common/utils/$(DEPDIR)/libccore_la-com_string.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/common/utils/com_string.c' object='src/ccore/common/utils/libccore_la-com_string.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/common/utils/libccore_la-com_string.lo `test -f 'src/ccore/common/utils/com_string.c' || echo '$(srcdir)/'`src/ccore/common/utils/com_string.c
+
+src/ccore/common/utils/libccore_la-com_sysinfo.lo: src/ccore/common/utils/com_sysinfo.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/common/utils/libccore_la-com_sysinfo.lo -MD -MP -MF src/ccore/common/utils/$(DEPDIR)/libccore_la-com_sysinfo.Tpo -c -o src/ccore/common/utils/libccore_la-com_sysinfo.lo `test -f 'src/ccore/common/utils/com_sysinfo.c' || echo '$(srcdir)/'`src/ccore/common/utils/com_sysinfo.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/common/utils/$(DEPDIR)/libccore_la-com_sysinfo.Tpo src/ccore/common/utils/$(DEPDIR)/libccore_la-com_sysinfo.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/common/utils/com_sysinfo.c' object='src/ccore/common/utils/libccore_la-com_sysinfo.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/common/utils/libccore_la-com_sysinfo.lo `test -f 'src/ccore/common/utils/com_sysinfo.c' || echo '$(srcdir)/'`src/ccore/common/utils/com_sysinfo.c
+
+src/ccore/windows/interface/libccore_la-win_display.lo: src/ccore/windows/interface/win_display.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/windows/interface/libccore_la-win_display.lo -MD -MP -MF src/ccore/windows/interface/$(DEPDIR)/libccore_la-win_display.Tpo -c -o src/ccore/windows/interface/libccore_la-win_display.lo `test -f 'src/ccore/windows/interface/win_display.c' || echo '$(srcdir)/'`src/ccore/windows/interface/win_display.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/windows/interface/$(DEPDIR)/libccore_la-win_display.Tpo src/ccore/windows/interface/$(DEPDIR)/libccore_la-win_display.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/windows/interface/win_display.c' object='src/ccore/windows/interface/libccore_la-win_display.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/windows/interface/libccore_la-win_display.lo `test -f 'src/ccore/windows/interface/win_display.c' || echo '$(srcdir)/'`src/ccore/windows/interface/win_display.c
+
+src/ccore/windows/interface/libccore_la-win_gamepad.lo: src/ccore/windows/interface/win_gamepad.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/windows/interface/libccore_la-win_gamepad.lo -MD -MP -MF src/ccore/windows/interface/$(DEPDIR)/libccore_la-win_gamepad.Tpo -c -o src/ccore/windows/interface/libccore_la-win_gamepad.lo `test -f 'src/ccore/windows/interface/win_gamepad.c' || echo '$(srcdir)/'`src/ccore/windows/interface/win_gamepad.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/windows/interface/$(DEPDIR)/libccore_la-win_gamepad.Tpo src/ccore/windows/interface/$(DEPDIR)/libccore_la-win_gamepad.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/windows/interface/win_gamepad.c' object='src/ccore/windows/interface/libccore_la-win_gamepad.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/windows/interface/libccore_la-win_gamepad.lo `test -f 'src/ccore/windows/interface/win_gamepad.c' || echo '$(srcdir)/'`src/ccore/windows/interface/win_gamepad.c
+
+src/ccore/windows/interface/libccore_la-win_opengl.lo: src/ccore/windows/interface/win_opengl.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/windows/interface/libccore_la-win_opengl.lo -MD -MP -MF src/ccore/windows/interface/$(DEPDIR)/libccore_la-win_opengl.Tpo -c -o src/ccore/windows/interface/libccore_la-win_opengl.lo `test -f 'src/ccore/windows/interface/win_opengl.c' || echo '$(srcdir)/'`src/ccore/windows/interface/win_opengl.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/windows/interface/$(DEPDIR)/libccore_la-win_opengl.Tpo src/ccore/windows/interface/$(DEPDIR)/libccore_la-win_opengl.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/windows/interface/win_opengl.c' object='src/ccore/windows/interface/libccore_la-win_opengl.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/windows/interface/libccore_la-win_opengl.lo `test -f 'src/ccore/windows/interface/win_opengl.c' || echo '$(srcdir)/'`src/ccore/windows/interface/win_opengl.c
+
+src/ccore/windows/interface/libccore_la-win_window.lo: src/ccore/windows/interface/win_window.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/windows/interface/libccore_la-win_window.lo -MD -MP -MF src/ccore/windows/interface/$(DEPDIR)/libccore_la-win_window.Tpo -c -o src/ccore/windows/interface/libccore_la-win_window.lo `test -f 'src/ccore/windows/interface/win_window.c' || echo '$(srcdir)/'`src/ccore/windows/interface/win_window.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/windows/interface/$(DEPDIR)/libccore_la-win_window.Tpo src/ccore/windows/interface/$(DEPDIR)/libccore_la-win_window.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/windows/interface/win_window.c' object='src/ccore/windows/interface/libccore_la-win_window.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/windows/interface/libccore_la-win_window.lo `test -f 'src/ccore/windows/interface/win_window.c' || echo '$(srcdir)/'`src/ccore/windows/interface/win_window.c
+
+src/ccore/windows/utils/libccore_la-win_file.lo: src/ccore/windows/utils/win_file.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/windows/utils/libccore_la-win_file.lo -MD -MP -MF src/ccore/windows/utils/$(DEPDIR)/libccore_la-win_file.Tpo -c -o src/ccore/windows/utils/libccore_la-win_file.lo `test -f 'src/ccore/windows/utils/win_file.c' || echo '$(srcdir)/'`src/ccore/windows/utils/win_file.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/windows/utils/$(DEPDIR)/libccore_la-win_file.Tpo src/ccore/windows/utils/$(DEPDIR)/libccore_la-win_file.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/windows/utils/win_file.c' object='src/ccore/windows/utils/libccore_la-win_file.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/windows/utils/libccore_la-win_file.lo `test -f 'src/ccore/windows/utils/win_file.c' || echo '$(srcdir)/'`src/ccore/windows/utils/win_file.c
+
+src/ccore/windows/utils/libccore_la-win_sysinfo.lo: src/ccore/windows/utils/win_sysinfo.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/windows/utils/libccore_la-win_sysinfo.lo -MD -MP -MF src/ccore/windows/utils/$(DEPDIR)/libccore_la-win_sysinfo.Tpo -c -o src/ccore/windows/utils/libccore_la-win_sysinfo.lo `test -f 'src/ccore/windows/utils/win_sysinfo.c' || echo '$(srcdir)/'`src/ccore/windows/utils/win_sysinfo.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/windows/utils/$(DEPDIR)/libccore_la-win_sysinfo.Tpo src/ccore/windows/utils/$(DEPDIR)/libccore_la-win_sysinfo.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/windows/utils/win_sysinfo.c' object='src/ccore/windows/utils/libccore_la-win_sysinfo.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/windows/utils/libccore_la-win_sysinfo.lo `test -f 'src/ccore/windows/utils/win_sysinfo.c' || echo '$(srcdir)/'`src/ccore/windows/utils/win_sysinfo.c
+
+src/ccore/windows/utils/libccore_la-win_thread.lo: src/ccore/windows/utils/win_thread.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/windows/utils/libccore_la-win_thread.lo -MD -MP -MF src/ccore/windows/utils/$(DEPDIR)/libccore_la-win_thread.Tpo -c -o src/ccore/windows/utils/libccore_la-win_thread.lo `test -f 'src/ccore/windows/utils/win_thread.c' || echo '$(srcdir)/'`src/ccore/windows/utils/win_thread.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/windows/utils/$(DEPDIR)/libccore_la-win_thread.Tpo src/ccore/windows/utils/$(DEPDIR)/libccore_la-win_thread.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/windows/utils/win_thread.c' object='src/ccore/windows/utils/libccore_la-win_thread.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/windows/utils/libccore_la-win_thread.lo `test -f 'src/ccore/windows/utils/win_thread.c' || echo '$(srcdir)/'`src/ccore/windows/utils/win_thread.c
+
+src/ccore/windows/utils/libccore_la-win_time.lo: src/ccore/windows/utils/win_time.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/windows/utils/libccore_la-win_time.lo -MD -MP -MF src/ccore/windows/utils/$(DEPDIR)/libccore_la-win_time.Tpo -c -o src/ccore/windows/utils/libccore_la-win_time.lo `test -f 'src/ccore/windows/utils/win_time.c' || echo '$(srcdir)/'`src/ccore/windows/utils/win_time.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/windows/utils/$(DEPDIR)/libccore_la-win_time.Tpo src/ccore/windows/utils/$(DEPDIR)/libccore_la-win_time.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/windows/utils/win_time.c' object='src/ccore/windows/utils/libccore_la-win_time.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/windows/utils/libccore_la-win_time.lo `test -f 'src/ccore/windows/utils/win_time.c' || echo '$(srcdir)/'`src/ccore/windows/utils/win_time.c
+
+src/ccore/linux/interface/libccore_la-lin_gamepad.lo: src/ccore/linux/interface/lin_gamepad.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/linux/interface/libccore_la-lin_gamepad.lo -MD -MP -MF src/ccore/linux/interface/$(DEPDIR)/libccore_la-lin_gamepad.Tpo -c -o src/ccore/linux/interface/libccore_la-lin_gamepad.lo `test -f 'src/ccore/linux/interface/lin_gamepad.c' || echo '$(srcdir)/'`src/ccore/linux/interface/lin_gamepad.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/linux/interface/$(DEPDIR)/libccore_la-lin_gamepad.Tpo src/ccore/linux/interface/$(DEPDIR)/libccore_la-lin_gamepad.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/linux/interface/lin_gamepad.c' object='src/ccore/linux/interface/libccore_la-lin_gamepad.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/linux/interface/libccore_la-lin_gamepad.lo `test -f 'src/ccore/linux/interface/lin_gamepad.c' || echo '$(srcdir)/'`src/ccore/linux/interface/lin_gamepad.c
+
+src/ccore/linux/utils/libccore_la-lin_file.lo: src/ccore/linux/utils/lin_file.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/linux/utils/libccore_la-lin_file.lo -MD -MP -MF src/ccore/linux/utils/$(DEPDIR)/libccore_la-lin_file.Tpo -c -o src/ccore/linux/utils/libccore_la-lin_file.lo `test -f 'src/ccore/linux/utils/lin_file.c' || echo '$(srcdir)/'`src/ccore/linux/utils/lin_file.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/linux/utils/$(DEPDIR)/libccore_la-lin_file.Tpo src/ccore/linux/utils/$(DEPDIR)/libccore_la-lin_file.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/linux/utils/lin_file.c' object='src/ccore/linux/utils/libccore_la-lin_file.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/linux/utils/libccore_la-lin_file.lo `test -f 'src/ccore/linux/utils/lin_file.c' || echo '$(srcdir)/'`src/ccore/linux/utils/lin_file.c
+
+src/ccore/linux/utils/libccore_la-lin_sysinfo.lo: src/ccore/linux/utils/lin_sysinfo.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/linux/utils/libccore_la-lin_sysinfo.lo -MD -MP -MF src/ccore/linux/utils/$(DEPDIR)/libccore_la-lin_sysinfo.Tpo -c -o src/ccore/linux/utils/libccore_la-lin_sysinfo.lo `test -f 'src/ccore/linux/utils/lin_sysinfo.c' || echo '$(srcdir)/'`src/ccore/linux/utils/lin_sysinfo.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/linux/utils/$(DEPDIR)/libccore_la-lin_sysinfo.Tpo src/ccore/linux/utils/$(DEPDIR)/libccore_la-lin_sysinfo.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/linux/utils/lin_sysinfo.c' object='src/ccore/linux/utils/libccore_la-lin_sysinfo.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/linux/utils/libccore_la-lin_sysinfo.lo `test -f 'src/ccore/linux/utils/lin_sysinfo.c' || echo '$(srcdir)/'`src/ccore/linux/utils/lin_sysinfo.c
+
+src/ccore/linux/utils/libccore_la-lin_thread.lo: src/ccore/linux/utils/lin_thread.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/linux/utils/libccore_la-lin_thread.lo -MD -MP -MF src/ccore/linux/utils/$(DEPDIR)/libccore_la-lin_thread.Tpo -c -o src/ccore/linux/utils/libccore_la-lin_thread.lo `test -f 'src/ccore/linux/utils/lin_thread.c' || echo '$(srcdir)/'`src/ccore/linux/utils/lin_thread.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/linux/utils/$(DEPDIR)/libccore_la-lin_thread.Tpo src/ccore/linux/utils/$(DEPDIR)/libccore_la-lin_thread.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/linux/utils/lin_thread.c' object='src/ccore/linux/utils/libccore_la-lin_thread.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/linux/utils/libccore_la-lin_thread.lo `test -f 'src/ccore/linux/utils/lin_thread.c' || echo '$(srcdir)/'`src/ccore/linux/utils/lin_thread.c
+
+src/ccore/linux/utils/libccore_la-lin_time.lo: src/ccore/linux/utils/lin_time.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/linux/utils/libccore_la-lin_time.lo -MD -MP -MF src/ccore/linux/utils/$(DEPDIR)/libccore_la-lin_time.Tpo -c -o src/ccore/linux/utils/libccore_la-lin_time.lo `test -f 'src/ccore/linux/utils/lin_time.c' || echo '$(srcdir)/'`src/ccore/linux/utils/lin_time.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/linux/utils/$(DEPDIR)/libccore_la-lin_time.Tpo src/ccore/linux/utils/$(DEPDIR)/libccore_la-lin_time.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/linux/utils/lin_time.c' object='src/ccore/linux/utils/libccore_la-lin_time.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/linux/utils/libccore_la-lin_time.lo `test -f 'src/ccore/linux/utils/lin_time.c' || echo '$(srcdir)/'`src/ccore/linux/utils/lin_time.c
+
+src/ccore/x11/interface/libccore_la-x11_display.lo: src/ccore/x11/interface/x11_display.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/x11/interface/libccore_la-x11_display.lo -MD -MP -MF src/ccore/x11/interface/$(DEPDIR)/libccore_la-x11_display.Tpo -c -o src/ccore/x11/interface/libccore_la-x11_display.lo `test -f 'src/ccore/x11/interface/x11_display.c' || echo '$(srcdir)/'`src/ccore/x11/interface/x11_display.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/x11/interface/$(DEPDIR)/libccore_la-x11_display.Tpo src/ccore/x11/interface/$(DEPDIR)/libccore_la-x11_display.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/x11/interface/x11_display.c' object='src/ccore/x11/interface/libccore_la-x11_display.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/x11/interface/libccore_la-x11_display.lo `test -f 'src/ccore/x11/interface/x11_display.c' || echo '$(srcdir)/'`src/ccore/x11/interface/x11_display.c
+
+src/ccore/x11/interface/libccore_la-x11_opengl.lo: src/ccore/x11/interface/x11_opengl.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/x11/interface/libccore_la-x11_opengl.lo -MD -MP -MF src/ccore/x11/interface/$(DEPDIR)/libccore_la-x11_opengl.Tpo -c -o src/ccore/x11/interface/libccore_la-x11_opengl.lo `test -f 'src/ccore/x11/interface/x11_opengl.c' || echo '$(srcdir)/'`src/ccore/x11/interface/x11_opengl.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/x11/interface/$(DEPDIR)/libccore_la-x11_opengl.Tpo src/ccore/x11/interface/$(DEPDIR)/libccore_la-x11_opengl.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/x11/interface/x11_opengl.c' object='src/ccore/x11/interface/libccore_la-x11_opengl.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/x11/interface/libccore_la-x11_opengl.lo `test -f 'src/ccore/x11/interface/x11_opengl.c' || echo '$(srcdir)/'`src/ccore/x11/interface/x11_opengl.c
+
+src/ccore/x11/interface/libccore_la-x11_window.lo: src/ccore/x11/interface/x11_window.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/x11/interface/libccore_la-x11_window.lo -MD -MP -MF src/ccore/x11/interface/$(DEPDIR)/libccore_la-x11_window.Tpo -c -o src/ccore/x11/interface/libccore_la-x11_window.lo `test -f 'src/ccore/x11/interface/x11_window.c' || echo '$(srcdir)/'`src/ccore/x11/interface/x11_window.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/x11/interface/$(DEPDIR)/libccore_la-x11_window.Tpo src/ccore/x11/interface/$(DEPDIR)/libccore_la-x11_window.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/x11/interface/x11_window.c' object='src/ccore/x11/interface/libccore_la-x11_window.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/x11/interface/libccore_la-x11_window.lo `test -f 'src/ccore/x11/interface/x11_window.c' || echo '$(srcdir)/'`src/ccore/x11/interface/x11_window.c
+
+src/ccore/gtk3/interface/libccore_la-gtk3_display.lo: src/ccore/gtk3/interface/gtk3_display.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/gtk3/interface/libccore_la-gtk3_display.lo -MD -MP -MF src/ccore/gtk3/interface/$(DEPDIR)/libccore_la-gtk3_display.Tpo -c -o src/ccore/gtk3/interface/libccore_la-gtk3_display.lo `test -f 'src/ccore/gtk3/interface/gtk3_display.c' || echo '$(srcdir)/'`src/ccore/gtk3/interface/gtk3_display.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/gtk3/interface/$(DEPDIR)/libccore_la-gtk3_display.Tpo src/ccore/gtk3/interface/$(DEPDIR)/libccore_la-gtk3_display.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/gtk3/interface/gtk3_display.c' object='src/ccore/gtk3/interface/libccore_la-gtk3_display.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/gtk3/interface/libccore_la-gtk3_display.lo `test -f 'src/ccore/gtk3/interface/gtk3_display.c' || echo '$(srcdir)/'`src/ccore/gtk3/interface/gtk3_display.c
+
+src/ccore/gtk3/interface/libccore_la-gtk3_opengl.lo: src/ccore/gtk3/interface/gtk3_opengl.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/gtk3/interface/libccore_la-gtk3_opengl.lo -MD -MP -MF src/ccore/gtk3/interface/$(DEPDIR)/libccore_la-gtk3_opengl.Tpo -c -o src/ccore/gtk3/interface/libccore_la-gtk3_opengl.lo `test -f 'src/ccore/gtk3/interface/gtk3_opengl.c' || echo '$(srcdir)/'`src/ccore/gtk3/interface/gtk3_opengl.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/gtk3/interface/$(DEPDIR)/libccore_la-gtk3_opengl.Tpo src/ccore/gtk3/interface/$(DEPDIR)/libccore_la-gtk3_opengl.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/gtk3/interface/gtk3_opengl.c' object='src/ccore/gtk3/interface/libccore_la-gtk3_opengl.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/gtk3/interface/libccore_la-gtk3_opengl.lo `test -f 'src/ccore/gtk3/interface/gtk3_opengl.c' || echo '$(srcdir)/'`src/ccore/gtk3/interface/gtk3_opengl.c
+
+src/ccore/gtk3/interface/libccore_la-gtk3_window.lo: src/ccore/gtk3/interface/gtk3_window.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -MT src/ccore/gtk3/interface/libccore_la-gtk3_window.lo -MD -MP -MF src/ccore/gtk3/interface/$(DEPDIR)/libccore_la-gtk3_window.Tpo -c -o src/ccore/gtk3/interface/libccore_la-gtk3_window.lo `test -f 'src/ccore/gtk3/interface/gtk3_window.c' || echo '$(srcdir)/'`src/ccore/gtk3/interface/gtk3_window.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/ccore/gtk3/interface/$(DEPDIR)/libccore_la-gtk3_window.Tpo src/ccore/gtk3/interface/$(DEPDIR)/libccore_la-gtk3_window.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/ccore/gtk3/interface/gtk3_window.c' object='src/ccore/gtk3/interface/libccore_la-gtk3_window.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libccore_la_CFLAGS) $(CFLAGS) -c -o src/ccore/gtk3/interface/libccore_la-gtk3_window.lo `test -f 'src/ccore/gtk3/interface/gtk3_window.c' || echo '$(srcdir)/'`src/ccore/gtk3/interface/gtk3_window.c
+
 examples/bin_framebuffer-framebuffer.o: examples/framebuffer.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_framebuffer_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT examples/bin_framebuffer-framebuffer.o -MD -MP -MF examples/$(DEPDIR)/bin_framebuffer-framebuffer.Tpo -c -o examples/bin_framebuffer-framebuffer.o `test -f 'examples/framebuffer.c' || echo '$(srcdir)/'`examples/framebuffer.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_framebuffer_CPPFLAGS) $(CPPFLAGS) $(bin_framebuffer_CFLAGS) $(CFLAGS) -MT examples/bin_framebuffer-framebuffer.o -MD -MP -MF examples/$(DEPDIR)/bin_framebuffer-framebuffer.Tpo -c -o examples/bin_framebuffer-framebuffer.o `test -f 'examples/framebuffer.c' || echo '$(srcdir)/'`examples/framebuffer.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) examples/$(DEPDIR)/bin_framebuffer-framebuffer.Tpo examples/$(DEPDIR)/bin_framebuffer-framebuffer.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='examples/framebuffer.c' object='examples/bin_framebuffer-framebuffer.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_framebuffer_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o examples/bin_framebuffer-framebuffer.o `test -f 'examples/framebuffer.c' || echo '$(srcdir)/'`examples/framebuffer.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_framebuffer_CPPFLAGS) $(CPPFLAGS) $(bin_framebuffer_CFLAGS) $(CFLAGS) -c -o examples/bin_framebuffer-framebuffer.o `test -f 'examples/framebuffer.c' || echo '$(srcdir)/'`examples/framebuffer.c
 
 examples/bin_framebuffer-framebuffer.obj: examples/framebuffer.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_framebuffer_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT examples/bin_framebuffer-framebuffer.obj -MD -MP -MF examples/$(DEPDIR)/bin_framebuffer-framebuffer.Tpo -c -o examples/bin_framebuffer-framebuffer.obj `if test -f 'examples/framebuffer.c'; then $(CYGPATH_W) 'examples/framebuffer.c'; else $(CYGPATH_W) '$(srcdir)/examples/framebuffer.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_framebuffer_CPPFLAGS) $(CPPFLAGS) $(bin_framebuffer_CFLAGS) $(CFLAGS) -MT examples/bin_framebuffer-framebuffer.obj -MD -MP -MF examples/$(DEPDIR)/bin_framebuffer-framebuffer.Tpo -c -o examples/bin_framebuffer-framebuffer.obj `if test -f 'examples/framebuffer.c'; then $(CYGPATH_W) 'examples/framebuffer.c'; else $(CYGPATH_W) '$(srcdir)/examples/framebuffer.c'; fi`
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) examples/$(DEPDIR)/bin_framebuffer-framebuffer.Tpo examples/$(DEPDIR)/bin_framebuffer-framebuffer.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='examples/framebuffer.c' object='examples/bin_framebuffer-framebuffer.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_framebuffer_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o examples/bin_framebuffer-framebuffer.obj `if test -f 'examples/framebuffer.c'; then $(CYGPATH_W) 'examples/framebuffer.c'; else $(CYGPATH_W) '$(srcdir)/examples/framebuffer.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_framebuffer_CPPFLAGS) $(CPPFLAGS) $(bin_framebuffer_CFLAGS) $(CFLAGS) -c -o examples/bin_framebuffer-framebuffer.obj `if test -f 'examples/framebuffer.c'; then $(CYGPATH_W) 'examples/framebuffer.c'; else $(CYGPATH_W) '$(srcdir)/examples/framebuffer.c'; fi`
 
 examples/bin_window-window.o: examples/window.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_window_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT examples/bin_window-window.o -MD -MP -MF examples/$(DEPDIR)/bin_window-window.Tpo -c -o examples/bin_window-window.o `test -f 'examples/window.c' || echo '$(srcdir)/'`examples/window.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_window_CPPFLAGS) $(CPPFLAGS) $(bin_window_CFLAGS) $(CFLAGS) -MT examples/bin_window-window.o -MD -MP -MF examples/$(DEPDIR)/bin_window-window.Tpo -c -o examples/bin_window-window.o `test -f 'examples/window.c' || echo '$(srcdir)/'`examples/window.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) examples/$(DEPDIR)/bin_window-window.Tpo examples/$(DEPDIR)/bin_window-window.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='examples/window.c' object='examples/bin_window-window.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_window_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o examples/bin_window-window.o `test -f 'examples/window.c' || echo '$(srcdir)/'`examples/window.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_window_CPPFLAGS) $(CPPFLAGS) $(bin_window_CFLAGS) $(CFLAGS) -c -o examples/bin_window-window.o `test -f 'examples/window.c' || echo '$(srcdir)/'`examples/window.c
 
 examples/bin_window-window.obj: examples/window.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_window_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT examples/bin_window-window.obj -MD -MP -MF examples/$(DEPDIR)/bin_window-window.Tpo -c -o examples/bin_window-window.obj `if test -f 'examples/window.c'; then $(CYGPATH_W) 'examples/window.c'; else $(CYGPATH_W) '$(srcdir)/examples/window.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_window_CPPFLAGS) $(CPPFLAGS) $(bin_window_CFLAGS) $(CFLAGS) -MT examples/bin_window-window.obj -MD -MP -MF examples/$(DEPDIR)/bin_window-window.Tpo -c -o examples/bin_window-window.obj `if test -f 'examples/window.c'; then $(CYGPATH_W) 'examples/window.c'; else $(CYGPATH_W) '$(srcdir)/examples/window.c'; fi`
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) examples/$(DEPDIR)/bin_window-window.Tpo examples/$(DEPDIR)/bin_window-window.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='examples/window.c' object='examples/bin_window-window.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_window_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o examples/bin_window-window.obj `if test -f 'examples/window.c'; then $(CYGPATH_W) 'examples/window.c'; else $(CYGPATH_W) '$(srcdir)/examples/window.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_window_CPPFLAGS) $(CPPFLAGS) $(bin_window_CFLAGS) $(CFLAGS) -c -o examples/bin_window-window.obj `if test -f 'examples/window.c'; then $(CYGPATH_W) 'examples/window.c'; else $(CYGPATH_W) '$(srcdir)/examples/window.c'; fi`
 
 test/check_ccore-icon.o: test/icon.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -MT test/check_ccore-icon.o -MD -MP -MF test/$(DEPDIR)/check_ccore-icon.Tpo -c -o test/check_ccore-icon.o `test -f 'test/icon.c' || echo '$(srcdir)/'`test/icon.c
