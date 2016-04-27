@@ -46,9 +46,19 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 		return CC_E_WM;
 	}
 
+	ccAssert(true);
+
 	GD->win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
 	gtk_window_set_title(GTK_WINDOW(GD->win), title);
 	gtk_window_set_default_size(GTK_WINDOW(GD->win), rect.width, rect.height);
+	gtk_window_set_resizable(GTK_WINDOW(GD->win), !(flags & CC_WINDOW_FLAG_NORESIZE));
+	gtk_window_set_decorated(GTK_WINDOW(GD->win), !(flags & CC_WINDOW_FLAG_NOBUTTONS));
+	if(flags & CC_WINDOW_FLAG_ALWAYSONTOP){
+		gtk_window_set_keep_above(GTK_WINDOW(GD->win), true);
+		gtk_window_resize(GTK_WINDOW(GD->win), rect.width, rect.height);
+	}
+
 	g_signal_connect(GD->win, "destroy", G_CALLBACK(destroy), NULL);
 
 	gtk_widget_show_all(GD->win);
@@ -58,18 +68,22 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 
 ccError ccWindowFree(void)
 {
+	gtk_widget_destroy(GD->win);
+
 	return CC_E_NONE;
 }
 
 bool ccWindowEventPoll(void)
 {
-	gtk_main_iteration();
+	if(gtk_events_pending()){
+		gtk_main_iteration();
+	}
 
 	if(GD->events == 0){
 		return false;
 	}
 
-	if((_CC_EVENT_FLAG_QUIT & GD->events) == _CC_EVENT_FLAG_QUIT){
+	if(GD->events & _CC_EVENT_FLAG_QUIT){
 		_ccWindow->event.type = CC_EVENT_WINDOW_QUIT;
 	}
 
@@ -80,11 +94,22 @@ bool ccWindowEventPoll(void)
 
 ccError ccWindowResizeMove(ccRect rect)
 {
+	ccAssert(false);
+	ccAssert(_ccWindow);
+
+	gtk_window_move(GTK_WINDOW(GD->win), rect.x, rect.y);
+	gtk_window_resize(GTK_WINDOW(GD->win), rect.width, rect.height);
+
 	return CC_E_NONE;
 }
 
 ccError ccWindowSetCentered(void)
 {
+	ccAssert(false);
+	ccAssert(_ccWindow);
+
+	gtk_window_set_position(GTK_WINDOW(GD->win), GTK_WIN_POS_CENTER_ALWAYS);
+
 	return CC_E_NONE;
 }
 
