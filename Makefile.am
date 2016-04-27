@@ -67,9 +67,13 @@ TESTS = check_ccore
 endif
 
 if BUILD_EXAMPLES
-bin_PROGRAMS = bin/framebuffer
+bin_PROGRAMS = bin/framebuffer bin/window
 
 bin_framebuffer_SOURCES = examples/framebuffer.c
 bin_framebuffer_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
 bin_framebuffer_LDADD = $(top_builddir)/.libs/libccore.la
+
+bin_window_SOURCES = examples/window.c
+bin_window_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
+bin_window_LDADD = $(top_builddir)/.libs/libccore.la
 endif
