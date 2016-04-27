@@ -108,7 +108,10 @@ host_triplet = @host@
 @BUILD_X11_TRUE@am__append_3 = src/ccore/x11/interface/x11_display.c \
 @BUILD_X11_TRUE@	src/ccore/x11/interface/x11_opengl.c \
 @BUILD_X11_TRUE@	src/ccore/x11/interface/x11_window.c
-@BUILD_GTK3_TRUE@am__append_4 = src/ccore/gtk3/interface/gtk3_window.c
+@BUILD_GTK3_TRUE@am__append_4 =  \
+@BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_display.c \
+@BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_opengl.c \
+@BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_window.c
 @BUILD_TESTS_TRUE@check_PROGRAMS = check_ccore$(EXEEXT)
 @BUILD_TESTS_TRUE@TESTS = check_ccore$(EXEEXT)
 @BUILD_EXAMPLES_TRUE@bin_PROGRAMS = bin/framebuffer$(EXEEXT) \
@@ -184,6 +187,8 @@ am__libccore_la_SOURCES_DIST =  \
 	src/ccore/x11/interface/x11_display.c \
 	src/ccore/x11/interface/x11_opengl.c \
 	src/ccore/x11/interface/x11_window.c \
+	src/ccore/gtk3/interface/gtk3_display.c \
+	src/ccore/gtk3/interface/gtk3_opengl.c \
 	src/ccore/gtk3/interface/gtk3_window.c
 am__dirstamp = $(am__leading_dot)dirstamp
 @BUILD_WINDOWS_TRUE@am__objects_1 = src/ccore/windows/interface/win_display.lo \
@@ -205,6 +210,8 @@ am__dirstamp = $(am__leading_dot)dirstamp
 @BUILD_X11_TRUE@	src/ccore/x11/interface/x11_opengl.lo \
 @BUILD_X11_TRUE@	src/ccore/x11/interface/x11_window.lo
 @BUILD_GTK3_TRUE@am__objects_4 =  \
+@BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_display.lo \
+@BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_opengl.lo \
 @BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_window.lo
 am_libccore_la_OBJECTS = src/ccore/common/interface/com_display.lo \
 	src/ccore/common/interface/com_event.lo \
@@ -853,6 +860,12 @@ src/ccore/gtk3/interface/$(am__dirstamp):
 src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/ccore/gtk3/interface/$(DEPDIR)
 	@: > src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp)
+src/ccore/gtk3/interface/gtk3_display.lo:  \
+	src/ccore/gtk3/interface/$(am__dirstamp) \
+	src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp)
+src/ccore/gtk3/interface/gtk3_opengl.lo:  \
+	src/ccore/gtk3/interface/$(am__dirstamp) \
+	src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp)
 src/ccore/gtk3/interface/gtk3_window.lo:  \
 	src/ccore/gtk3/interface/$(am__dirstamp) \
 	src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp)
@@ -987,6 +1000,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_rect.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_string.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_sysinfo.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/gtk3/interface/$(DEPDIR)/gtk3_display.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/gtk3/interface/$(DEPDIR)/gtk3_opengl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/gtk3/interface/$(DEPDIR)/gtk3_window.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/interface/$(DEPDIR)/lin_gamepad.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/utils/$(DEPDIR)/lin_file.Plo@am__quote@
