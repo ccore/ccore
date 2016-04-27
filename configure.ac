@@ -113,7 +113,7 @@ case "${host_os}" in
 		AC_CHECK_LIB([pthread], [pthread_create], [], [echo "Pthread dev library is required" && exit -1])
 		build_linux=yes
 
-		if test "x$enable_gtk3" = xyes; then
+		if test x$enable_gtk3 = xyes; then
 			CheckGTK3
 		else
 			CheckX11
@@ -142,6 +142,12 @@ AC_ARG_ENABLE(all-modules, AC_HELP_STRING([--disable-all-modules], [Disable all 
 if test x$disable_all_modules != xyes; then
 	AC_SUBST([AM_CPPFLAGS], "-DCC_USE_ALL")
 	SUMMARY="${SUMMARY}Enabling all ccore modules (#define CC_USE_ALL)\n"
+fi
+# Check if we want to build ccore with the debug flag
+AC_ARG_ENABLE([debug], [AS_HELP_STRING([--enable-debug], [compile with assertions and other debug options [default=auto]])], [enable_debug=$enableval],	[enable_debug=auto])
+if test x$enable_debug = xyes; then
+	AC_SUBST([DEBUG_FLAG], "-D_DEBUG")
+	SUMMARY="${SUMMARY}Building the library with assertions and other options (#define _DEBUG)\n"
 fi
 
 if test x$have_check != xyes; then

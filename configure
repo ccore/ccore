@@ -632,6 +632,7 @@ ac_unique_file="src/ccore/common/interface/com_display.c"
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
+DEBUG_FLAG
 AM_CPPFLAGS
 BUILD_EXAMPLES_FALSE
 BUILD_EXAMPLES_TRUE
@@ -789,6 +790,7 @@ enable_libtool_lock
 enable_gtk3
 with_x
 enable_all_modules
+enable_debug
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1457,6 +1459,8 @@ Optional Features:
   --disable-libtool-lock  avoid locking (might break parallel builds)
   --enable-gtk3           compile against GTK3 [default=auto]
   --disable-all-modules   Disable all ccore modules (not recommeded)
+  --enable-debug          compile with assertions and other debug options
+                          [default=auto]
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -14720,7 +14724,7 @@ fi
 
 		build_linux=yes
 
-		if test "x$enable_gtk3" = xyes; then
+		if test x$enable_gtk3 = xyes; then
 			CheckGTK3
 		else
 			CheckX11
@@ -14796,6 +14800,19 @@ if test x$disable_all_modules != xyes; then
 	AM_CPPFLAGS="-DCC_USE_ALL"
 
 	SUMMARY="${SUMMARY}Enabling all ccore modules (#define CC_USE_ALL)\n"
+fi
+# Check if we want to build ccore with the debug flag
+# Check whether --enable-debug was given.
+if test "${enable_debug+set}" = set; then :
+  enableval=$enable_debug; enable_debug=$enableval
+else
+  enable_debug=auto
+fi
+
+if test x$enable_debug = xyes; then
+	DEBUG_FLAG="-D_DEBUG"
+
+	SUMMARY="${SUMMARY}Building the library with assertions and other options (#define _DEBUG)\n"
 fi
 
 if test x$have_check != xyes; then

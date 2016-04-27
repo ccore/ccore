@@ -523,7 +523,7 @@ ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 
 #ACLOCAL_AMFLAGS = -I m4 --install
-AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/include
+AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/include @DEBUG_FLAG@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AUTOCONF = @AUTOCONF@
@@ -539,6 +539,7 @@ CHECK_LIBS = @CHECK_LIBS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
+DEBUG_FLAG = @DEBUG_FLAG@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
@@ -668,16 +669,16 @@ libccore_la_SOURCES = src/ccore/common/interface/com_display.c \
 	src/ccore/common/utils/com_sysinfo.c $(am__append_1) \
 	$(am__append_2) $(am__append_3) $(am__append_4)
 @BUILD_TESTS_TRUE@check_ccore_SOURCES = test/icon.c test/test.c
-@BUILD_TESTS_TRUE@check_ccore_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
+@BUILD_TESTS_TRUE@check_ccore_CPPFLAGS = @DEBUG_FLAG@ $(AM_CPPFLAGS)
 @BUILD_TESTS_TRUE@check_ccore_CFLAGS = @CHECK_CFLAGS@ @GTK_CFLAGS@
 @BUILD_TESTS_TRUE@check_ccore_LDADD = @CHECK_LIBS@ @GTK_LIBS@ $(top_builddir)/.libs/libccore.la
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_SOURCES = examples/framebuffer.c
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_CFLAGS = @GTK_CFLAGS@
-@BUILD_EXAMPLES_TRUE@bin_framebuffer_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
+@BUILD_EXAMPLES_TRUE@bin_framebuffer_CPPFLAGS = @DEBUG_FLAG@ $(AM_CPPFLAGS)
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_LDADD = @GTK_LIBS@ $(top_builddir)/.libs/libccore.la
 @BUILD_EXAMPLES_TRUE@bin_window_SOURCES = examples/window.c
 @BUILD_EXAMPLES_TRUE@bin_window_CFLAGS = @GTK_CFLAGS@
-@BUILD_EXAMPLES_TRUE@bin_window_CPPFLAGS = $(AM_CPPFLAGS) -D_DEBUG
+@BUILD_EXAMPLES_TRUE@bin_window_CPPFLAGS = @DEBUG_FLAG@ $(AM_CPPFLAGS)
 @BUILD_EXAMPLES_TRUE@bin_window_LDADD = @GTK_LIBS@ $(top_builddir)/.libs/libccore.la
 all: all-am
 
