@@ -13,37 +13,69 @@
 #include <ccore/assert.h>
 #include <ccore/print.h>
 
-static void activate(GtkApplication *app, gpointer udata)
-{
-	GD->win = gtk_application_window_new(GD->app);
-	gtk_window_set_title(GTK_WINDOW(GD->win), GD->title);
-	gtk_window_set_default_size(GTK_WINDOW(GD->win), rect.width, rect.height);
-	gtk_widget_show_all(GD->win);
+enum {
+	_CC_EVENT_FLAG_QUIT = 1
+};
 
-	free(GD->title);
+static void destroy(GtkWidget *widget, gpointer data)
+{
+	GD->events ^= _CC_EVENT_FLAG_QUIT;
 }
 
 ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 {
-	GD->app = gtk_application_new(title, G_APPLICATION_FLAGS_NONE);
-	g_signal_connect(GD->app, "activate", G_CALLBACK(activate), NULL);
+	ccAssert(rect.width > 0 && rect.height > 0);
 
-	GD->title = (char*)malloc(strlen(title));
-	strcpy(GD->title, title);
+	if(CC_UNLIKELY(_ccWindow != NULL)) {
+		return CC_E_WINDOW_CREATE;
+	}
+
+	_ccWindow = malloc(sizeof(ccWindow));
+	if(_ccWindow == NULL){
+		return CC_E_MEMORY_OVERFLOW;
+	}	
+
+	_ccWindow->data = calloc(1, sizeof(ccWindow_gtk3));
+	if(_ccWindow->data == NULL){
+		return CC_E_MEMORY_OVERFLOW;
+	}
+
+	_ccWindow->rect = rect;
+
+	if(!gtk_init_check(NULL, NULL)){
+		return CC_E_WM;
+	}
+
+	GD->win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW(GD->win), title);
+	gtk_window_set_default_size(GTK_WINDOW(GD->win), rect.width, rect.height);
+	g_signal_connect(GD->win, "destroy", G_CALLBACK(destroy), NULL);
+
+	gtk_widget_show_all(GD->win);
 
 	return CC_E_NONE;
 }
 
 ccError ccWindowFree(void)
 {
-	g_object_unref(app);
-
 	return CC_E_NONE;
 }
 
 bool ccWindowEventPoll(void)
 {
-	return false;
+	gtk_main_iteration();
+
+	if(GD->events == 0){
+		return false;
+	}
+
+	if((_CC_EVENT_FLAG_QUIT & GD->events) == _CC_EVENT_FLAG_QUIT){
+		_ccWindow->event.type = CC_EVENT_WINDOW_QUIT;
+	}
+
+	GD->events = 0;
+
+	return true;
 }
 
 ccError ccWindowResizeMove(ccRect rect)
