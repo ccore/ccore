@@ -51,9 +51,13 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([clock_gettime memset select strdup sysinfo])
 
+# Check if we want to build with Gtk3 instead of X11
+AC_ARG_ENABLE([gtk3], [AS_HELP_STRING([--enable-gtk3], [compile against GTK3 [default=auto]])], [enable_gtk3=$enableval],	[enable_gtk3=auto])
+
 build_linux=no
 build_windows=no
 build_x11=no
+build_gtk3=no
 
 build_examples=yes
 
@@ -72,6 +76,15 @@ CheckX11()
 
 	build_x11=yes
 	SUMMARY="${SUMMARY}Using X11 to handle window and input functions\n"
+}
+
+CheckGTK3()
+{
+	# Check for X11 libraries
+	AC_CHECK_LIB([gtk-3], [gtk_application_new], [], [echo "GTK3 dev library is required" && exit -1])
+
+	build_gtk3=yes
+	SUMMARY="${SUMMARY}Using GTK3 to handle window and input functions\n"
 }
 
 CheckWindows()
@@ -97,7 +110,11 @@ case "${host_os}" in
 		AC_CHECK_LIB([pthread], [pthread_create], [], [echo "Pthread dev library is required" && exit -1])
 		build_linux=yes
 
-		CheckX11
+		if test "x$enable_gtk3" = xyes; then
+			CheckGTK3
+		else
+			CheckX11
+		fi
 		;;
 	mingw*)
 		CheckWindows
@@ -113,6 +130,7 @@ esac
 AM_CONDITIONAL([BUILD_LINUX], [test "$build_linux" = "yes"])
 AM_CONDITIONAL([BUILD_WINDOWS], [test "$build_windows" = "yes"])
 AM_CONDITIONAL([BUILD_X11], [test "$build_x11" = "yes"])
+AM_CONDITIONAL([BUILD_GTK3], [test "$build_gtk3" = "yes"])
 AM_CONDITIONAL([BUILD_TESTS], [test "$have_check" = "yes"])
 AM_CONDITIONAL([BUILD_EXAMPLES], [test "$build_examples" = "yes"])
 

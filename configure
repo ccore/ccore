@@ -637,6 +637,8 @@ BUILD_EXAMPLES_FALSE
 BUILD_EXAMPLES_TRUE
 BUILD_TESTS_FALSE
 BUILD_TESTS_TRUE
+BUILD_GTK3_FALSE
+BUILD_GTK3_TRUE
 BUILD_X11_FALSE
 BUILD_X11_TRUE
 BUILD_WINDOWS_FALSE
@@ -782,6 +784,7 @@ with_aix_soname
 with_gnu_ld
 with_sysroot
 enable_libtool_lock
+enable_gtk3
 with_x
 enable_all_modules
 '
@@ -1448,6 +1451,7 @@ Optional Features:
   --enable-fast-install[=PKGS]
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
+  --enable-gtk3           compile against GTK3 [default=auto]
   --disable-all-modules   Disable all ccore modules (not recommeded)
 
 Optional Packages:
@@ -14030,9 +14034,19 @@ fi
 done
 
 
+# Check if we want to build with Gtk3 instead of X11
+# Check whether --enable-gtk3 was given.
+if test "${enable_gtk3+set}" = set; then :
+  enableval=$enable_gtk3; enable_gtk3=$enableval
+else
+  enable_gtk3=auto
+fi
+
+
 build_linux=no
 build_windows=no
 build_x11=no
+build_gtk3=no
 
 build_examples=yes
 
@@ -14475,6 +14489,61 @@ fi
 	SUMMARY="${SUMMARY}Using X11 to handle window and input functions\n"
 }
 
+CheckGTK3()
+{
+	# Check for X11 libraries
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gtk_application_new in -lgtk-3" >&5
+$as_echo_n "checking for gtk_application_new in -lgtk-3... " >&6; }
+if ${ac_cv_lib_gtk_3_gtk_application_new+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lgtk-3  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char gtk_application_new ();
+int
+main ()
+{
+return gtk_application_new ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_gtk_3_gtk_application_new=yes
+else
+  ac_cv_lib_gtk_3_gtk_application_new=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gtk_3_gtk_application_new" >&5
+$as_echo "$ac_cv_lib_gtk_3_gtk_application_new" >&6; }
+if test "x$ac_cv_lib_gtk_3_gtk_application_new" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBGTK_3 1
+_ACEOF
+
+  LIBS="-lgtk-3 $LIBS"
+
+else
+  echo "GTK3 dev library is required" && exit -1
+fi
+
+
+	build_gtk3=yes
+	SUMMARY="${SUMMARY}Using GTK3 to handle window and input functions\n"
+}
+
 CheckWindows()
 {
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking Windows compiler" >&5
@@ -14572,7 +14641,11 @@ fi
 
 		build_linux=yes
 
-		CheckX11
+		if test "x$enable_gtk3" = xyes; then
+			CheckGTK3
+		else
+			CheckX11
+		fi
 		;;
 	mingw*)
 		CheckWindows
@@ -14607,6 +14680,14 @@ fi
 else
   BUILD_X11_TRUE='#'
   BUILD_X11_FALSE=
+fi
+
+ if test "$build_gtk3" = "yes"; then
+  BUILD_GTK3_TRUE=
+  BUILD_GTK3_FALSE='#'
+else
+  BUILD_GTK3_TRUE='#'
+  BUILD_GTK3_FALSE=
 fi
 
  if test "$have_check" = "yes"; then
@@ -14846,6 +14927,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${BUILD_X11_TRUE}" && test -z "${BUILD_X11_FALSE}"; then
   as_fn_error $? "conditional \"BUILD_X11\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${BUILD_GTK3_TRUE}" && test -z "${BUILD_GTK3_FALSE}"; then
+  as_fn_error $? "conditional \"BUILD_GTK3\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${BUILD_TESTS_TRUE}" && test -z "${BUILD_TESTS_FALSE}"; then
