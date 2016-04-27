@@ -13,6 +13,8 @@
 #include <ccore/sysinfo.h>
 #endif
 
+#include <ccore/event.h>
+
 ccError ccInitialize(void)
 {
 #if defined CC_USE_ALL || defined CC_USE_GAMEPAD
@@ -139,5 +141,38 @@ const char *ccErrorString(ccError error)
 			return "Could not open file";
 		default:
 			return "Error message not defined";
+	}
+}
+
+char *ccEventString(ccEvent event){
+	switch(event.type){
+		case CC_EVENT_SKIP:
+			return "Skip";
+		case CC_EVENT_KEY_DOWN:
+			return "Key Down";
+		case CC_EVENT_KEY_UP:
+			return "Key Up";
+		case CC_EVENT_MOUSE_MOVE:
+			return "Mouse Move";
+		case CC_EVENT_MOUSE_DOWN:
+			return "Mouse Down";
+		case CC_EVENT_MOUSE_UP:
+			return "Mouse Up";
+		case CC_EVENT_MOUSE_SCROLL:
+			return "Mouse Scroll";
+		case CC_EVENT_FOCUS_GAINED:
+			return "Focus Gained";
+		case CC_EVENT_FOCUS_LOST:
+			return "Focus Lost";
+		case CC_EVENT_WINDOW_QUIT:
+			return "Window Quit";
+		case CC_EVENT_WINDOW_RESIZE:
+			return "Window Resize";
+#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
+		case CC_EVENT_GAMEPAD:
+			return "Gamepad";
+#endif
+		default:
+			return "Error, event not listed";
 	}
 }

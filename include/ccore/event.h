@@ -85,8 +85,10 @@ typedef struct {
 	};
 } ccEvent;
 
+char *ccEventString(ccEvent event);
+
 #ifdef X11
-// Regex for keysymdef to auto generate the X11 part of the definitions:
+// Vim regex for keysymdef to auto generate the X11 part of the definitions:
 // :%s/#define XK_\(\S*\).*/#define CC_KEY_\U\1\e KEYDEF(XK_\1, VK_\U\1)/g
 #include <X11/keysym.h>
 #define KEYDEF(x11,win) x11
