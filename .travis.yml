@@ -16,11 +16,13 @@ addons:
     - libxi-dev
     - libxext-dev
     - libibus-1.0-dev
+    - libgtk-3-dev
     - libtool
     - check
   
 script: 
-  - ./configure && make && make check
+  - ./configure --enable-debug && make && make check
+  - ./configure --enable-gtk3 --enable-debug && make && make check
 
 after_failure:
   - cat test-suite.log
