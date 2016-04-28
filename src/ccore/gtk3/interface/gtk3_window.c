@@ -78,23 +78,23 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 {
 	ccAssert(rect.width > 0 && rect.height > 0);
 
-	if(CC_UNLIKELY(_ccWindow != NULL)) {
+	if(CC_UNLIKELY(_ccWindow)) {
 		return CC_E_WINDOW_CREATE;
 	}
 
 	_ccWindow = malloc(sizeof(ccWindow));
-	if(_ccWindow == NULL){
+	if(CC_UNLIKELY(!_ccWindow)){
 		return CC_E_MEMORY_OVERFLOW;
 	}	
 
 	_ccWindow->data = calloc(1, sizeof(ccWindow_gtk3));
-	if(_ccWindow->data == NULL){
+	if(CC_UNLIKELY(!_ccWindow->data)){
 		return CC_E_MEMORY_OVERFLOW;
 	}
 
 	_ccWindow->rect = rect;
 
-	if(!gtk_init_check(NULL, NULL)){
+	if(CC_UNLIKELY(!gtk_init_check(NULL, NULL))){
 		return CC_E_WM;
 	}
 
@@ -201,7 +201,9 @@ ccError ccWindowSetCentered(void)
 
 ccError ccWindowSetWindowed(ccRect *rect)
 {
-	return CC_E_NONE;
+	gtk_window_unfullscreen(GTK_WINDOW(GD->win));
+
+	return ccWindowResizeMove(*rect);
 }
 
 ccError ccWindowSetMaximized(void)
@@ -237,6 +239,9 @@ ccError ccWindowIconSet(ccPoint size, const uint32_t *icon)
 	int len = size.x * size.y;
 	int totallen = len * sizeof(uint32_t);
 	guchar *buf = (guchar*)g_malloc(totallen * 20);
+	if(!buf){
+		return CC_E_MEMORY_OVERFLOW;
+	}
 
 	union pixel {
 		uint32_t l;

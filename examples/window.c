@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 
 	EXIT_ON_E(ccWindowCreate((ccRect){0, 0, 300, 100}, "☐ccore examples: window", CC_WINDOW_FLAG_NORESIZE | CC_WINDOW_FLAG_ALWAYSONTOP));
 
-	unsigned long *icondata = iconGetData();
+	uint32_t *icondata = iconGetData();
 	EXIT_ON_E(ccWindowIconSet(iconGetSize(), icondata));
 	free(icondata);
 
