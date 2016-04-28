@@ -22,16 +22,12 @@ ccError ccThreadJoin(ccThread *thread)
 
 bool ccThreadFinished(ccThread *thread)
 {
-	if(pthread_kill(*thread, 0) == 0){
-		return false;
-	}else{
-		return true;
-	}
+	return pthread_kill(*thread, 0);
 }
 
 ccError ccThreadMutexCreate(ccMutex *mutex, unsigned int spinCount)
 {
-	if(CC_UNLIKELY(pthread_mutex_init(mutex, NULL) != 0)){
+	if(CC_UNLIKELY(pthread_mutex_init(mutex, NULL))){
 		return CC_E_THREAD_MUTEXCREATE;
 	}
 
@@ -40,7 +36,7 @@ ccError ccThreadMutexCreate(ccMutex *mutex, unsigned int spinCount)
 
 ccError ccThreadMutexJoin(ccMutex *mutex)
 {
-	if(CC_UNLIKELY(pthread_mutex_lock(mutex) != 0)) {
+	if(CC_UNLIKELY(pthread_mutex_lock(mutex))) {
 		return CC_E_THREAD_MUTEX;
 	}
 
@@ -49,7 +45,7 @@ ccError ccThreadMutexJoin(ccMutex *mutex)
 
 ccError ccThreadMutexRelease(ccMutex *mutex)
 {
-	if(CC_UNLIKELY(pthread_mutex_unlock(mutex) != 0)){
+	if(CC_UNLIKELY(pthread_mutex_unlock(mutex))){
 		return CC_E_THREAD_MUTEX;
 	}
 
@@ -58,7 +54,7 @@ ccError ccThreadMutexRelease(ccMutex *mutex)
 
 ccError ccThreadMutexFree(ccMutex *mutex)
 {
-	if(CC_UNLIKELY(pthread_mutex_destroy(mutex) != 0)){
+	if(CC_UNLIKELY(pthread_mutex_destroy(mutex))){
 		return CC_E_THREAD_MUTEX;
 	}
 

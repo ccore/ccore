@@ -4,10 +4,7 @@
 
 static long parseLineKB(char *line)
 {
-	int i;
-	long value;
-
-	i = strlen(line);
+	int i = strlen(line);
 	while(*line < '0' || *line > '9'){
 		line++;
 	}
@@ -16,21 +13,17 @@ static long parseLineKB(char *line)
 	return atoi(line);
 }
 
-static long getKBValueFromProc(char *proc, char *value)
+static long getKBValueFromProc(const char *proc, const char *field)
 {
-	FILE *file;
-	long result;
-	int valueLen;
-	char line[128];
-
-	result = -1;
-	file = fopen(proc, "r");
+	FILE *file = fopen(proc, "r");
 	if(!file){
-		return result;
+		return -1;
 	}
-	valueLen = strlen(value) - 1;
+	int fieldlen = strlen(field) - 1;
+	char line[128];
+	long result = -1;
 	while(fgets(line, 128, file) != NULL){
-		if(strncmp(line, value, valueLen) == 0){
+		if(strncmp(line, field, fieldlen) == 0){
 			result = parseLineKB(line);
 			break;
 		}
@@ -42,20 +35,18 @@ static long getKBValueFromProc(char *proc, char *value)
 
 ccError ccSysinfoInitialize(void)
 {
-	long value;
-
-	ccAssert(_ccSysinfo == NULL);
+	ccAssert(!_ccSysinfo);
 
 	_ccSysinfo = malloc(sizeof(ccSysinfo));
 	if(_ccSysinfo == NULL){
 		return CC_E_MEMORY_OVERFLOW;
 	}
 
-	value = getKBValueFromProc("/proc/meminfo", "MemTotal");
-	if(value == -1){
+	long kb = getKBValueFromProc("/proc/meminfo", "MemTotal");
+	if(kb == -1){
 		return CC_E_OS;
 	}
-	_ccSysinfo->ramTotal = ((uint_fast64_t)value) * 1000;
+	_ccSysinfo->ramTotal = ((uint_fast64_t)kb) * 1000;
 
 	_ccSysinfo->processorCount = sysconf(_SC_NPROCESSORS_CONF);
 
@@ -66,17 +57,16 @@ ccError ccSysinfoInitialize(void)
 
 uint_fast64_t ccSysinfoGetRamAvailable(void)
 {
-	struct sysinfo memInfo;
-	unsigned long available;
+	struct sysinfo meminfo;
+	sysinfo(&meminfo);
 
-	sysinfo(&memInfo);
-
-	available = memInfo.freeram;
-	return available * memInfo.mem_unit;
+	return meminfo.freeram * meminfo.mem_unit;
 }
 
 void ccSysinfoFree(void)
 {
+	ccAssert(_ccSysinfo);
+
 	free(_ccSysinfo);
 }
 

@@ -2,7 +2,9 @@
 
 #include "lin_file.h"
 
-static char *dataDir = NULL;
+#ifndef CC_DATA_LOCATION
+static char *datadir = NULL;
+#endif
 
 char *ccFileUserDirGet(void)
 {
@@ -12,18 +14,16 @@ char *ccFileUserDirGet(void)
 char *ccFileDataDirGet(void)
 {
 #ifndef CC_DATA_LOCATION
-	int len;
-
-	if(dataDir == NULL){
-		dataDir = malloc(PATH_MAX);
-		len = readlink("/proc/self/exe", dataDir, PATH_MAX);
+	if(datadir == NULL){
+		datadir = malloc(PATH_MAX);
+		int len = readlink("/proc/self/exe", datadir, PATH_MAX);
 		if(len > 0){
-			dataDir[len] = '\0';
-			dataDir = dirname(dataDir);
-			strcat(dataDir, "/");
+			datadir[len] = '\0';
+			datadir = dirname(datadir);
+			strcat(datadir, "/");
 		}
 	}
-	return dataDir;
+	return datadir;
 #else
 	return CC_DATA_LOCATION;
 #endif
@@ -36,12 +36,14 @@ char *ccFileTempDirGet(void)
 
 void _ccFileFree(void)
 {
-
+#ifndef CC_DATA_LOCATION
+	free(datadir);
+#endif
 }
 
-ccError ccFileDirFindFirst(ccFileDir *dir, const char *dirPath)
+ccError ccFileDirFindFirst(ccFileDir *dir, const char *dirpath)
 {
-	dir->dir = opendir(dirPath);
+	dir->dir = opendir(dirpath);
 	if(!dir->dir){
 		return CC_E_FILE_OPEN;
 	}
