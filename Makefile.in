@@ -239,19 +239,19 @@ bin_framebuffer_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(bin_framebuffer_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-am__bin_window_SOURCES_DIST = examples/window.c
+am__bin_window_SOURCES_DIST = examples/window.c examples/icon.c
 @BUILD_EXAMPLES_TRUE@am_bin_window_OBJECTS =  \
-@BUILD_EXAMPLES_TRUE@	examples/bin_window-window.$(OBJEXT)
+@BUILD_EXAMPLES_TRUE@	examples/bin_window-window.$(OBJEXT) \
+@BUILD_EXAMPLES_TRUE@	examples/bin_window-icon.$(OBJEXT)
 bin_window_OBJECTS = $(am_bin_window_OBJECTS)
 @BUILD_EXAMPLES_TRUE@bin_window_DEPENDENCIES =  \
 @BUILD_EXAMPLES_TRUE@	$(top_builddir)/.libs/libccore.la
 bin_window_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(bin_window_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-am__check_ccore_SOURCES_DIST = test/icon.c test/test.c
+am__check_ccore_SOURCES_DIST = test/icon.c
 @BUILD_TESTS_TRUE@am_check_ccore_OBJECTS =  \
-@BUILD_TESTS_TRUE@	test/check_ccore-icon.$(OBJEXT) \
-@BUILD_TESTS_TRUE@	test/check_ccore-test.$(OBJEXT)
+@BUILD_TESTS_TRUE@	test/check_ccore-icon.$(OBJEXT)
 check_ccore_OBJECTS = $(am_check_ccore_OBJECTS)
 @BUILD_TESTS_TRUE@check_ccore_DEPENDENCIES =  \
 @BUILD_TESTS_TRUE@	$(top_builddir)/.libs/libccore.la
@@ -668,7 +668,7 @@ libccore_la_SOURCES = src/ccore/common/interface/com_display.c \
 	src/ccore/common/utils/com_string.c \
 	src/ccore/common/utils/com_sysinfo.c $(am__append_1) \
 	$(am__append_2) $(am__append_3) $(am__append_4)
-@BUILD_TESTS_TRUE@check_ccore_SOURCES = test/icon.c test/test.c
+@BUILD_TESTS_TRUE@check_ccore_SOURCES = test/icon.c
 @BUILD_TESTS_TRUE@check_ccore_CPPFLAGS = @DEBUG_FLAG@ $(AM_CPPFLAGS)
 @BUILD_TESTS_TRUE@check_ccore_CFLAGS = @CHECK_CFLAGS@ @GTK_CFLAGS@
 @BUILD_TESTS_TRUE@check_ccore_LDADD = @CHECK_LIBS@ @GTK_LIBS@ $(top_builddir)/.libs/libccore.la
@@ -676,7 +676,7 @@ libccore_la_SOURCES = src/ccore/common/interface/com_display.c \
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_CFLAGS = @GTK_CFLAGS@
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_CPPFLAGS = @DEBUG_FLAG@ $(AM_CPPFLAGS)
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_LDADD = @GTK_LIBS@ $(top_builddir)/.libs/libccore.la
-@BUILD_EXAMPLES_TRUE@bin_window_SOURCES = examples/window.c
+@BUILD_EXAMPLES_TRUE@bin_window_SOURCES = examples/window.c examples/icon.c
 @BUILD_EXAMPLES_TRUE@bin_window_CFLAGS = @GTK_CFLAGS@
 @BUILD_EXAMPLES_TRUE@bin_window_CPPFLAGS = @DEBUG_FLAG@ $(AM_CPPFLAGS)
 @BUILD_EXAMPLES_TRUE@bin_window_LDADD = @GTK_LIBS@ $(top_builddir)/.libs/libccore.la
@@ -959,6 +959,8 @@ bin/framebuffer$(EXEEXT): $(bin_framebuffer_OBJECTS) $(bin_framebuffer_DEPENDENC
 	$(AM_V_CCLD)$(bin_framebuffer_LINK) $(bin_framebuffer_OBJECTS) $(bin_framebuffer_LDADD) $(LIBS)
 examples/bin_window-window.$(OBJEXT): examples/$(am__dirstamp) \
 	examples/$(DEPDIR)/$(am__dirstamp)
+examples/bin_window-icon.$(OBJEXT): examples/$(am__dirstamp) \
+	examples/$(DEPDIR)/$(am__dirstamp)
 
 bin/window$(EXEEXT): $(bin_window_OBJECTS) $(bin_window_DEPENDENCIES) $(EXTRA_bin_window_DEPENDENCIES) bin/$(am__dirstamp)
 	@rm -f bin/window$(EXEEXT)
@@ -970,8 +972,6 @@ test/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) test/$(DEPDIR)
 	@: > test/$(DEPDIR)/$(am__dirstamp)
 test/check_ccore-icon.$(OBJEXT): test/$(am__dirstamp) \
-	test/$(DEPDIR)/$(am__dirstamp)
-test/check_ccore-test.$(OBJEXT): test/$(am__dirstamp) \
 	test/$(DEPDIR)/$(am__dirstamp)
 
 check_ccore$(EXEEXT): $(check_ccore_OBJECTS) $(check_ccore_DEPENDENCIES) $(EXTRA_check_ccore_DEPENDENCIES) 
@@ -1003,6 +1003,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@examples/$(DEPDIR)/bin_framebuffer-framebuffer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@examples/$(DEPDIR)/bin_window-icon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@examples/$(DEPDIR)/bin_window-window.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/libccore_la-com_display.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/libccore_la-com_event.Plo@am__quote@
@@ -1032,7 +1033,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/x11/interface/$(DEPDIR)/libccore_la-x11_opengl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/x11/interface/$(DEPDIR)/libccore_la-x11_window.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/check_ccore-icon.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/check_ccore-test.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -1275,6 +1275,20 @@ examples/bin_window-window.obj: examples/window.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_window_CPPFLAGS) $(CPPFLAGS) $(bin_window_CFLAGS) $(CFLAGS) -c -o examples/bin_window-window.obj `if test -f 'examples/window.c'; then $(CYGPATH_W) 'examples/window.c'; else $(CYGPATH_W) '$(srcdir)/examples/window.c'; fi`
 
+examples/bin_window-icon.o: examples/icon.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_window_CPPFLAGS) $(CPPFLAGS) $(bin_window_CFLAGS) $(CFLAGS) -MT examples/bin_window-icon.o -MD -MP -MF examples/$(DEPDIR)/bin_window-icon.Tpo -c -o examples/bin_window-icon.o `test -f 'examples/icon.c' || echo '$(srcdir)/'`examples/icon.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) examples/$(DEPDIR)/bin_window-icon.Tpo examples/$(DEPDIR)/bin_window-icon.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='examples/icon.c' object='examples/bin_window-icon.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_window_CPPFLAGS) $(CPPFLAGS) $(bin_window_CFLAGS) $(CFLAGS) -c -o examples/bin_window-icon.o `test -f 'examples/icon.c' || echo '$(srcdir)/'`examples/icon.c
+
+examples/bin_window-icon.obj: examples/icon.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_window_CPPFLAGS) $(CPPFLAGS) $(bin_window_CFLAGS) $(CFLAGS) -MT examples/bin_window-icon.obj -MD -MP -MF examples/$(DEPDIR)/bin_window-icon.Tpo -c -o examples/bin_window-icon.obj `if test -f 'examples/icon.c'; then $(CYGPATH_W) 'examples/icon.c'; else $(CYGPATH_W) '$(srcdir)/examples/icon.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) examples/$(DEPDIR)/bin_window-icon.Tpo examples/$(DEPDIR)/bin_window-icon.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='examples/icon.c' object='examples/bin_window-icon.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bin_window_CPPFLAGS) $(CPPFLAGS) $(bin_window_CFLAGS) $(CFLAGS) -c -o examples/bin_window-icon.obj `if test -f 'examples/icon.c'; then $(CYGPATH_W) 'examples/icon.c'; else $(CYGPATH_W) '$(srcdir)/examples/icon.c'; fi`
+
 test/check_ccore-icon.o: test/icon.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -MT test/check_ccore-icon.o -MD -MP -MF test/$(DEPDIR)/check_ccore-icon.Tpo -c -o test/check_ccore-icon.o `test -f 'test/icon.c' || echo '$(srcdir)/'`test/icon.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) test/$(DEPDIR)/check_ccore-icon.Tpo test/$(DEPDIR)/check_ccore-icon.Po
@@ -1288,20 +1302,6 @@ test/check_ccore-icon.obj: test/icon.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test/icon.c' object='test/check_ccore-icon.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -c -o test/check_ccore-icon.obj `if test -f 'test/icon.c'; then $(CYGPATH_W) 'test/icon.c'; else $(CYGPATH_W) '$(srcdir)/test/icon.c'; fi`
-
-test/check_ccore-test.o: test/test.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -MT test/check_ccore-test.o -MD -MP -MF test/$(DEPDIR)/check_ccore-test.Tpo -c -o test/check_ccore-test.o `test -f 'test/test.c' || echo '$(srcdir)/'`test/test.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) test/$(DEPDIR)/check_ccore-test.Tpo test/$(DEPDIR)/check_ccore-test.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test/test.c' object='test/check_ccore-test.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -c -o test/check_ccore-test.o `test -f 'test/test.c' || echo '$(srcdir)/'`test/test.c
-
-test/check_ccore-test.obj: test/test.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -MT test/check_ccore-test.obj -MD -MP -MF test/$(DEPDIR)/check_ccore-test.Tpo -c -o test/check_ccore-test.obj `if test -f 'test/test.c'; then $(CYGPATH_W) 'test/test.c'; else $(CYGPATH_W) '$(srcdir)/test/test.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) test/$(DEPDIR)/check_ccore-test.Tpo test/$(DEPDIR)/check_ccore-test.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test/test.c' object='test/check_ccore-test.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(check_ccore_CPPFLAGS) $(CPPFLAGS) $(check_ccore_CFLAGS) $(CFLAGS) -c -o test/check_ccore-test.obj `if test -f 'test/test.c'; then $(CYGPATH_W) 'test/test.c'; else $(CYGPATH_W) '$(srcdir)/test/test.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

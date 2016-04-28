@@ -61,7 +61,7 @@ endif
 
 if BUILD_TESTS
 check_PROGRAMS = check_ccore
-check_ccore_SOURCES = test/icon.c test/test.c
+check_ccore_SOURCES = test/icon.c
 check_ccore_CPPFLAGS = @DEBUG_FLAG@ $(AM_CPPFLAGS)
 check_ccore_CFLAGS = @CHECK_CFLAGS@ @GTK_CFLAGS@
 check_ccore_LDADD = @CHECK_LIBS@ @GTK_LIBS@ $(top_builddir)/.libs/libccore.la
@@ -77,7 +77,7 @@ bin_framebuffer_CFLAGS = @GTK_CFLAGS@
 bin_framebuffer_CPPFLAGS = @DEBUG_FLAG@ $(AM_CPPFLAGS)
 bin_framebuffer_LDADD = @GTK_LIBS@ $(top_builddir)/.libs/libccore.la
 
-bin_window_SOURCES = examples/window.c
+bin_window_SOURCES = examples/window.c examples/icon.c
 bin_window_CFLAGS = @GTK_CFLAGS@
 bin_window_CPPFLAGS = @DEBUG_FLAG@ $(AM_CPPFLAGS)
 bin_window_LDADD = @GTK_LIBS@ $(top_builddir)/.libs/libccore.la

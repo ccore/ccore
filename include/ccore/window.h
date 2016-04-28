@@ -20,6 +20,7 @@
 #pragma once
 
 #include <stdarg.h>
+#include <stdint.h>
 
 #include "core.h"
 
@@ -95,7 +96,7 @@ ccError ccWindowSetFullscreen(int displayCount, ...);
 ccError ccWindowSetTitle(const char *title);
 
 ccError ccWindowSetBlink(void);
-ccError ccWindowIconSet(ccPoint size, unsigned long *icon);
+ccError ccWindowIconSet(ccPoint size, const uint32_t *icon);
 ccError ccWindowMouseSetPosition(ccPoint target);
 ccError ccWindowMouseSetCursor(ccCursor cursor);
 

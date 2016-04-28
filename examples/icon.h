@@ -3,6 +3,7 @@
 #include <ccore/types.h>
 
 #include <stdlib.h>
+#include <stdint.h>
 
 ccPoint iconGetSize();
-unsigned long* iconGetData();
+uint32_t* iconGetData();

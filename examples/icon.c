@@ -161,13 +161,13 @@ ccPoint iconGetSize()
 	return (ccPoint){ICON_WIDTH, ICON_HEIGHT};
 }
 
-unsigned long *iconGetData()
+uint32_t *iconGetData()
 {
 	int i, len;
-	unsigned long *data;
+	uint32_t *data;
 
 	len = ICON_WIDTH * ICON_HEIGHT;
-	data = malloc(len * sizeof(unsigned long));
+	data = malloc(len * sizeof(uint32_t));
 
 	for(i = 0; i < len; i++){
 		// A + R + G + B

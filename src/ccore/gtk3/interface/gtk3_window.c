@@ -1,6 +1,7 @@
 #include "gtk3_window.h"
 
 #include <string.h>
+#include <stdint.h>
 
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
@@ -25,12 +26,12 @@ enum {
 	_EV_RESIZE =           1 << 7,
 };
 
-static void destroy(GtkWidget *widget, gpointer data)
+static void eventDestroy(GtkWidget *widget, gpointer data)
 {
 	GD->events |= _EV_QUIT;
 }
 
-static void buttonPress(GtkWidget *widget, GdkEventButton *event, gpointer data)
+static void eventButtonPress(GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
 	if(event->button == 1){
 		GD->events |= _EV_MOUSE_LEFT_DOWN;
@@ -39,7 +40,7 @@ static void buttonPress(GtkWidget *widget, GdkEventButton *event, gpointer data)
 	}
 }
 
-static void buttonRelease(GtkWidget *widget, GdkEventButton *event, gpointer data)
+static void eventButtonRelease(GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
 	if(event->button == 1){
 		GD->events |= _EV_MOUSE_LEFT_UP;
@@ -48,22 +49,29 @@ static void buttonRelease(GtkWidget *widget, GdkEventButton *event, gpointer dat
 	}
 }
 
-static void focusIn(GtkWidget *widget, gpointer data)
+static void eventFocusIn(GtkWidget *widget, gpointer data)
 {
 	GD->events |= _EV_FOCUS_IN;
 }
 
-static void focusOut(GtkWidget *widget, gpointer data)
+static void eventFocusOut(GtkWidget *widget, gpointer data)
 {
 	GD->events |= _EV_FOCUS_OUT;
 }
 
-static void resize(GtkWidget *widget, GdkRectangle *rect, gpointer data)
+static void eventResize(GtkWidget *widget, GdkRectangle *rect, gpointer data)
 {
 	_ccWindow->rect.width = rect->width;
 	_ccWindow->rect.height = rect->height;
 
 	GD->events |= _EV_RESIZE;
+}
+
+static void imageDestroy(guchar *pixels, gpointer data)
+{
+	if(pixels){
+		g_free(pixels);
+	}
 }
 
 ccError ccWindowCreate(ccRect rect, const char *title, int flags)
@@ -101,12 +109,12 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 		gtk_window_resize(GTK_WINDOW(GD->win), rect.width, rect.height);
 	}
 
-	g_signal_connect(GD->win, "destroy", G_CALLBACK(destroy), NULL);
-	g_signal_connect(GD->win, "button-press-event", G_CALLBACK(buttonPress), NULL);
-	g_signal_connect(GD->win, "button-release-event", G_CALLBACK(buttonRelease), NULL);
-	g_signal_connect(GD->win, "focus-in-event", G_CALLBACK(focusIn), NULL);
-	g_signal_connect(GD->win, "focus-out-event", G_CALLBACK(focusOut), NULL);
-	g_signal_connect(GD->win, "size-allocate", G_CALLBACK(resize), NULL);
+	g_signal_connect(GD->win, "destroy", G_CALLBACK(eventDestroy), NULL);
+	g_signal_connect(GD->win, "button-press-event", G_CALLBACK(eventButtonPress), NULL);
+	g_signal_connect(GD->win, "button-release-event", G_CALLBACK(eventButtonRelease), NULL);
+	g_signal_connect(GD->win, "focus-in-event", G_CALLBACK(eventFocusIn), NULL);
+	g_signal_connect(GD->win, "focus-out-event", G_CALLBACK(eventFocusOut), NULL);
+	g_signal_connect(GD->win, "size-allocate", G_CALLBACK(eventResize), NULL);
 
 	gtk_widget_show_all(GD->win);
 
@@ -221,8 +229,39 @@ ccError ccWindowSetBlink(void)
 	return CC_E_NONE;
 }
 
-ccError ccWindowIconSet(ccPoint size, unsigned long *icon)
+ccError ccWindowIconSet(ccPoint size, const uint32_t *icon)
 {
+	ccAssert(_ccWindow);
+	ccAssert(size.x > 0 && size.y > 0);
+
+	int len = size.x * size.y;
+	int totallen = len * sizeof(uint32_t);
+	guchar *buf = (guchar*)g_malloc(totallen * 20);
+
+	union pixel {
+		uint32_t l;
+		char c[4];
+	};
+
+	// Swap BGR for RGB, GdkPixbuf only supports RGB
+	for(int i = 0; i < totallen; i++){
+		union pixel p;
+		p.l = icon[i];
+		buf[(i << 2) + 0] = p.c[2];
+		buf[(i << 2) + 1] = p.c[1];
+		buf[(i << 2) + 2] = p.c[0];
+		buf[(i << 2) + 3] = p.c[3];
+	}
+
+	GdkPixbuf *pix = gdk_pixbuf_new_from_data(buf, GDK_COLORSPACE_RGB, true, 8, size.x, size.y, size.x * sizeof(uint32_t), imageDestroy, NULL);
+	if(!buf){
+		return CC_E_WM;
+	}
+
+	gtk_window_set_icon(GTK_WINDOW(GD->win), pix);
+	
+	g_object_unref(pix);
+
 	return CC_E_NONE;
 }
 

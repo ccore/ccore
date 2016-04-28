@@ -552,14 +552,14 @@ ccError ccWindowSetBlink(void)
 	return CC_E_NONE;
 }
 
-ccError ccWindowIconSet(ccPoint size, unsigned long *data)
+ccError ccWindowIconSet(ccPoint size, const uint32_t *data)
 {
 	HICON icon;
 	BYTE *bmp;
 	int y, dataLen, totalLen;
-	unsigned long *row;
+	uint32_t *row;
 
-	dataLen = size.x * size.y * sizeof(unsigned long);
+	dataLen = size.x * size.y * sizeof(uint32_t);
 	totalLen = dataLen + 40 * sizeof(int32_t);
 	bmp = malloc(totalLen);
 	if(bmp == NULL){
@@ -581,7 +581,7 @@ ccError ccWindowIconSet(ccPoint size, unsigned long *data)
 	y = size.y;
 	row = data;
 	while (y--){
-		memcpy(bmp + 40 + y * size.x * sizeof(unsigned long), row, size.x * sizeof(unsigned long));
+		memcpy(bmp + 40 + y * size.x * sizeof(uint32_t), row, size.x * sizeof(uint32_t));
 		row += size.x;
 	}
 

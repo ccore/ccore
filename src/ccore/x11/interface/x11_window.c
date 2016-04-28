@@ -647,27 +647,23 @@ ccError ccWindowSetTitle(const char *title)
 	return CC_E_NONE;
 }
 
-ccError ccWindowIconSet(ccPoint size, unsigned long *icon)
+ccError ccWindowIconSet(ccPoint size, const uint32_t *icon)
 {
 	ccAssert(_ccWindow);
+	ccAssert(size.x > 0 && size.y > 0);
 
-	if(size.x <= 0 || size.y <= 0) {
-		return CC_E_INVALID_ARGUMENT;
-	}
-
-	size_t dataLen = size.x * size.y;
-	size_t totalLen = dataLen + 2;
-	unsigned long *data;
-	data = malloc(totalLen * sizeof(unsigned long));
+	size_t datalen = size.x * size.y;
+	size_t totallen = datalen + 2;
+	uint32_t *data = malloc(totallen * sizeof(uint32_t));
 	if(data == NULL){
 		return CC_E_MEMORY_OVERFLOW;
 	}
 
-	data[0] = (unsigned long)size.x;
-	data[1] = (unsigned long)size.y;
-	memcpy(data + 2, icon, dataLen * sizeof(unsigned long));
+	data[0] = (uint32_t)size.x;
+	data[1] = (uint32_t)size.y;
+	memcpy(data + 2, icon, datalen * sizeof(uint32_t));
 
-	XChangeProperty(XD->display, XD->win, XD->WM_ICON, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)data, totalLen);
+	XChangeProperty(XD->display, XD->win, XD->WM_ICON, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)data, totallen);
 
 	free(data);
 
