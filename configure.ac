@@ -82,7 +82,7 @@ CheckGTK3()
 {
 	# Check for X11 libraries
 	AC_CHECK_LIB([gtk-3], [gtk_application_new], [], [echo "GTK3 dev library is required" && exit -1])
-	PKG_CHECK_MODULES([GTK], [gtk+-3.0 > 3.0], [], [echo "GTK3 dev library is the wrong version" && exit -1])
+	PKG_CHECK_MODULES([GTK], [gtk+-3.0 >= 3.16], [], [echo "GTK3 dev library is the wrong version (version 3.16 or higher is required)" && exit -1])
 	AC_SUBST(GTK_CFLAGS)
 	AC_SUBST(GTK_LIBS)
 

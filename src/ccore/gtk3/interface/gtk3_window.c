@@ -276,7 +276,8 @@ ccError ccWindowIconSet(ccPoint size, const uint32_t *icon)
 	};
 
 	// Swap BGR for RGB, GdkPixbuf only supports RGB
-	for(int i = 0; i < totallen; i++){
+	int i;
+	for(i = 0; i < totallen; i++){
 		union pixel p;
 		p.l = icon[i];
 		buf[(i << 2) + 0] = p.c[2];
@@ -363,7 +364,7 @@ ccError ccWindowFramebufferFree()
 
 ccError ccWindowClipboardSet(const char *data)
 {
-	GtkClipboard *clip = gtk_clipboard_get_default(gdk_display_get_default());
+	GtkClipboard *clip = (GtkClipboard*)gtk_clipboard_get_default(gdk_display_get_default());
 
 	gtk_clipboard_set_text(clip, data, strlen(data));
 
@@ -372,7 +373,7 @@ ccError ccWindowClipboardSet(const char *data)
 
 char *ccWindowClipboardGet(void)
 {
-	GtkClipboard *clip = gtk_clipboard_get_default(gdk_display_get_default());
+	GtkClipboard *clip = (GtkClipboard*)gtk_clipboard_get_default(gdk_display_get_default());
 
 	return gtk_clipboard_wait_for_text(clip);
 }
