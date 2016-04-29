@@ -92,8 +92,6 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 		return CC_E_MEMORY_OVERFLOW;
 	}
 
-	_ccWindow->rect = rect;
-
 	if(CC_UNLIKELY(!gtk_init_check(NULL, NULL))){
 		return CC_E_WM;
 	}
@@ -104,10 +102,7 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	gtk_window_set_default_size(GTK_WINDOW(GD->win), rect.width, rect.height);
 	gtk_window_set_resizable(GTK_WINDOW(GD->win), !(flags & CC_WINDOW_FLAG_NORESIZE));
 	gtk_window_set_decorated(GTK_WINDOW(GD->win), !(flags & CC_WINDOW_FLAG_NOBUTTONS));
-	if(flags & CC_WINDOW_FLAG_ALWAYSONTOP){
-		gtk_window_set_keep_above(GTK_WINDOW(GD->win), true);
-		gtk_window_resize(GTK_WINDOW(GD->win), rect.width, rect.height);
-	}
+	gtk_window_set_keep_above(GTK_WINDOW(GD->win), flags & CC_WINDOW_FLAG_ALWAYSONTOP);
 
 	g_signal_connect(GD->win, "destroy", G_CALLBACK(eventDestroy), NULL);
 	g_signal_connect(GD->win, "button-press-event", G_CALLBACK(eventButtonPress), NULL);
@@ -117,6 +112,9 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	g_signal_connect(GD->win, "size-allocate", G_CALLBACK(eventResize), NULL);
 
 	gtk_widget_show_all(GD->win);
+
+	_ccWindow->rect = rect;
+	GD->flags = flags;
 
 	return CC_E_NONE;
 }
@@ -183,8 +181,17 @@ ccError ccWindowResizeMove(ccRect rect)
 	ccAssert(_ccWindow);
 	ccAssert(GD->win);
 
+	// We can't force to resize the window when it's not resizable
+	if(GD->flags & CC_WINDOW_FLAG_NORESIZE){
+		gtk_window_set_resizable(GTK_WINDOW(GD->win), true);
+	}
+
 	gtk_window_move(GTK_WINDOW(GD->win), rect.x, rect.y);
-	gtk_window_resize(GTK_WINDOW(GD->win), rect.width, rect.height);
+	gtk_widget_set_size_request(GD->win, rect.width, rect.height);
+
+	if(GD->flags & CC_WINDOW_FLAG_NORESIZE){
+		gtk_window_set_resizable(GTK_WINDOW(GD->win), false);
+	}
 
 	return CC_E_NONE;
 }
@@ -201,13 +208,28 @@ ccError ccWindowSetCentered(void)
 
 ccError ccWindowSetWindowed(ccRect *rect)
 {
+	ccAssert(_ccWindow);
+	ccAssert(GD->win);
+
 	gtk_window_unfullscreen(GTK_WINDOW(GD->win));
+	gtk_window_unmaximize(GTK_WINDOW(GD->win));
 
 	return ccWindowResizeMove(*rect);
 }
 
 ccError ccWindowSetMaximized(void)
 {
+	ccAssert(_ccWindow);
+	ccAssert(GD->win);
+
+	// We can't force to resize the window when it's not resizable
+	if(GD->flags & CC_WINDOW_FLAG_NORESIZE){
+		gtk_window_set_resizable(GTK_WINDOW(GD->win), true);
+	}
+
+	//gtk_window_unfullscreen(GTK_WINDOW(GD->win));
+	gtk_window_maximize(GTK_WINDOW(GD->win));
+
 	return CC_E_NONE;
 }
 
@@ -228,6 +250,11 @@ ccError ccWindowSetTitle(const char *title)
 
 ccError ccWindowSetBlink(void)
 {
+	ccAssert(_ccWindow);
+	ccAssert(GD->win);
+
+	gtk_window_set_urgency_hint(GTK_WINDOW(GD->win), true);
+
 	return CC_E_NONE;
 }
 
@@ -277,6 +304,43 @@ ccError ccWindowMouseSetPosition(ccPoint target)
 
 ccError ccWindowMouseSetCursor(ccCursor cursor)
 {
+	const char *name;
+	switch(cursor){
+		case CC_CURSOR_ARROW:
+			name = "default";
+			break;
+		case CC_CURSOR_CROSS:
+			name = "crosshair";
+			break;
+		case CC_CURSOR_BEAM:
+			name = "text";
+			break;
+		case CC_CURSOR_MOVE:
+			name = "move";
+			break;
+		case CC_CURSOR_HAND:
+			name = "pointer";
+			break;
+		case CC_CURSOR_SIZEH:
+			name = "ew-resize";
+			break;
+		case CC_CURSOR_SIZEV:
+			name = "ns-resize";
+			break;
+		case CC_CURSOR_NO:
+			name = "not-allowed";
+			break;
+		case CC_CURSOR_QUESTION:
+			name = "help";
+			break;
+		case CC_CURSOR_NONE:
+			name = "none";
+			break;
+	}
+
+	GdkCursor *cur = gdk_cursor_new_from_name(gdk_display_get_default(), name);
+	gdk_window_set_cursor(gtk_widget_get_window(GD->win), cur);
+	
 	return CC_E_NONE;
 }
 
