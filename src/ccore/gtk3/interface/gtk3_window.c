@@ -363,10 +363,16 @@ ccError ccWindowFramebufferFree()
 
 ccError ccWindowClipboardSet(const char *data)
 {
+	GtkClipboard *clip = gtk_clipboard_get_default(gdk_display_get_default());
+
+	gtk_clipboard_set_text(clip, data, strlen(data));
+
 	return CC_E_NONE;
 }
 
 char *ccWindowClipboardGet(void)
 {
-	return NULL;
+	GtkClipboard *clip = gtk_clipboard_get_default(gdk_display_get_default());
+
+	return gtk_clipboard_wait_for_text(clip);
 }

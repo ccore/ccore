@@ -66,8 +66,14 @@ int main(int argc, char **argv)
 							EXIT_ON_E(ccWindowMouseSetCursor(CC_CURSOR_NONE));
 							break;
 						case 6:
-							EXIT_ON_E(ccWindowSetTitle("ccWindowSetCursor"));
 							EXIT_ON_E(ccWindowMouseSetCursor(CC_CURSOR_ARROW));
+
+							EXIT_ON_E(ccWindowSetTitle("ccWindowClipboardSet"));
+							EXIT_ON_E(ccWindowClipboardSet("ccore window clipboard test"));
+							break;
+						case 7:
+							EXIT_ON_E(ccWindowSetTitle("ccWindowClipboardGet"));
+							printf("Clipboard contents: \"%s\"\n", ccWindowClipboardGet());
 							break;
 						default:
 							cur = -1;
