@@ -224,11 +224,16 @@ ccError ccWindowSetMaximized(void)
 
 	// We can't force to resize the window when it's not resizable
 	if(GD->flags & CC_WINDOW_FLAG_NORESIZE){
+		gtk_widget_hide(GD->win);
 		gtk_window_set_resizable(GTK_WINDOW(GD->win), true);
 	}
 
 	//gtk_window_unfullscreen(GTK_WINDOW(GD->win));
 	gtk_window_maximize(GTK_WINDOW(GD->win));
+
+	if(GD->flags & CC_WINDOW_FLAG_NORESIZE){
+		gtk_widget_show_all(GD->win);
+	}
 
 	return CC_E_NONE;
 }
