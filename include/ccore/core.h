@@ -21,6 +21,8 @@
 
 #ifdef __linux__
 
+#include "config.h"
+
 #define X11
 #define LINUX
 
