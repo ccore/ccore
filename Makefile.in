@@ -129,7 +129,6 @@ DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_HEADER = $(top_builddir)/include/ccore/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
@@ -501,10 +500,8 @@ TEST_LOGS = $(am__test_logs2:.test.log=.log)
 TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/test-driver
 TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
 	$(TEST_LOG_FLAGS)
-am__DIST_COMMON = $(srcdir)/Makefile.in \
-	$(top_srcdir)/include/ccore/config.h.in ar-lib compile \
-	config.guess config.sub depcomp install-sh ltmain.sh missing \
-	test-driver
+am__DIST_COMMON = $(srcdir)/Makefile.in ar-lib compile config.guess \
+	config.sub depcomp install-sh ltmain.sh missing test-driver
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -524,8 +521,6 @@ am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
-
-#ACLOCAL_AMFLAGS = -I m4 --install
 AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/include @DEBUG_FLAG@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
@@ -652,6 +647,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+ACLOCAL_AMFLAGS = -I m4
 pkginclude_HEADERS = include/ccore/assert.h include/ccore/core.h \
 	include/ccore/display.h include/ccore/event.h \
 	include/ccore/file.h include/ccore/gamepad.h \
@@ -720,21 +716,6 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
-
-include/ccore/config.h: include/ccore/stamp-h1
-	@test -f $@ || rm -f include/ccore/stamp-h1
-	@test -f $@ || $(MAKE) $(AM_MAKEFLAGS) include/ccore/stamp-h1
-
-include/ccore/stamp-h1: $(top_srcdir)/include/ccore/config.h.in $(top_builddir)/config.status
-	@rm -f include/ccore/stamp-h1
-	cd $(top_builddir) && $(SHELL) ./config.status include/ccore/config.h
-$(top_srcdir)/include/ccore/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
-	($(am__cd) $(top_srcdir) && $(AUTOHEADER))
-	rm -f include/ccore/stamp-h1
-	touch $@
-
-distclean-hdr:
-	-rm -f include/ccore/config.h include/ccore/stamp-h1
 
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
@@ -1820,7 +1801,7 @@ distclean: distclean-am
 	-rm -rf examples/$(DEPDIR) src/ccore/common/interface/$(DEPDIR) src/ccore/common/utils/$(DEPDIR) src/ccore/gtk3/interface/$(DEPDIR) src/ccore/linux/interface/$(DEPDIR) src/ccore/linux/utils/$(DEPDIR) src/ccore/windows/interface/$(DEPDIR) src/ccore/windows/utils/$(DEPDIR) src/ccore/x11/interface/$(DEPDIR) test/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
-	distclean-hdr distclean-libtool distclean-tags
+	distclean-libtool distclean-tags
 
 dvi: dvi-am
 
@@ -1893,9 +1874,9 @@ uninstall-am: uninstall-binPROGRAMS uninstall-libLTLIBRARIES \
 	cscope cscopelist-am ctags ctags-am dist dist-all dist-bzip2 \
 	dist-gzip dist-lzip dist-shar dist-tarZ dist-xz dist-zip \
 	distcheck distclean distclean-compile distclean-generic \
-	distclean-hdr distclean-libtool distclean-tags distcleancheck \
-	distdir distuninstallcheck dvi dvi-am html html-am info \
-	info-am install install-am install-binPROGRAMS install-data \
+	distclean-libtool distclean-tags distcleancheck distdir \
+	distuninstallcheck dvi dvi-am html html-am info info-am \
+	install install-am install-binPROGRAMS install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
 	install-exec-am install-html install-html-am install-info \
 	install-info-am install-libLTLIBRARIES install-man install-pdf \

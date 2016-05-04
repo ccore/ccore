@@ -1,4 +1,4 @@
-#ACLOCAL_AMFLAGS = -I m4 --install
+ACLOCAL_AMFLAGS = -I m4
 AM_CPPFLAGS += -I$(top_srcdir)/include @DEBUG_FLAG@ 
 
 pkginclude_HEADERS = include/ccore/assert.h

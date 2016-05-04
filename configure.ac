@@ -4,12 +4,13 @@
 AC_PREREQ([2.69])
 AC_INIT([ccore], m4_esyscmd_s([cat VERSION]))
 
-case "${host_os}" in
-	linux*)
-		# Create a custom configuration header
-		AC_CONFIG_HEADER([include/ccore/config.h])
-		;;
-esac
+#AC_CONFIG_AUX_DIR([autotools])
+#case "${host_os}" in
+#	linux*)
+#		# Create a custom configuration header
+#		AC_CONFIG_HEADER([include/ccore/config.h])
+#		;;
+#esac
 
 CCORE_VERSION="$(cat VERSION)"
 AC_SUBST(CCORE_VERSION)

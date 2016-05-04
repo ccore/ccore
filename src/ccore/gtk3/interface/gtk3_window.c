@@ -305,6 +305,16 @@ ccError ccWindowIconSet(ccPoint size, const uint32_t *icon)
 
 ccError ccWindowMouseSetPosition(ccPoint target)
 {
+	GdkDisplay *disp = gdk_display_get_default();
+	GdkDeviceManager *devs = gdk_display_get_device_manager(disp);
+	GdkDevice *pointer = gdk_device_manager_get_client_pointer(devs);
+	GdkScreen *screen = gtk_window_get_screen(GTK_WINDOW(GD->win));
+
+	int x, y;
+	gtk_window_get_position(GTK_WINDOW(GD->win), &x, &y);
+
+	gdk_device_warp(pointer, screen, x + target.x, y + target.y);
+
 	return CC_E_NONE;
 }
 
