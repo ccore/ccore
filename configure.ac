@@ -4,22 +4,14 @@
 AC_PREREQ([2.69])
 AC_INIT([ccore], m4_esyscmd_s([cat VERSION]))
 
-# AC_CANONICAL_HOST is needed to access host_os
-AC_CANONICAL_HOST
-case "${host_os}" in
-	linux*)
-		# Hide all the -DHAVE flags
-		AC_CONFIG_HEADER([/tmp/config.h])
-		;;
-esac
-
 CCORE_VERSION="$(cat VERSION)"
 AC_SUBST(CCORE_VERSION)
 
 # Set the programming language to 'C'
 AC_LANG_C
 
-AM_INIT_AUTOMAKE([foreign subdir-objects nostdinc -Wall -Werror])
+AM_INIT_AUTOMAKE([foreign subdir-objects nostdinc silent-rules -Wall -Werror])
+AM_SILENT_RULES([yes])
 AM_MAINTAINER_MODE([disable])
 AM_PROG_AR
 
@@ -58,13 +50,16 @@ AC_TYPE_UINT8_T
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC 
+
+# AC_CANONICAL_HOST is needed to access host_os
+AC_CANONICAL_HOST
 case "{$host_os}" in
-    cygwin* | mingw32*)
-        ;;
-    *)
-        AC_FUNC_ALLOCA
-        ;;
-    esac
+	cygwin* | mingw32*)
+		;;
+	*)
+		AC_FUNC_ALLOCA
+		;;
+esac
 AC_CHECK_FUNCS([clock_gettime memset select strdup sysinfo])
 
 # Check if we want to build with Gtk3 instead of X11

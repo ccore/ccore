@@ -129,7 +129,6 @@ DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_HEADER = $(top_builddir)//tmp/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
@@ -489,9 +488,8 @@ TEST_LOGS = $(am__test_logs2:.test.log=.log)
 TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/test-driver
 TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
 	$(TEST_LOG_FLAGS)
-am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)//tmp/config.h.in \
-	ar-lib compile config.guess config.sub depcomp install-sh \
-	ltmain.sh missing test-driver
+am__DIST_COMMON = $(srcdir)/Makefile.in ar-lib compile config.guess \
+	config.sub depcomp install-sh ltmain.sh missing test-driver
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -704,21 +702,6 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
-
-/tmp/config.h: /tmp/stamp-h1
-	@test -f $@ || rm -f /tmp/stamp-h1
-	@test -f $@ || $(MAKE) $(AM_MAKEFLAGS) /tmp/stamp-h1
-
-/tmp/stamp-h1: $(top_srcdir)//tmp/config.h.in $(top_builddir)/config.status
-	@rm -f /tmp/stamp-h1
-	cd $(top_builddir) && $(SHELL) ./config.status /tmp/config.h
-$(top_srcdir)//tmp/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
-	($(am__cd) $(top_srcdir) && $(AUTOHEADER))
-	rm -f /tmp/stamp-h1
-	touch $@
-
-distclean-hdr:
-	-rm -f /tmp/config.h /tmp/stamp-h1
 
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
@@ -1559,7 +1542,7 @@ distclean: distclean-am
 	-rm -rf examples/$(DEPDIR) src/ccore/common/interface/$(DEPDIR) src/ccore/common/utils/$(DEPDIR) src/ccore/gtk3/interface/$(DEPDIR) src/ccore/linux/interface/$(DEPDIR) src/ccore/linux/utils/$(DEPDIR) src/ccore/windows/interface/$(DEPDIR) src/ccore/windows/utils/$(DEPDIR) src/ccore/x11/interface/$(DEPDIR) test/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
-	distclean-hdr distclean-libtool distclean-tags
+	distclean-libtool distclean-tags
 
 dvi: dvi-am
 
@@ -1632,9 +1615,9 @@ uninstall-am: uninstall-binPROGRAMS uninstall-libLTLIBRARIES \
 	cscope cscopelist-am ctags ctags-am dist dist-all dist-bzip2 \
 	dist-gzip dist-lzip dist-shar dist-tarZ dist-xz dist-zip \
 	distcheck distclean distclean-compile distclean-generic \
-	distclean-hdr distclean-libtool distclean-tags distcleancheck \
-	distdir distuninstallcheck dvi dvi-am html html-am info \
-	info-am install install-am install-binPROGRAMS install-data \
+	distclean-libtool distclean-tags distcleancheck distdir \
+	distuninstallcheck dvi dvi-am html html-am info info-am \
+	install install-am install-binPROGRAMS install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
 	install-exec-am install-html install-html-am install-info \
 	install-info-am install-libLTLIBRARIES install-man install-pdf \
