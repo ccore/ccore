@@ -632,8 +632,9 @@ ac_unique_file="src/ccore/common/interface/com_display.c"
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
-DEBUG_FLAG
-AM_CPPFLAGS
+EXTRA_CPPFLAGS
+EXTRA_CFLAGS
+EXTRA_LDFLAGS
 BUILD_EXAMPLES_FALSE
 BUILD_EXAMPLES_TRUE
 BUILD_TESTS_FALSE
@@ -649,6 +650,7 @@ BUILD_LINUX_TRUE
 GTK_LIBS
 GTK_CFLAGS
 XMKMF
+ALLOCA
 LIBOBJS
 CHECK_LIBS
 CHECK_CFLAGS
@@ -664,8 +666,6 @@ NMEDIT
 DSYMUTIL
 MANIFEST_TOOL
 RANLIB
-DLLTOOL
-OBJDUMP
 LN_S
 NM
 ac_ct_DUMPBIN
@@ -675,15 +675,10 @@ FGREP
 EGREP
 GREP
 SED
-host_os
-host_vendor
-host_cpu
-host
-build_os
-build_vendor
-build_cpu
-build
 LIBTOOL
+OBJDUMP
+DLLTOOL
+AS
 am__fastdepCC_FALSE
 am__fastdepCC_TRUE
 CCDEPMODE
@@ -734,6 +729,14 @@ INSTALL_DATA
 INSTALL_SCRIPT
 INSTALL_PROGRAM
 CCORE_VERSION
+host_os
+host_vendor
+host_cpu
+host
+build_os
+build_vendor
+build_cpu
+build
 target_alias
 host_alias
 build_alias
@@ -2462,27 +2465,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-#AC_CONFIG_AUX_DIR([autotools])
-#case "${host_os}" in
-#	linux*)
-#		# Create a custom configuration header
-#		AC_CONFIG_HEADER([include/ccore/config.h])
-#		;;
-#esac
-
-CCORE_VERSION="$(cat VERSION)"
-
-
-# Set the programming language to 'C'
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-
-am__api_version='1.15'
-
+# AC_CANONICAL_HOST is needed to access host_os
 ac_aux_dir=
 for ac_dir in "$srcdir" "$srcdir/.." "$srcdir/../.."; do
   if test -f "$ac_dir/install-sh"; then
@@ -2511,6 +2494,98 @@ ac_config_guess="$SHELL $ac_aux_dir/config.guess"  # Please don't use this var.
 ac_config_sub="$SHELL $ac_aux_dir/config.sub"  # Please don't use this var.
 ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
+
+# Make sure we can run config.sub.
+$SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
+  as_fn_error $? "cannot run $SHELL $ac_aux_dir/config.sub" "$LINENO" 5
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking build system type" >&5
+$as_echo_n "checking build system type... " >&6; }
+if ${ac_cv_build+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_build_alias=$build_alias
+test "x$ac_build_alias" = x &&
+  ac_build_alias=`$SHELL "$ac_aux_dir/config.guess"`
+test "x$ac_build_alias" = x &&
+  as_fn_error $? "cannot guess build type; you must specify one" "$LINENO" 5
+ac_cv_build=`$SHELL "$ac_aux_dir/config.sub" $ac_build_alias` ||
+  as_fn_error $? "$SHELL $ac_aux_dir/config.sub $ac_build_alias failed" "$LINENO" 5
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_build" >&5
+$as_echo "$ac_cv_build" >&6; }
+case $ac_cv_build in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical build" "$LINENO" 5;;
+esac
+build=$ac_cv_build
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_build
+shift
+build_cpu=$1
+build_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+build_os=$*
+IFS=$ac_save_IFS
+case $build_os in *\ *) build_os=`echo "$build_os" | sed 's/ /-/g'`;; esac
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking host system type" >&5
+$as_echo_n "checking host system type... " >&6; }
+if ${ac_cv_host+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$host_alias" = x; then
+  ac_cv_host=$ac_cv_build
+else
+  ac_cv_host=`$SHELL "$ac_aux_dir/config.sub" $host_alias` ||
+    as_fn_error $? "$SHELL $ac_aux_dir/config.sub $host_alias failed" "$LINENO" 5
+fi
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_host" >&5
+$as_echo "$ac_cv_host" >&6; }
+case $ac_cv_host in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical host" "$LINENO" 5;;
+esac
+host=$ac_cv_host
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_host
+shift
+host_cpu=$1
+host_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+host_os=$*
+IFS=$ac_save_IFS
+case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
+
+
+case "${host_os}" in
+	linux*)
+		# Hide all the -DHAVE flags
+		ac_config_headers="$ac_config_headers /tmp/config.h"
+
+		;;
+esac
+
+CCORE_VERSION="$(cat VERSION)"
+
+
+# Set the programming language to 'C'
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+
+am__api_version='1.15'
 
 # Find a good install program.  We prefer a C program (faster),
 # so one script is as good as another.  But avoid the broken or
@@ -4350,77 +4425,6 @@ macro_revision='2.4.6'
 
 ltmain=$ac_aux_dir/ltmain.sh
 
-# Make sure we can run config.sub.
-$SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
-  as_fn_error $? "cannot run $SHELL $ac_aux_dir/config.sub" "$LINENO" 5
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking build system type" >&5
-$as_echo_n "checking build system type... " >&6; }
-if ${ac_cv_build+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_build_alias=$build_alias
-test "x$ac_build_alias" = x &&
-  ac_build_alias=`$SHELL "$ac_aux_dir/config.guess"`
-test "x$ac_build_alias" = x &&
-  as_fn_error $? "cannot guess build type; you must specify one" "$LINENO" 5
-ac_cv_build=`$SHELL "$ac_aux_dir/config.sub" $ac_build_alias` ||
-  as_fn_error $? "$SHELL $ac_aux_dir/config.sub $ac_build_alias failed" "$LINENO" 5
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_build" >&5
-$as_echo "$ac_cv_build" >&6; }
-case $ac_cv_build in
-*-*-*) ;;
-*) as_fn_error $? "invalid value of canonical build" "$LINENO" 5;;
-esac
-build=$ac_cv_build
-ac_save_IFS=$IFS; IFS='-'
-set x $ac_cv_build
-shift
-build_cpu=$1
-build_vendor=$2
-shift; shift
-# Remember, the first character of IFS is used to create $*,
-# except with old shells:
-build_os=$*
-IFS=$ac_save_IFS
-case $build_os in *\ *) build_os=`echo "$build_os" | sed 's/ /-/g'`;; esac
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking host system type" >&5
-$as_echo_n "checking host system type... " >&6; }
-if ${ac_cv_host+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  if test "x$host_alias" = x; then
-  ac_cv_host=$ac_cv_build
-else
-  ac_cv_host=`$SHELL "$ac_aux_dir/config.sub" $host_alias` ||
-    as_fn_error $? "$SHELL $ac_aux_dir/config.sub $host_alias failed" "$LINENO" 5
-fi
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_host" >&5
-$as_echo "$ac_cv_host" >&6; }
-case $ac_cv_host in
-*-*-*) ;;
-*) as_fn_error $? "invalid value of canonical host" "$LINENO" 5;;
-esac
-host=$ac_cv_host
-ac_save_IFS=$IFS; IFS='-'
-set x $ac_cv_host
-shift
-host_cpu=$1
-host_vendor=$2
-shift; shift
-# Remember, the first character of IFS is used to create $*,
-# except with old shells:
-host_os=$*
-IFS=$ac_save_IFS
-case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
-
-
 # Backslashify metacharacters that are still active within
 # double-quoted strings.
 sed_quote_subst='s/\(["`$\\]\)/\\\1/g'
@@ -5509,9 +5513,6 @@ test -z "$OBJDUMP" && OBJDUMP=objdump
 
 
 
-
-
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking how to recognize dependent libraries" >&5
 $as_echo_n "checking how to recognize dependent libraries... " >&6; }
 if ${lt_cv_deplibs_check_method+:} false; then :
@@ -5847,9 +5848,6 @@ else
 fi
 
 test -z "$DLLTOOL" && DLLTOOL=dlltool
-
-
-
 
 
 
@@ -8098,13 +8096,311 @@ done
 
 
 # Set options
+enable_win32_dll=yes
+
+case $host in
+*-*-cygwin* | *-*-mingw* | *-*-pw32* | *-*-cegcc*)
+  if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}as", so it can be a program name with args.
+set dummy ${ac_tool_prefix}as; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_AS+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$AS"; then
+  ac_cv_prog_AS="$AS" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_AS="${ac_tool_prefix}as"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+AS=$ac_cv_prog_AS
+if test -n "$AS"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $AS" >&5
+$as_echo "$AS" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_prog_AS"; then
+  ac_ct_AS=$AS
+  # Extract the first word of "as", so it can be a program name with args.
+set dummy as; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_ac_ct_AS+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_AS"; then
+  ac_cv_prog_ac_ct_AS="$ac_ct_AS" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_ac_ct_AS="as"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_AS=$ac_cv_prog_ac_ct_AS
+if test -n "$ac_ct_AS"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_ct_AS" >&5
+$as_echo "$ac_ct_AS" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_ct_AS" = x; then
+    AS="false"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    AS=$ac_ct_AS
+  fi
+else
+  AS="$ac_cv_prog_AS"
+fi
+
+  if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}dlltool", so it can be a program name with args.
+set dummy ${ac_tool_prefix}dlltool; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_DLLTOOL+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$DLLTOOL"; then
+  ac_cv_prog_DLLTOOL="$DLLTOOL" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_DLLTOOL="${ac_tool_prefix}dlltool"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+DLLTOOL=$ac_cv_prog_DLLTOOL
+if test -n "$DLLTOOL"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $DLLTOOL" >&5
+$as_echo "$DLLTOOL" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_prog_DLLTOOL"; then
+  ac_ct_DLLTOOL=$DLLTOOL
+  # Extract the first word of "dlltool", so it can be a program name with args.
+set dummy dlltool; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_ac_ct_DLLTOOL+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_DLLTOOL"; then
+  ac_cv_prog_ac_ct_DLLTOOL="$ac_ct_DLLTOOL" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_ac_ct_DLLTOOL="dlltool"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_DLLTOOL=$ac_cv_prog_ac_ct_DLLTOOL
+if test -n "$ac_ct_DLLTOOL"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_ct_DLLTOOL" >&5
+$as_echo "$ac_ct_DLLTOOL" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_ct_DLLTOOL" = x; then
+    DLLTOOL="false"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    DLLTOOL=$ac_ct_DLLTOOL
+  fi
+else
+  DLLTOOL="$ac_cv_prog_DLLTOOL"
+fi
+
+  if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}objdump", so it can be a program name with args.
+set dummy ${ac_tool_prefix}objdump; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_OBJDUMP+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$OBJDUMP"; then
+  ac_cv_prog_OBJDUMP="$OBJDUMP" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_OBJDUMP="${ac_tool_prefix}objdump"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+OBJDUMP=$ac_cv_prog_OBJDUMP
+if test -n "$OBJDUMP"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $OBJDUMP" >&5
+$as_echo "$OBJDUMP" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_prog_OBJDUMP"; then
+  ac_ct_OBJDUMP=$OBJDUMP
+  # Extract the first word of "objdump", so it can be a program name with args.
+set dummy objdump; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_ac_ct_OBJDUMP+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_OBJDUMP"; then
+  ac_cv_prog_ac_ct_OBJDUMP="$ac_ct_OBJDUMP" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_ac_ct_OBJDUMP="objdump"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_OBJDUMP=$ac_cv_prog_ac_ct_OBJDUMP
+if test -n "$ac_ct_OBJDUMP"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_ct_OBJDUMP" >&5
+$as_echo "$ac_ct_OBJDUMP" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_ct_OBJDUMP" = x; then
+    OBJDUMP="false"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    OBJDUMP=$ac_ct_OBJDUMP
+  fi
+else
+  OBJDUMP="$ac_cv_prog_OBJDUMP"
+fi
+
+  ;;
+esac
+
+test -z "$AS" && AS=as
+
+
+
+
+
+test -z "$DLLTOOL" && DLLTOOL=dlltool
+
+
+
+
+
+test -z "$OBJDUMP" && OBJDUMP=objdump
+
+
+
+
 
 
 
         enable_dlopen=no
 
-
-  enable_win32_dll=no
 
 
             # Check whether --enable-shared was given.
@@ -14039,6 +14335,198 @@ $as_echo "#define realloc rpl_realloc" >>confdefs.h
 fi
 
 
+case "{$host_os}" in
+    cygwin* | mingw32*)
+        ;;
+    *)
+        # The Ultrix 4.2 mips builtin alloca declared by alloca.h only works
+# for constant arguments.  Useless!
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for working alloca.h" >&5
+$as_echo_n "checking for working alloca.h... " >&6; }
+if ${ac_cv_working_alloca_h+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <alloca.h>
+int
+main ()
+{
+char *p = (char *) alloca (2 * sizeof (int));
+			  if (p) return 0;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_working_alloca_h=yes
+else
+  ac_cv_working_alloca_h=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_working_alloca_h" >&5
+$as_echo "$ac_cv_working_alloca_h" >&6; }
+if test $ac_cv_working_alloca_h = yes; then
+
+$as_echo "#define HAVE_ALLOCA_H 1" >>confdefs.h
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for alloca" >&5
+$as_echo_n "checking for alloca... " >&6; }
+if ${ac_cv_func_alloca_works+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#ifdef __GNUC__
+# define alloca __builtin_alloca
+#else
+# ifdef _MSC_VER
+#  include <malloc.h>
+#  define alloca _alloca
+# else
+#  ifdef HAVE_ALLOCA_H
+#   include <alloca.h>
+#  else
+#   ifdef _AIX
+ #pragma alloca
+#   else
+#    ifndef alloca /* predefined by HP cc +Olibcalls */
+void *alloca (size_t);
+#    endif
+#   endif
+#  endif
+# endif
+#endif
+
+int
+main ()
+{
+char *p = (char *) alloca (1);
+				    if (p) return 0;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_func_alloca_works=yes
+else
+  ac_cv_func_alloca_works=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_func_alloca_works" >&5
+$as_echo "$ac_cv_func_alloca_works" >&6; }
+
+if test $ac_cv_func_alloca_works = yes; then
+
+$as_echo "#define HAVE_ALLOCA 1" >>confdefs.h
+
+else
+  # The SVR3 libPW and SVR4 libucb both contain incompatible functions
+# that cause trouble.  Some versions do not even contain alloca or
+# contain a buggy version.  If you still want to use their alloca,
+# use ar to extract alloca.o from them instead of compiling alloca.c.
+
+ALLOCA=\${LIBOBJDIR}alloca.$ac_objext
+
+$as_echo "#define C_ALLOCA 1" >>confdefs.h
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether \`alloca.c' needs Cray hooks" >&5
+$as_echo_n "checking whether \`alloca.c' needs Cray hooks... " >&6; }
+if ${ac_cv_os_cray+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#if defined CRAY && ! defined CRAY2
+webecray
+#else
+wenotbecray
+#endif
+
+_ACEOF
+if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
+  $EGREP "webecray" >/dev/null 2>&1; then :
+  ac_cv_os_cray=yes
+else
+  ac_cv_os_cray=no
+fi
+rm -f conftest*
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_os_cray" >&5
+$as_echo "$ac_cv_os_cray" >&6; }
+if test $ac_cv_os_cray = yes; then
+  for ac_func in _getb67 GETB67 getb67; do
+    as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
+if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+
+cat >>confdefs.h <<_ACEOF
+#define CRAY_STACKSEG_END $ac_func
+_ACEOF
+
+    break
+fi
+
+  done
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking stack direction for C alloca" >&5
+$as_echo_n "checking stack direction for C alloca... " >&6; }
+if ${ac_cv_c_stack_direction+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test "$cross_compiling" = yes; then :
+  ac_cv_c_stack_direction=0
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+$ac_includes_default
+int
+find_stack_direction (int *addr, int depth)
+{
+  int dir, dummy = 0;
+  if (! addr)
+    addr = &dummy;
+  *addr = addr < &dummy ? 1 : addr == &dummy ? 0 : -1;
+  dir = depth ? find_stack_direction (addr, depth - 1) : 0;
+  return dir + dummy;
+}
+
+int
+main (int argc, char **argv)
+{
+  return find_stack_direction (0, argc + !argv + 20) < 0;
+}
+_ACEOF
+if ac_fn_c_try_run "$LINENO"; then :
+  ac_cv_c_stack_direction=1
+else
+  ac_cv_c_stack_direction=-1
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_c_stack_direction" >&5
+$as_echo "$ac_cv_c_stack_direction" >&6; }
+cat >>confdefs.h <<_ACEOF
+#define STACK_DIRECTION $ac_cv_c_stack_direction
+_ACEOF
+
+
+fi
+
+        ;;
+    esac
 for ac_func in clock_gettime memset select strdup sysinfo
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
@@ -14071,9 +14559,15 @@ build_examples=yes
 SUMMARY="Configuration summary\n"
 SUMMARY="${SUMMARY}ccore version: ${CCORE_VERSION}\n"
 
+EXTRA_LDFLAGS="$BASE_LDFLAGS"
+EXTRA_CFLAGS="$BASE_CFLAGS"
+EXTRA_CPPFLAGS="-I$srcdir/include"
+
 CheckX11()
 {
-	# Check for X11 libraries
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking X11" >&5
+$as_echo_n "checking X11... " >&6; }
+
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for XOpenDisplay in -lX11" >&5
 $as_echo_n "checking for XOpenDisplay in -lX11... " >&6; }
 if ${ac_cv_lib_X11_XOpenDisplay+:} false; then :
@@ -14502,14 +14996,20 @@ else
 $as_echo "libraries $x_libraries, headers $x_includes" >&6; }
 fi
 
+	EXTRA_CFLAGS="$EXTRA_CFLAGS $X_CFLAGS"
+	EXTRA_LDFLAGS="$EXTRA_LDFLAGS $X_LIBS"
 
 	build_x11=yes
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $build_x11" >&5
+$as_echo "$build_x11" >&6; }
 	SUMMARY="${SUMMARY}Using X11 to handle window and input functions\n"
 }
 
 CheckGTK3()
 {
-	# Check for X11 libraries
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking GTK3" >&5
+$as_echo_n "checking GTK3... " >&6; }
+
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gtk_application_new in -lgtk-3" >&5
 $as_echo_n "checking for gtk_application_new in -lgtk-3... " >&6; }
 if ${ac_cv_lib_gtk_3_gtk_application_new+:} false; then :
@@ -14628,44 +15128,16 @@ else
 $as_echo "yes" >&6; }
 
 fi
-
-
+	EXTRA_CFLAGS="$EXTRA_CFLAGS $GTK_CFLAGS"
+	EXTRA_LDFLAGS="$EXTRA_LDFLAGS $GTK_LIBS"
 
 	build_gtk3=yes
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $build_gtk3" >&5
+$as_echo "$build_gtk3" >&6; }
 	SUMMARY="${SUMMARY}Using GTK3 to handle window and input functions\n"
 }
 
-CheckWindows()
-{
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking Windows compiler" >&5
-$as_echo_n "checking Windows compiler... " >&6; }
-	have_win32_gcc=no
-	cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-"#include <windows.h>"
-int
-main ()
-{
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  have_win32_gcc=yes
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $have_win32_gcc" >&5
-$as_echo "$have_win32_gcc" >&6; }
-  if test x$have_win32_gcc != xyes; then
-  	as_fn_error $? "\"Your compiler ($CC) does not produce Windows executables!\"" "$LINENO" 5
-	fi
-
-	build_windows=yes
-}
-
 # AC_CANONICAL_HOST is needed to acces the 'host_os' variable
-
 SUMMARY="${SUMMARY}Target host: ${host_os}\n"
 case "${host_os}" in
 	linux*)
@@ -14738,8 +15210,70 @@ fi
 			CheckX11
 		fi
 		;;
-	mingw*)
-		CheckWindows
+	mingw* | cygwin*)
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking Windows compatibility" >&5
+$as_echo_n "checking Windows compatibility... " >&6; }
+		cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+"#include <windows.h>"
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  echo "The compiler ($CC) could not build the windows header files" && exit -1
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+		EXTRA_LDFLAGS="$EXTRA_LDFLAGS -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion $LIBUUID -static-libgcc"
+
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lmingw32" >&5
+$as_echo_n "checking for main in -lmingw32... " >&6; }
+if ${ac_cv_lib_mingw32_main+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lmingw32  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_mingw32_main=yes
+else
+  ac_cv_lib_mingw32_main=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_mingw32_main" >&5
+$as_echo "$ac_cv_lib_mingw32_main" >&6; }
+if test "x$ac_cv_lib_mingw32_main" = xyes; then :
+  have_mingw32=yes
+fi
+
+		if test x$have_mingw32 = xyes; then
+			EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lmingw32"
+		else
+			EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lcygwin"
+		fi
+
+		build_windows=yes
 		;;
 	*)
 		as_fn_error $? "\"OS $host_os is not supported\"" "$LINENO" 5
@@ -14798,6 +15332,16 @@ else
 fi
 
 
+if test x$have_check != xyes; then
+
+$as_echo "#define HAVE_CHECK 1" >>confdefs.h
+
+	EXTRA_CFLAGS="$EXTRA_CFLAGS $CHECK_CFLAGS"
+	EXTRA_LDFLAGS="$EXTRA_LDFLAGS $CHECK_LIBS"
+	SUMMARY="${SUMMARY}Not building tests (test/test.c) because the 'check' package could not be found\n"
+	SUMMARY="${SUMMARY}Please install the check package to be able to run the tests\n"
+fi
+
 # The library automatically includes all modules, change this if it is unwanted
 # Check whether --enable-all-modules was given.
 if test "${enable_all_modules+set}" = set; then :
@@ -14805,8 +15349,7 @@ if test "${enable_all_modules+set}" = set; then :
 fi
 
 if test x$disable_all_modules != xyes; then
-	AM_CPPFLAGS="-DCC_USE_ALL"
-
+	EXTRA_CPPFLAGS="$EXTRA_CPPFLAGS -DCC_USE_ALL"
 	SUMMARY="${SUMMARY}Enabling all ccore modules (#define CC_USE_ALL)\n"
 fi
 # Check if we want to build ccore with the debug flag
@@ -14818,18 +15361,13 @@ else
 fi
 
 if test x$enable_debug = xyes; then
-	DEBUG_FLAG="-D_DEBUG"
-
+	EXTRA_CPPFLAGS="$EXTRA_CPPFLAGS -D_DEBUG"
 	SUMMARY="${SUMMARY}Building the library with assertions and other options (#define _DEBUG)\n"
 fi
 
-if test x$have_check != xyes; then
 
-$as_echo "#define HAVE_CHECK 1" >>confdefs.h
 
-	SUMMARY="${SUMMARY}Not building tests (test/test.c) because the 'check' package could not be found\n"
-	SUMMARY="${SUMMARY}Please install the check package to be able to run the tests\n"
-fi
+
 
 # Check if the source files are in the right location
 
@@ -14932,43 +15470,7 @@ test "x$prefix" = xNONE && prefix=$ac_default_prefix
 # Let make expand exec_prefix.
 test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
-# Transform confdefs.h into DEFS.
-# Protect against shell expansion while executing Makefile rules.
-# Protect against Makefile macro expansion.
-#
-# If the first sed substitution is executed (which looks for macros that
-# take arguments), then branch to the quote section.  Otherwise,
-# look for a macro that doesn't take arguments.
-ac_script='
-:mline
-/\\$/{
- N
- s,\\\n,,
- b mline
-}
-t clear
-:clear
-s/^[	 ]*#[	 ]*define[	 ][	 ]*\([^	 (][^	 (]*([^)]*)\)[	 ]*\(.*\)/-D\1=\2/g
-t quote
-s/^[	 ]*#[	 ]*define[	 ][	 ]*\([^	 ][^	 ]*\)[	 ]*\(.*\)/-D\1=\2/g
-t quote
-b any
-:quote
-s/[	 `~#$^&*(){}\\|;'\''"<>?]/\\&/g
-s/\[/\\&/g
-s/\]/\\&/g
-s/\$/$$/g
-H
-:any
-${
-	g
-	s/^\n//
-	s/\n/ /g
-	p
-}
-'
-DEFS=`sed -n "$ac_script" confdefs.h`
-
+DEFS=-DHAVE_CONFIG_H
 
 ac_libobjs=
 ac_ltlibobjs=
@@ -15458,11 +15960,15 @@ case $ac_config_files in *"
 "*) set x $ac_config_files; shift; ac_config_files=$*;;
 esac
 
+case $ac_config_headers in *"
+"*) set x $ac_config_headers; shift; ac_config_headers=$*;;
+esac
 
 
 cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
 # Files that config.status was made for.
 config_files="$ac_config_files"
+config_headers="$ac_config_headers"
 config_commands="$ac_config_commands"
 
 _ACEOF
@@ -15484,9 +15990,14 @@ Usage: $0 [OPTION]... [TAG]...
       --recheck    update $as_me by reconfiguring in the same conditions
       --file=FILE[:TEMPLATE]
                    instantiate the configuration file FILE
+      --header=FILE[:TEMPLATE]
+                   instantiate the configuration header FILE
 
 Configuration files:
 $config_files
+
+Configuration headers:
+$config_headers
 
 Configuration commands:
 $config_commands
@@ -15554,7 +16065,18 @@ do
     esac
     as_fn_append CONFIG_FILES " '$ac_optarg'"
     ac_need_defaults=false;;
-  --he | --h |  --help | --hel | -h )
+  --header | --heade | --head | --hea )
+    $ac_shift
+    case $ac_optarg in
+    *\'*) ac_optarg=`$as_echo "$ac_optarg" | sed "s/'/'\\\\\\\\''/g"` ;;
+    esac
+    as_fn_append CONFIG_HEADERS " '$ac_optarg'"
+    ac_need_defaults=false;;
+  --he | --h)
+    # Conflict between --help and --header
+    as_fn_error $? "ambiguous option: \`$1'
+Try \`$0 --help' for more information.";;
+  --help | --hel | -h )
     $as_echo "$ac_cs_usage"; exit ;;
   -q | -quiet | --quiet | --quie | --qui | --qu | --q \
   | -silent | --silent | --silen | --sile | --sil | --si | --s)
@@ -15617,6 +16139,9 @@ double_quote_subst='$double_quote_subst'
 delay_variable_subst='$delay_variable_subst'
 macro_version='`$ECHO "$macro_version" | $SED "$delay_single_quote_subst"`'
 macro_revision='`$ECHO "$macro_revision" | $SED "$delay_single_quote_subst"`'
+AS='`$ECHO "$AS" | $SED "$delay_single_quote_subst"`'
+DLLTOOL='`$ECHO "$DLLTOOL" | $SED "$delay_single_quote_subst"`'
+OBJDUMP='`$ECHO "$OBJDUMP" | $SED "$delay_single_quote_subst"`'
 enable_shared='`$ECHO "$enable_shared" | $SED "$delay_single_quote_subst"`'
 enable_static='`$ECHO "$enable_static" | $SED "$delay_single_quote_subst"`'
 pic_mode='`$ECHO "$pic_mode" | $SED "$delay_single_quote_subst"`'
@@ -15649,12 +16174,10 @@ lt_cv_to_host_file_cmd='`$ECHO "$lt_cv_to_host_file_cmd" | $SED "$delay_single_q
 lt_cv_to_tool_file_cmd='`$ECHO "$lt_cv_to_tool_file_cmd" | $SED "$delay_single_quote_subst"`'
 reload_flag='`$ECHO "$reload_flag" | $SED "$delay_single_quote_subst"`'
 reload_cmds='`$ECHO "$reload_cmds" | $SED "$delay_single_quote_subst"`'
-OBJDUMP='`$ECHO "$OBJDUMP" | $SED "$delay_single_quote_subst"`'
 deplibs_check_method='`$ECHO "$deplibs_check_method" | $SED "$delay_single_quote_subst"`'
 file_magic_cmd='`$ECHO "$file_magic_cmd" | $SED "$delay_single_quote_subst"`'
 file_magic_glob='`$ECHO "$file_magic_glob" | $SED "$delay_single_quote_subst"`'
 want_nocaseglob='`$ECHO "$want_nocaseglob" | $SED "$delay_single_quote_subst"`'
-DLLTOOL='`$ECHO "$DLLTOOL" | $SED "$delay_single_quote_subst"`'
 sharedlib_from_linklib_cmd='`$ECHO "$sharedlib_from_linklib_cmd" | $SED "$delay_single_quote_subst"`'
 AR='`$ECHO "$AR" | $SED "$delay_single_quote_subst"`'
 AR_FLAGS='`$ECHO "$AR_FLAGS" | $SED "$delay_single_quote_subst"`'
@@ -15764,7 +16287,10 @@ _LTECHO_EOF'
 }
 
 # Quote evaled strings.
-for var in SHELL \
+for var in AS \
+DLLTOOL \
+OBJDUMP \
+SHELL \
 ECHO \
 PATH_SEPARATOR \
 SED \
@@ -15777,12 +16303,10 @@ LN_S \
 lt_SP2NL \
 lt_NL2SP \
 reload_flag \
-OBJDUMP \
 deplibs_check_method \
 file_magic_cmd \
 file_magic_glob \
 want_nocaseglob \
-DLLTOOL \
 sharedlib_from_linklib_cmd \
 AR \
 AR_FLAGS \
@@ -15899,6 +16423,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
 for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
+    "/tmp/config.h") CONFIG_HEADERS="$CONFIG_HEADERS /tmp/config.h" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
@@ -15915,6 +16440,7 @@ done
 # bizarre bug on SunOS 4.1.3.
 if $ac_need_defaults; then
   test "${CONFIG_FILES+set}" = set || CONFIG_FILES=$config_files
+  test "${CONFIG_HEADERS+set}" = set || CONFIG_HEADERS=$config_headers
   test "${CONFIG_COMMANDS+set}" = set || CONFIG_COMMANDS=$config_commands
 fi
 
@@ -16103,8 +16629,116 @@ fi
 cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
 fi # test -n "$CONFIG_FILES"
 
+# Set up the scripts for CONFIG_HEADERS section.
+# No need to generate them if there are no CONFIG_HEADERS.
+# This happens for instance with `./config.status Makefile'.
+if test -n "$CONFIG_HEADERS"; then
+cat >"$ac_tmp/defines.awk" <<\_ACAWK ||
+BEGIN {
+_ACEOF
 
-eval set X "  :F $CONFIG_FILES      :C $CONFIG_COMMANDS"
+# Transform confdefs.h into an awk script `defines.awk', embedded as
+# here-document in config.status, that substitutes the proper values into
+# config.h.in to produce config.h.
+
+# Create a delimiter string that does not exist in confdefs.h, to ease
+# handling of long lines.
+ac_delim='%!_!# '
+for ac_last_try in false false :; do
+  ac_tt=`sed -n "/$ac_delim/p" confdefs.h`
+  if test -z "$ac_tt"; then
+    break
+  elif $ac_last_try; then
+    as_fn_error $? "could not make $CONFIG_HEADERS" "$LINENO" 5
+  else
+    ac_delim="$ac_delim!$ac_delim _$ac_delim!! "
+  fi
+done
+
+# For the awk script, D is an array of macro values keyed by name,
+# likewise P contains macro parameters if any.  Preserve backslash
+# newline sequences.
+
+ac_word_re=[_$as_cr_Letters][_$as_cr_alnum]*
+sed -n '
+s/.\{148\}/&'"$ac_delim"'/g
+t rset
+:rset
+s/^[	 ]*#[	 ]*define[	 ][	 ]*/ /
+t def
+d
+:def
+s/\\$//
+t bsnl
+s/["\\]/\\&/g
+s/^ \('"$ac_word_re"'\)\(([^()]*)\)[	 ]*\(.*\)/P["\1"]="\2"\
+D["\1"]=" \3"/p
+s/^ \('"$ac_word_re"'\)[	 ]*\(.*\)/D["\1"]=" \2"/p
+d
+:bsnl
+s/["\\]/\\&/g
+s/^ \('"$ac_word_re"'\)\(([^()]*)\)[	 ]*\(.*\)/P["\1"]="\2"\
+D["\1"]=" \3\\\\\\n"\\/p
+t cont
+s/^ \('"$ac_word_re"'\)[	 ]*\(.*\)/D["\1"]=" \2\\\\\\n"\\/p
+t cont
+d
+:cont
+n
+s/.\{148\}/&'"$ac_delim"'/g
+t clear
+:clear
+s/\\$//
+t bsnlc
+s/["\\]/\\&/g; s/^/"/; s/$/"/p
+d
+:bsnlc
+s/["\\]/\\&/g; s/^/"/; s/$/\\\\\\n"\\/p
+b cont
+' <confdefs.h | sed '
+s/'"$ac_delim"'/"\\\
+"/g' >>$CONFIG_STATUS || ac_write_fail=1
+
+cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
+  for (key in D) D_is_set[key] = 1
+  FS = ""
+}
+/^[\t ]*#[\t ]*(define|undef)[\t ]+$ac_word_re([\t (]|\$)/ {
+  line = \$ 0
+  split(line, arg, " ")
+  if (arg[1] == "#") {
+    defundef = arg[2]
+    mac1 = arg[3]
+  } else {
+    defundef = substr(arg[1], 2)
+    mac1 = arg[2]
+  }
+  split(mac1, mac2, "(") #)
+  macro = mac2[1]
+  prefix = substr(line, 1, index(line, defundef) - 1)
+  if (D_is_set[macro]) {
+    # Preserve the white space surrounding the "#".
+    print prefix "define", macro P[macro] D[macro]
+    next
+  } else {
+    # Replace #undef with comments.  This is necessary, for example,
+    # in the case of _POSIX_SOURCE, which is predefined and required
+    # on some systems where configure will not decide to define it.
+    if (defundef == "undef") {
+      print "/*", prefix defundef, macro, "*/"
+      next
+    }
+  }
+}
+{ print }
+_ACAWK
+_ACEOF
+cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
+  as_fn_error $? "could not setup config headers machinery" "$LINENO" 5
+fi # test -n "$CONFIG_HEADERS"
+
+
+eval set X "  :F $CONFIG_FILES  :H $CONFIG_HEADERS    :C $CONFIG_COMMANDS"
 shift
 for ac_tag
 do
@@ -16323,7 +16957,64 @@ which seems to be undefined.  Please make sure it is defined" >&2;}
   esac \
   || as_fn_error $? "could not create $ac_file" "$LINENO" 5
  ;;
-
+  :H)
+  #
+  # CONFIG_HEADER
+  #
+  if test x"$ac_file" != x-; then
+    {
+      $as_echo "/* $configure_input  */" \
+      && eval '$AWK -f "$ac_tmp/defines.awk"' "$ac_file_inputs"
+    } >"$ac_tmp/config.h" \
+      || as_fn_error $? "could not create $ac_file" "$LINENO" 5
+    if diff "$ac_file" "$ac_tmp/config.h" >/dev/null 2>&1; then
+      { $as_echo "$as_me:${as_lineno-$LINENO}: $ac_file is unchanged" >&5
+$as_echo "$as_me: $ac_file is unchanged" >&6;}
+    else
+      rm -f "$ac_file"
+      mv "$ac_tmp/config.h" "$ac_file" \
+	|| as_fn_error $? "could not create $ac_file" "$LINENO" 5
+    fi
+  else
+    $as_echo "/* $configure_input  */" \
+      && eval '$AWK -f "$ac_tmp/defines.awk"' "$ac_file_inputs" \
+      || as_fn_error $? "could not create -" "$LINENO" 5
+  fi
+# Compute "$ac_file"'s index in $config_headers.
+_am_arg="$ac_file"
+_am_stamp_count=1
+for _am_header in $config_headers :; do
+  case $_am_header in
+    $_am_arg | $_am_arg:* )
+      break ;;
+    * )
+      _am_stamp_count=`expr $_am_stamp_count + 1` ;;
+  esac
+done
+echo "timestamp for $_am_arg" >`$as_dirname -- "$_am_arg" ||
+$as_expr X"$_am_arg" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
+	 X"$_am_arg" : 'X\(//\)[^/]' \| \
+	 X"$_am_arg" : 'X\(//\)$' \| \
+	 X"$_am_arg" : 'X\(/\)' \| . 2>/dev/null ||
+$as_echo X"$_am_arg" |
+    sed '/^X\(.*[^/]\)\/\/*[^/][^/]*\/*$/{
+	    s//\1/
+	    q
+	  }
+	  /^X\(\/\/\)[^/].*/{
+	    s//\1/
+	    q
+	  }
+	  /^X\(\/\/\)$/{
+	    s//\1/
+	    q
+	  }
+	  /^X\(\/\).*/{
+	    s//\1/
+	    q
+	  }
+	  s/.*/./; q'`/stamp-h$_am_stamp_count
+ ;;
 
   :C)  { $as_echo "$as_me:${as_lineno-$LINENO}: executing $ac_file commands" >&5
 $as_echo "$as_me: executing $ac_file commands" >&6;}
@@ -16481,6 +17172,15 @@ available_tags=''
 macro_version=$macro_version
 macro_revision=$macro_revision
 
+# Assembler program.
+AS=$lt_AS
+
+# DLL creation program.
+DLLTOOL=$lt_DLLTOOL
+
+# Object dumper program.
+OBJDUMP=$lt_OBJDUMP
+
 # Whether or not to build shared libraries.
 build_libtool_libs=$enable_shared
 
@@ -16560,9 +17260,6 @@ to_host_file_cmd=$lt_cv_to_host_file_cmd
 # convert \$build files to toolchain format.
 to_tool_file_cmd=$lt_cv_to_tool_file_cmd
 
-# An object symbol dumper.
-OBJDUMP=$lt_OBJDUMP
-
 # Method to check whether dependent libraries are shared objects.
 deplibs_check_method=$lt_deplibs_check_method
 
@@ -16574,9 +17271,6 @@ file_magic_glob=$lt_file_magic_glob
 
 # Find potential files using nocaseglob when deplibs_check_method = "file_magic".
 want_nocaseglob=$lt_want_nocaseglob
-
-# DLL creation program.
-DLLTOOL=$lt_DLLTOOL
 
 # Command to associate shared and link libraries.
 sharedlib_from_linklib_cmd=$lt_sharedlib_from_linklib_cmd

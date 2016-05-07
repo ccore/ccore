@@ -1,5 +1,7 @@
 ACLOCAL_AMFLAGS = -I m4
-AM_CPPFLAGS += -I$(top_srcdir)/include @DEBUG_FLAG@ 
+AM_CFLAGS = $(EXTRA_CFLAGS)
+AM_CPPFLAGS = $(EXTRA_CPPFLAGS)
+AM_LDFLAGS = $(EXTRA_LDFLAGS)
 
 pkginclude_HEADERS = include/ccore/assert.h
 pkginclude_HEADERS += include/ccore/core.h
@@ -17,8 +19,6 @@ pkginclude_HEADERS += include/ccore/types.h
 pkginclude_HEADERS += include/ccore/window.h
 
 lib_LTLIBRARIES = libccore.la
-libccore_la_LDFLAGS = @GTK_LIBS@ -version-info $(CCORE_VERSION)
-libccore_la_CFLAGS = @GTK_CFLAGS@
 libccore_la_SOURCES = src/ccore/common/interface/com_display.c
 libccore_la_SOURCES += src/ccore/common/interface/com_event.c
 libccore_la_SOURCES += src/ccore/common/interface/com_window.c
@@ -61,10 +61,8 @@ endif
 
 if BUILD_TESTS
 check_PROGRAMS = check_ccore
-check_ccore_SOURCES = test/icon.c
-check_ccore_CPPFLAGS = @DEBUG_FLAG@ $(AM_CPPFLAGS)
-check_ccore_CFLAGS = @CHECK_CFLAGS@ @GTK_CFLAGS@
-check_ccore_LDADD = @CHECK_LIBS@ @GTK_LIBS@ $(top_builddir)/.libs/libccore.la
+check_ccore_SOURCES = test/test.c
+check_ccore_LDADD = $(top_builddir)/.libs/libccore.la
 
 TESTS = check_ccore
 endif
@@ -73,12 +71,8 @@ if BUILD_EXAMPLES
 bin_PROGRAMS = bin/framebuffer bin/window
 
 bin_framebuffer_SOURCES = examples/framebuffer.c
-bin_framebuffer_CFLAGS = @GTK_CFLAGS@
-bin_framebuffer_CPPFLAGS = @DEBUG_FLAG@ $(AM_CPPFLAGS)
-bin_framebuffer_LDADD = @GTK_LIBS@ $(top_builddir)/.libs/libccore.la
+bin_framebuffer_LDADD = $(top_builddir)/.libs/libccore.la
 
 bin_window_SOURCES = examples/window.c examples/icon.c
-bin_window_CFLAGS = @GTK_CFLAGS@
-bin_window_CPPFLAGS = @DEBUG_FLAG@ $(AM_CPPFLAGS)
-bin_window_LDADD = @GTK_LIBS@ $(top_builddir)/.libs/libccore.la
+bin_window_LDADD = $(top_builddir)/.libs/libccore.la
 endif
