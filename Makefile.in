@@ -662,7 +662,7 @@ libccore_la_SOURCES = src/ccore/common/interface/com_display.c \
 	src/ccore/common/utils/com_sysinfo.c $(am__append_1) \
 	$(am__append_2) $(am__append_3) $(am__append_4)
 @BUILD_TESTS_TRUE@check_ccore_SOURCES = test/test.c
-@BUILD_TESTS_TRUE@check_ccore_LDADD = $(top_builddir)/.libs/libccore.la
+@BUILD_TESTS_TRUE@check_ccore_LDADD = @CHECK_LIBS@ $(top_builddir)/.libs/libccore.la
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_SOURCES = examples/framebuffer.c
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_LDADD = $(top_builddir)/.libs/libccore.la
 @BUILD_EXAMPLES_TRUE@bin_window_SOURCES = examples/window.c examples/icon.c

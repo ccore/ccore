@@ -86,19 +86,17 @@ EXTRA_CPPFLAGS="-I$srcdir/include"
 
 CheckX11()
 {
-	AC_MSG_CHECKING(X11)
-
 	AC_CHECK_LIB([X11], [XOpenDisplay], [], [echo "X11 dev library is required" && exit -1])
 	AC_CHECK_LIB([Xrandr], [XRRGetScreenResources], [], [echo "XRandr dev library is required" && exit -1])
 	AC_CHECK_LIB([Xinerama], [XineramaQueryExtension], [], [echo "Xinerama dev library is required" && exit -1])
 	AC_CHECK_LIB([Xi], [XISelectEvents], [], [echo "XInput dev library is required" && exit -1])
 	AC_CHECK_LIB([Xext], [XShmCreateImage], [], [echo "Xshm (Xext) dev library is required" && exit -1])
 	AC_PATH_X
+
 	EXTRA_CFLAGS="$EXTRA_CFLAGS $X_CFLAGS"
 	EXTRA_LDFLAGS="$EXTRA_LDFLAGS $X_LIBS"
 
 	build_x11=yes
-	AC_MSG_RESULT($build_x11)
 	SUMMARY="${SUMMARY}Using X11 to handle window and input functions\n"
 }
 
@@ -164,8 +162,6 @@ AM_CONDITIONAL([BUILD_EXAMPLES], [test "$build_examples" = "yes"])
 
 if test x$have_check != xyes; then
 	AC_DEFINE([HAVE_CHECK], [1], [Use check])
-	EXTRA_CFLAGS="$EXTRA_CFLAGS $CHECK_CFLAGS"
-	EXTRA_LDFLAGS="$EXTRA_LDFLAGS $CHECK_LIBS"
 	SUMMARY="${SUMMARY}Not building tests (test/test.c) because the 'check' package could not be found\n"
 	SUMMARY="${SUMMARY}Please install the check package to be able to run the tests\n"
 fi

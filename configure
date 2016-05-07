@@ -14565,9 +14565,6 @@ EXTRA_CPPFLAGS="-I$srcdir/include"
 
 CheckX11()
 {
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking X11" >&5
-$as_echo_n "checking X11... " >&6; }
-
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for XOpenDisplay in -lX11" >&5
 $as_echo_n "checking for XOpenDisplay in -lX11... " >&6; }
 if ${ac_cv_lib_X11_XOpenDisplay+:} false; then :
@@ -14996,12 +14993,11 @@ else
 $as_echo "libraries $x_libraries, headers $x_includes" >&6; }
 fi
 
+
 	EXTRA_CFLAGS="$EXTRA_CFLAGS $X_CFLAGS"
 	EXTRA_LDFLAGS="$EXTRA_LDFLAGS $X_LIBS"
 
 	build_x11=yes
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $build_x11" >&5
-$as_echo "$build_x11" >&6; }
 	SUMMARY="${SUMMARY}Using X11 to handle window and input functions\n"
 }
 
@@ -15336,8 +15332,6 @@ if test x$have_check != xyes; then
 
 $as_echo "#define HAVE_CHECK 1" >>confdefs.h
 
-	EXTRA_CFLAGS="$EXTRA_CFLAGS $CHECK_CFLAGS"
-	EXTRA_LDFLAGS="$EXTRA_LDFLAGS $CHECK_LIBS"
 	SUMMARY="${SUMMARY}Not building tests (test/test.c) because the 'check' package could not be found\n"
 	SUMMARY="${SUMMARY}Please install the check package to be able to run the tests\n"
 fi
