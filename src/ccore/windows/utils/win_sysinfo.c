@@ -3,7 +3,6 @@
 #include <windows.h>
 
 #include <ccore/sysinfo.h>
-#include <ccore/assert.h>
 
 #if defined CC_USE_ALL || defined CC_USE_SYSINFO
 

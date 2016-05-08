@@ -11,8 +11,6 @@
 
 #include <ccore/gamepad.h>
 
-#include <ccore/assert.h>
-
 #include "win_window.h"
 
 #define _CC_GAMEPAD_STDNAME_RAW "USB gamepad"

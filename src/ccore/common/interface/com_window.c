@@ -2,29 +2,39 @@
 
 ccEvent ccWindowEventGet(void)
 {
-	ccAssert(_ccWindow != NULL);
+#ifdef _DEBUG
+	assert(_ccWindow != NULL);
+#endif
 
 	return _ccWindow->event;
 }
 
 ccRect ccWindowGetRect(void)
 {
-	ccAssert(_ccWindow != NULL);
+#ifdef _DEBUG
+	assert(_ccWindow != NULL);
+#endif
 
 	return _ccWindow->rect;
 }
 
 ccPoint ccWindowGetMouse(void)
 {
-	ccAssert(_ccWindow != NULL);
+#ifdef _DEBUG
+	assert(_ccWindow != NULL);
+#endif
 
 	return _ccWindow->mouse;
 }
 
 ccDisplay *ccWindowGetDisplay(void)
 {
-	ccAssert(_ccWindow != NULL);
-	ccAssert(_ccWindow->display != NULL);
+#ifdef _DEBUG
+	assert(_ccWindow != NULL);
+#endif
+#ifdef _DEBUG
+	assert(_ccWindow->display != NULL);
+#endif
 
 	return _ccWindow->display;
 }
@@ -40,7 +50,9 @@ void ccWindowUpdateDisplay(void)
 	int area, largestArea;
 	ccRect displayRect;
 
-	ccAssert(_ccWindow != NULL);
+#ifdef _DEBUG
+	assert(_ccWindow != NULL);
+#endif
 
 	largestArea = 0;
 	for(i = 0; i < ccDisplayGetAmount(); i++) {
@@ -56,7 +68,9 @@ void ccWindowUpdateDisplay(void)
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 void *ccWindowFramebufferGetPixels()
 {
-	ccAssert(_ccWindow != NULL);
+#ifdef _DEBUG
+	assert(_ccWindow != NULL);
+#endif
 
 	return _ccWindow->pixels;
 }

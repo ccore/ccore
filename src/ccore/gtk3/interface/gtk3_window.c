@@ -12,8 +12,6 @@
 #include <ccore/opengl.h>
 #include <ccore/types.h>
 #include <ccore/event.h>
-#include <ccore/assert.h>
-#include <ccore/print.h>
 
 enum {
 	_EV_QUIT =             1 << 0,
@@ -76,7 +74,9 @@ static void imageDestroy(guchar *pixels, gpointer data)
 
 ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 {
-	ccAssert(rect.width > 0 && rect.height > 0);
+#ifdef _DEBUG
+	assert(rect.width > 0 && rect.height > 0);
+#endif
 
 	if(CC_UNLIKELY(_ccWindow)) {
 		return CC_E_WINDOW_CREATE;
@@ -178,8 +178,12 @@ bool ccWindowEventPoll(void)
 
 ccError ccWindowResizeMove(ccRect rect)
 {
-	ccAssert(_ccWindow);
-	ccAssert(GD->win);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
+#ifdef _DEBUG
+	assert(GD->win);
+#endif
 
 	// We can't force to resize the window when it's not resizable
 	if(GD->flags & CC_WINDOW_FLAG_NORESIZE){
@@ -198,8 +202,12 @@ ccError ccWindowResizeMove(ccRect rect)
 
 ccError ccWindowSetCentered(void)
 {
-	ccAssert(_ccWindow);
-	ccAssert(GD->win);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
+#ifdef _DEBUG
+	assert(GD->win);
+#endif
 
 	gtk_window_set_position(GTK_WINDOW(GD->win), GTK_WIN_POS_CENTER_ALWAYS);
 
@@ -208,8 +216,12 @@ ccError ccWindowSetCentered(void)
 
 ccError ccWindowSetWindowed(ccRect *rect)
 {
-	ccAssert(_ccWindow);
-	ccAssert(GD->win);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
+#ifdef _DEBUG
+	assert(GD->win);
+#endif
 
 	gtk_window_unfullscreen(GTK_WINDOW(GD->win));
 	gtk_window_unmaximize(GTK_WINDOW(GD->win));
@@ -219,8 +231,12 @@ ccError ccWindowSetWindowed(ccRect *rect)
 
 ccError ccWindowSetMaximized(void)
 {
-	ccAssert(_ccWindow);
-	ccAssert(GD->win);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
+#ifdef _DEBUG
+	assert(GD->win);
+#endif
 
 	// We can't force to resize the window when it's not resizable
 	if(GD->flags & CC_WINDOW_FLAG_NORESIZE){
@@ -245,8 +261,12 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 
 ccError ccWindowSetTitle(const char *title)
 {
-	ccAssert(_ccWindow);
-	ccAssert(GD->win);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
+#ifdef _DEBUG
+	assert(GD->win);
+#endif
 
 	gtk_window_set_title(GTK_WINDOW(GD->win), title);
 
@@ -255,8 +275,12 @@ ccError ccWindowSetTitle(const char *title)
 
 ccError ccWindowSetBlink(void)
 {
-	ccAssert(_ccWindow);
-	ccAssert(GD->win);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
+#ifdef _DEBUG
+	assert(GD->win);
+#endif
 
 	gtk_window_set_urgency_hint(GTK_WINDOW(GD->win), true);
 
@@ -265,8 +289,12 @@ ccError ccWindowSetBlink(void)
 
 ccError ccWindowIconSet(ccPoint size, const uint32_t *icon)
 {
-	ccAssert(_ccWindow);
-	ccAssert(size.x > 0 && size.y > 0);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
+#ifdef _DEBUG
+	assert(size.x > 0 && size.y > 0);
+#endif
 
 	int len = size.x * size.y;
 	int totallen = len * sizeof(uint32_t);

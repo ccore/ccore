@@ -658,13 +658,12 @@ ACLOCAL_AMFLAGS = -I m4
 AM_CFLAGS = $(EXTRA_CFLAGS)
 AM_CPPFLAGS = $(EXTRA_CPPFLAGS)
 AM_LDFLAGS = $(EXTRA_LIBS) $(EXTRA_LDFLAGS)
-pkginclude_HEADERS = include/ccore/assert.h include/ccore/core.h \
-	include/ccore/display.h include/ccore/event.h \
-	include/ccore/file.h include/ccore/gamepad.h \
-	include/ccore/opengl.h include/ccore/string.h \
-	include/ccore/sysinfo.h include/ccore/thread.h \
-	include/ccore/time.h include/ccore/types.h \
-	include/ccore/window.h
+pkginclude_HEADERS = include/ccore/core.h include/ccore/display.h \
+	include/ccore/event.h include/ccore/file.h \
+	include/ccore/gamepad.h include/ccore/opengl.h \
+	include/ccore/string.h include/ccore/sysinfo.h \
+	include/ccore/thread.h include/ccore/time.h \
+	include/ccore/types.h include/ccore/window.h
 lib_LTLIBRARIES = libccore.la
 libccore_la_LDFLAGS = $(EXTRA_LDFLAGS) -version-info $(CCORE_VERSION) -no-undefined
 libccore_la_LIBADD = $(EXTRA_LIBS)

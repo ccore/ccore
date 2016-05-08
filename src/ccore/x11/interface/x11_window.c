@@ -11,7 +11,6 @@
 #include <ccore/opengl.h>
 #include <ccore/types.h>
 #include <ccore/event.h>
-#include <ccore/assert.h>
 
 #include "x11_display.h"
 
@@ -47,7 +46,9 @@ static ccError setWindowState(const char *type, bool value)
 
 static ccError setResizable(bool resizable)
 {
-	ccAssert(_ccWindow != NULL);
+#ifdef _DEBUG
+	assert(_ccWindow != NULL);
+#endif
 
 	XSizeHints *sizeHints = XAllocSizeHints();
 	long flags = 0;
@@ -223,7 +224,9 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 
 ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 {
-	ccAssert(rect.width > 0 && rect.height > 0);
+#ifdef _DEBUG
+	assert(rect.width > 0 && rect.height > 0);
+#endif
 
 	if(CC_UNLIKELY(_ccWindow != NULL)) {
 		return CC_E_WINDOW_CREATE;
@@ -310,7 +313,9 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 
 ccError ccWindowFree(void)
 {
-	ccAssert(_ccWindow);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
 
 	XSetErrorHandler(origXError);
 
@@ -334,7 +339,9 @@ ccError ccWindowFree(void)
 
 bool ccWindowEventPoll(void)
 {
-	ccAssert(_ccWindow);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
 
 	_ccWindow->event.type = CC_EVENT_SKIP;
 
@@ -497,7 +504,9 @@ bool ccWindowEventPoll(void)
 
 ccError ccWindowSetWindowed(ccRect *rect)
 {
-	ccAssert(_ccWindow);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
 
 	setResizable(true);
 	setWindowState("_NET_WM_STATE_FULLSCREEN", false);
@@ -513,7 +522,9 @@ ccError ccWindowSetWindowed(ccRect *rect)
 
 ccError ccWindowSetMaximized(void)
 {
-	ccAssert(_ccWindow);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
 
 	ccWindowSetWindowed(NULL);
 
@@ -525,7 +536,9 @@ ccError ccWindowSetMaximized(void)
 
 ccError ccWindowSetFullscreen(int displayCount, ...)
 {
-	ccAssert(_ccWindow);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
 
 	ccDisplay *current, *topDisplay, *bottomDisplay, *leftDisplay, *rightDisplay;
 	if(CC_LIKELY(displayCount == CC_FULLSCREEN_CURRENT_DISPLAY)) {
@@ -580,8 +593,12 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 
 ccError ccWindowResizeMove(ccRect rect)
 {
-	ccAssert(_ccWindow);
-	ccAssert(rect.width > 0 && rect.height > 0);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
+#ifdef _DEBUG
+	assert(rect.width > 0 && rect.height > 0);
+#endif
 
 	setResizable(true);
 	XMoveResizeWindow(XD->display, XD->win, rect.x, rect.y, rect.width, rect.height);
@@ -597,7 +614,9 @@ ccError ccWindowResizeMove(ccRect rect)
 
 ccError ccWindowSetCentered(void)
 {
-	ccAssert(_ccWindow);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
 	if(CC_UNLIKELY(_ccWindow->display == NULL)) {
 		return CC_E_DISPLAY_NONE;
 	}
@@ -613,7 +632,9 @@ ccError ccWindowSetCentered(void)
 
 ccError ccWindowSetBlink(void)
 {
-	ccAssert(_ccWindow);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
 
 	return setWindowState("_NET_WM_STATE_DEMANDS_ATTENTION", true);
 }
@@ -646,8 +667,12 @@ ccError ccWindowSetTitle(const char *title)
 
 ccError ccWindowIconSet(ccPoint size, const uint32_t *icon)
 {
-	ccAssert(_ccWindow);
-	ccAssert(size.x > 0 && size.y > 0);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
+#ifdef _DEBUG
+	assert(size.x > 0 && size.y > 0);
+#endif
 
 	size_t datalen = size.x * size.y;
 	size_t totallen = datalen + 2;
@@ -669,7 +694,9 @@ ccError ccWindowIconSet(ccPoint size, const uint32_t *icon)
 
 ccError ccWindowMouseSetPosition(ccPoint target)
 {
-	ccAssert(_ccWindow);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
 
 	XWarpPointer(XD->display, None, XD->win, 0, 0, 0, 0, target.x, target.y);
 
@@ -678,7 +705,9 @@ ccError ccWindowMouseSetPosition(ccPoint target)
 
 ccError ccWindowMouseSetCursor(ccCursor cursor)
 {
-	ccAssert(_ccWindow);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
 
 	if(XD->cursor != 0) {
 		XFreeCursor(XD->display, XD->cursor);
@@ -702,7 +731,9 @@ ccError ccWindowMouseSetCursor(ccCursor cursor)
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 ccError ccWindowFramebufferCreate(ccFramebufferFormat *format)
 {
-	ccAssert(_ccWindow);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
 
 	// There already is a OpenGL context, you can't create both
 	if(XD->context != NULL){
@@ -804,7 +835,9 @@ ccError ccWindowFramebufferUpdate()
 
 ccError ccWindowFramebufferFree()
 {
-	ccAssert(_ccWindow);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
 
 	if(XD->fb){
 		XShmDetach(XD->display, &XD->shminfo);
@@ -827,7 +860,9 @@ ccError ccWindowFramebufferFree()
 
 ccError ccWindowClipboardSet(const char *text)
 {
-	ccAssert(_ccWindow);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
 
 	if(text == NULL) {
 		return CC_E_INVALID_ARGUMENT;
@@ -859,7 +894,9 @@ char *ccWindowClipboardGet()
 	const Atom formats[] = { XA_STRING, XD->UTF8_STRING, XD->COMPOUND_STRING};
 	const int formatCount = sizeof(formats) / sizeof(formats[0]);
 
-	ccAssert(_ccWindow);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
 
 	Window owner = XGetSelectionOwner(XD->display, XD->CLIPBOARD);
 	if(owner == XD->win) {

@@ -9,7 +9,6 @@
 #include <ccore/window.h>
 
 #include <ccore/string.h>
-#include <ccore/assert.h>
 #include <ccore/gamepad.h>
 
 #include "win_gamepad.h"

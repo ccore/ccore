@@ -3,8 +3,7 @@ AM_CFLAGS = $(EXTRA_CFLAGS)
 AM_CPPFLAGS = $(EXTRA_CPPFLAGS)
 AM_LDFLAGS = $(EXTRA_LIBS) $(EXTRA_LDFLAGS)
 
-pkginclude_HEADERS = include/ccore/assert.h
-pkginclude_HEADERS += include/ccore/core.h
+pkginclude_HEADERS = include/ccore/core.h
 pkginclude_HEADERS += include/ccore/display.h
 pkginclude_HEADERS += include/ccore/event.h
 pkginclude_HEADERS += include/ccore/file.h

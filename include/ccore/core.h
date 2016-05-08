@@ -20,18 +20,12 @@
 #pragma once
 
 #ifdef __linux__
-
 #define X11
 #define LINUX
-
 #elif defined _WIN32
-
 #define WINDOWS
-
 #elif defined __APPLE__
-
 #define OSX
-
 #else
 #error "OS not supported!"
 #endif

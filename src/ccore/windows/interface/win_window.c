@@ -257,7 +257,9 @@ bool ccWindowEventPoll(void)
 {
 	static bool canPollInput = true;
 
-	ccAssert(_ccWindow != NULL);
+#ifdef _DEBUG
+	assert(_ccWindow != NULL);
+#endif
 
 	if(canPollInput) {
 		canPollInput = false;
@@ -293,7 +295,9 @@ ccError ccWindowCreate(ccRect rect, const char* title, int flags)
 	HMODULE moduleHandle = GetModuleHandle(NULL);
 	RECT windowRect;
 
-	ccAssert(_ccWindow == NULL);
+#ifdef _DEBUG
+	assert(_ccWindow == NULL);
+#endif
 
 	if(moduleHandle == NULL) {
 		return CC_E_WINDOW_CREATE;
@@ -379,7 +383,9 @@ ccError ccWindowCreate(ccRect rect, const char* title, int flags)
 
 ccError ccWindowFree(void)
 {
-	ccAssert(_ccWindow != NULL);
+#ifdef _DEBUG
+	assert(_ccWindow != NULL);
+#endif
 
 	if(!freeRawInput()) {
 		return CC_E_WINDOW_DESTROY;
@@ -421,7 +427,9 @@ ccError ccWindowSetWindowed(ccRect *rect)
 
 ccError ccWindowSetMaximized(void)
 {
-	ccAssert(_ccWindow != NULL);
+#ifdef _DEBUG
+	assert(_ccWindow != NULL);
+#endif
 
 	if(SetWindowLongPtr(_CC_WINDOW_DATA->winHandle, GWL_STYLE, _CC_WINDOW_DATA->style | WS_CAPTION | WS_MAXIMIZEBOX) == 0) {
 		return CC_E_WINDOW_MODE;
@@ -442,7 +450,9 @@ ccError ccWindowSetMaximized(void)
 
 static ccError _ccWindowResizeMove(ccRect rect, bool addBorder)
 {
-	ccAssert(_ccWindow != NULL);
+#ifdef _DEBUG
+	assert(_ccWindow != NULL);
+#endif
 
 	if(addBorder) {
 		RECT windowRect;
@@ -471,7 +481,9 @@ static ccError _ccWindowResizeMove(ccRect rect, bool addBorder)
 
 ccError ccWindowSetFullscreen(int displayCount, ...)
 {
-	ccAssert(_ccWindow);
+#ifdef _DEBUG
+	assert(_ccWindow);
+#endif
 
 	if(SetWindowLongPtr(_CC_WINDOW_DATA->winHandle, GWL_STYLE, _CC_WINDOW_DATA->style & ~(WS_CAPTION | WS_THICKFRAME)) == 0) {
 		return CC_E_WINDOW_MODE;
@@ -525,7 +537,9 @@ ccError ccWindowSetCentered(void)
 {
 	RECT windowRect;
 
-	ccAssert(_ccWindow != NULL);
+#ifdef _DEBUG
+	assert(_ccWindow != NULL);
+#endif
 
 	if(GetWindowRect(_CC_WINDOW_DATA->winHandle, &windowRect) == FALSE) {
 		return CC_E_WINDOW_MODE;

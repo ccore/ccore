@@ -7,7 +7,6 @@
 #include <X11/extensions/Xinerama.h>
 
 #include <ccore/display.h>
-#include <ccore/assert.h>
 
 static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
 {

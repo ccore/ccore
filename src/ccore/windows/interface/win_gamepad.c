@@ -24,7 +24,9 @@ ccError ccGamepadOutputSet(ccGamepad *gamepad, int hapticIndex, int force)
 {	
 	int i;
 
-	ccAssert(gamepad != NULL);
+#ifdef _DEBUG
+	assert(gamepad != NULL);
+#endif
 
 	if(hapticIndex >= gamepad->outputAmount) {
 		return CC_E_GAMEPAD_HAPTICNONE;
@@ -64,7 +66,9 @@ ccError ccGamepadOutputSet(ccGamepad *gamepad, int hapticIndex, int force)
 ccError ccGamepadInitialize(void)
 {
 	int i;
-	ccAssert(_ccWindow != NULL);
+#ifdef _DEBUG
+	assert(_ccWindow != NULL);
+#endif
 
 	_ccGamepads = malloc(sizeof(ccGamepads));
 	if(_ccGamepads == NULL){
@@ -99,7 +103,9 @@ ccError ccGamepadInitialize(void)
 
 ccError ccGamepadFree(void)
 {
-	ccAssert(_ccGamepads != NULL);
+#ifdef _DEBUG
+	assert(_ccGamepads != NULL);
+#endif
 
 	_CC_WINDOW_DATA->queryXinput = false;
 

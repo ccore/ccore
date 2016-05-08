@@ -12,7 +12,9 @@ ccError ccDisplayInitialize(void)
 	int displayCount;
 	int i;
 
-	ccAssert(_ccDisplays == NULL);
+#ifdef _DEBUG
+	assert(_ccDisplays == NULL);
+#endif
 
 	_ccDisplays = malloc(sizeof(ccDisplays));
 	if(_ccDisplays == NULL){
@@ -115,7 +117,9 @@ ccError ccDisplayFree(void)
 {
 	int i;
 
-	ccAssert(_ccDisplays != NULL);
+#ifdef _DEBUG
+	assert(_ccDisplays != NULL);
+#endif
 
 	for(i = 0; i < _ccDisplays->amount; i++) {
 		free(_ccDisplays->display[i].gpuName);
@@ -136,8 +140,10 @@ ccError ccDisplayResolutionSet(ccDisplay *display, int resolutionIndex)
 	DEVMODE devMode;
 	ccDisplayData displayData;
 
-	ccAssert(display != NULL);
-	ccAssert(resolutionIndex < display->amount);
+#ifdef _DEBUG
+	assert(display != NULL);
+	assert(resolutionIndex < display->amount);
+#endif
 
 	if(resolutionIndex == CC_DEFAULT_RESOLUTION) resolutionIndex = display->initial;
 	if(resolutionIndex == display->current) return CC_E_NONE;

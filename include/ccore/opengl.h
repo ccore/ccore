@@ -28,7 +28,7 @@
 extern "C"
 {
 #endif
-// opengl
+
 ccError ccGLContextBind(void); // Bind the openGl context to window
 ccError ccGLContextFree(void); // Free context
 ccError ccGLBuffersSwap(void); // Swap the buffers
