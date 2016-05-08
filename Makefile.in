@@ -170,7 +170,6 @@ am__libccore_la_SOURCES_DIST =  \
 	src/ccore/common/utils/com_file.c \
 	src/ccore/common/utils/com_rect.c \
 	src/ccore/common/utils/com_string.c \
-	src/ccore/common/utils/com_sysinfo.c \
 	src/ccore/windows/interface/win_display.c \
 	src/ccore/windows/interface/win_gamepad.c \
 	src/ccore/windows/interface/win_window.c \
@@ -220,8 +219,7 @@ am_libccore_la_OBJECTS = src/ccore/common/interface/com_display.lo \
 	src/ccore/common/utils/com_core.lo \
 	src/ccore/common/utils/com_file.lo \
 	src/ccore/common/utils/com_rect.lo \
-	src/ccore/common/utils/com_string.lo \
-	src/ccore/common/utils/com_sysinfo.lo $(am__objects_1) \
+	src/ccore/common/utils/com_string.lo $(am__objects_1) \
 	$(am__objects_2) $(am__objects_3) $(am__objects_4) \
 	$(am__objects_5) $(am__objects_6) $(am__objects_7) \
 	$(am__objects_8)
@@ -674,8 +672,7 @@ libccore_la_SOURCES = src/ccore/common/interface/com_display.c \
 	src/ccore/common/utils/com_core.c \
 	src/ccore/common/utils/com_file.c \
 	src/ccore/common/utils/com_rect.c \
-	src/ccore/common/utils/com_string.c \
-	src/ccore/common/utils/com_sysinfo.c $(am__append_1) \
+	src/ccore/common/utils/com_string.c $(am__append_1) \
 	$(am__append_2) $(am__append_3) $(am__append_4) \
 	$(am__append_5) $(am__append_6) $(am__append_7) \
 	$(am__append_8)
@@ -788,9 +785,6 @@ src/ccore/common/utils/com_rect.lo:  \
 	src/ccore/common/utils/$(am__dirstamp) \
 	src/ccore/common/utils/$(DEPDIR)/$(am__dirstamp)
 src/ccore/common/utils/com_string.lo:  \
-	src/ccore/common/utils/$(am__dirstamp) \
-	src/ccore/common/utils/$(DEPDIR)/$(am__dirstamp)
-src/ccore/common/utils/com_sysinfo.lo:  \
 	src/ccore/common/utils/$(am__dirstamp) \
 	src/ccore/common/utils/$(DEPDIR)/$(am__dirstamp)
 src/ccore/windows/interface/$(am__dirstamp):
@@ -1017,7 +1011,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_file.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_rect.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_string.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_sysinfo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/gtk3/interface/$(DEPDIR)/gtk3_display.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/gtk3/interface/$(DEPDIR)/gtk3_opengl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/gtk3/interface/$(DEPDIR)/gtk3_window.Plo@am__quote@

@@ -29,7 +29,6 @@ libccore_la_SOURCES += src/ccore/common/utils/com_core.c
 libccore_la_SOURCES += src/ccore/common/utils/com_file.c
 libccore_la_SOURCES += src/ccore/common/utils/com_rect.c
 libccore_la_SOURCES += src/ccore/common/utils/com_string.c
-libccore_la_SOURCES += src/ccore/common/utils/com_sysinfo.c
 
 if BUILD_WINDOWS
 libccore_la_SOURCES += src/ccore/windows/interface/win_display.c

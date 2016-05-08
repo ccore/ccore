@@ -9,9 +9,6 @@
 #if defined CC_USE_ALL || defined CC_USE_FILE
 #include <ccore/file.h>
 #endif
-#if defined CC_USE_ALL || defined CC_USE_SYSINFO
-#include <ccore/sysinfo.h>
-#endif
 
 #include <ccore/event.h>
 
@@ -22,9 +19,6 @@ ccError ccInitialize(void)
 #endif
 	_ccDisplays = NULL;
 	_ccWindow = NULL;
-#if defined CC_USE_ALL || defined CC_USE_SYSINFO
-	_ccSysinfo = NULL;
-#endif
 
 	return CC_E_NONE;
 }
@@ -49,11 +43,6 @@ ccError ccFree(void)
 	if(_ccDisplays != NULL) {
 		ccDisplayFree();
 	}
-#if defined CC_USE_ALL || defined CC_USE_SYSINFO
-	if(_ccSysinfo != NULL) {
-		ccSysinfoFree();
-	}
-#endif
 
 	return CC_E_NONE;
 }

@@ -2,6 +2,10 @@
 
 #if defined CC_USE_ALL || defined CC_USE_SYSINFO
 
+static uint_fast64_t _ramTotal = 0;
+static unsigned int _processorCount = 0;
+static unsigned int _fileMaxOpen = 0;
+
 static long parseLineKB(char *line)
 {
 	int i = strlen(line);
@@ -33,41 +37,51 @@ static long getKBValueFromProc(const char *proc, const char *field)
 	return result;
 }
 
-ccError ccSysinfoInitialize(void)
-{
-	ccAssert(!_ccSysinfo);
-
-	_ccSysinfo = malloc(sizeof(ccSysinfo));
-	if(_ccSysinfo == NULL){
-		return CC_E_MEMORY_OVERFLOW;
-	}
-
-	long kb = getKBValueFromProc("/proc/meminfo", "MemTotal");
-	if(kb == -1){
-		return CC_E_OS;
-	}
-	_ccSysinfo->ramTotal = ((uint_fast64_t)kb) * 1000;
-
-	_ccSysinfo->processorCount = sysconf(_SC_NPROCESSORS_CONF);
-
-	_ccSysinfo->fileMaxOpen = sysconf(_SC_OPEN_MAX);
-
-	return CC_E_NONE;
-}
-
-uint_fast64_t ccSysinfoGetRamAvailable(void)
+ccError ccSysinfoGetRamAvailable(uint_fast64_t *ram)
 {
 	struct sysinfo meminfo;
 	sysinfo(&meminfo);
 
-	return meminfo.freeram * meminfo.mem_unit;
+	*ram = meminfo.freeram * meminfo.mem_unit;
+
+	return CC_E_NONE;
 }
 
-void ccSysinfoFree(void)
+ccError ccSysinfoGetRamTotal(uint_fast64_t *ram)
 {
-	ccAssert(_ccSysinfo);
+	if(CC_UNLIKELY(_ramTotal == 0)){
+		long kb = getKBValueFromProc("/proc/meminfo", "MemTotal");
+		if(kb == -1){
+			return CC_E_OS;
+		}
+		_ramTotal = ((uint_fast64_t)kb) * 1000;
+	}
 
-	free(_ccSysinfo);
+	*ram = _ramTotal;
+
+	return CC_E_NONE;
+}
+
+ccError ccSysinfoGetProcessorCount(unsigned int *processors)
+{
+	if(CC_UNLIKELY(_processorCount == 0)){
+		_processorCount = sysconf(_SC_NPROCESSORS_CONF);
+	}
+
+	*processors = _processorCount;
+
+	return CC_E_NONE;
+}
+
+ccError ccSysinfoGetFileMaxOpen(unsigned int *maxFiles)
+{
+	if(CC_UNLIKELY(_fileMaxOpen == 0)){
+		_fileMaxOpen = sysconf(_SC_OPEN_MAX);
+	}
+
+	*maxFiles = _fileMaxOpen;
+
+	return CC_E_NONE;
 }
 
 #endif

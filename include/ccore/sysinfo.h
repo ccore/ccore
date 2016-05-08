@@ -24,9 +24,7 @@
 #include <stdint.h>
 
 #include "core.h"
-
 #include "types.h"
-
 #include "assert.h"
 
 #ifdef __cplusplus
@@ -34,23 +32,10 @@ extern "C"
 {
 #endif
 
-typedef struct {
-	uint_fast64_t ramTotal;
-
-	unsigned int processorCount;
-
-	unsigned int fileMaxOpen;
-} ccSysinfo;
-
-ccSysinfo *_ccSysinfo;
-
-#define ccSysinfoGetProcessorCount() _ccSysinfo->processorCount
-#define ccSysinfoGetFileMaxOpen() _ccSysinfo->fileMaxOpen
-
-#define ccSysinfoGetRamTotal() _ccSysinfo->ramTotal
-
-ccError ccSysinfoInitialize(void);
-void ccSysinfoFree(void);
+ccError ccSysinfoGetRamAvailable(uint_fast64_t *ram);
+ccError ccSysinfoGetRamTotal(uint_fast64_t *ram);
+ccError ccSysinfoGetProcessorCount(unsigned int *processors);
+ccError ccSysinfoGetFileMaxOpen(unsigned int *maxFiles);
 
 #ifdef __cplusplus
 }
