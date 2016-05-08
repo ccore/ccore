@@ -93,25 +93,25 @@ host_triplet = @host@
 @BUILD_WINDOWS_TRUE@am__append_1 =  \
 @BUILD_WINDOWS_TRUE@	src/ccore/windows/interface/win_display.c \
 @BUILD_WINDOWS_TRUE@	src/ccore/windows/interface/win_gamepad.c \
-@BUILD_WINDOWS_TRUE@	src/ccore/windows/interface/win_opengl.c \
-@BUILD_WINDOWS_TRUE@	src/ccore/windows/interface/win_window.c \
-@BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/win_file.c \
+@BUILD_WINDOWS_TRUE@	src/ccore/windows/interface/win_window.c
+@BUILD_OPENGL_TRUE@@BUILD_WINDOWS_TRUE@am__append_2 = src/ccore/windows/interface/win_opengl.c
+@BUILD_WINDOWS_TRUE@am__append_3 = src/ccore/windows/utils/win_file.c \
 @BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/win_sysinfo.c \
 @BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/win_thread.c \
 @BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/win_time.c
-@BUILD_LINUX_TRUE@am__append_2 =  \
+@BUILD_LINUX_TRUE@am__append_4 =  \
 @BUILD_LINUX_TRUE@	src/ccore/linux/interface/lin_gamepad.c \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_file.c \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_sysinfo.c \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_thread.c \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_time.c
-@BUILD_X11_TRUE@am__append_3 = src/ccore/x11/interface/x11_display.c \
-@BUILD_X11_TRUE@	src/ccore/x11/interface/x11_opengl.c \
+@BUILD_X11_TRUE@am__append_5 = src/ccore/x11/interface/x11_display.c \
 @BUILD_X11_TRUE@	src/ccore/x11/interface/x11_window.c
-@BUILD_GTK3_TRUE@am__append_4 =  \
+@BUILD_OPENGL_TRUE@@BUILD_X11_TRUE@am__append_6 = src/ccore/x11/interface/x11_opengl.c
+@BUILD_GTK3_TRUE@am__append_7 =  \
 @BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_display.c \
-@BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_opengl.c \
 @BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_window.c
+@BUILD_GTK3_TRUE@@BUILD_OPENGL_TRUE@am__append_8 = src/ccore/gtk3/interface/gtk3_opengl.c
 @BUILD_TESTS_TRUE@check_PROGRAMS = check_ccore$(EXEEXT)
 @BUILD_TESTS_TRUE@TESTS = check_ccore$(EXEEXT)
 @BUILD_EXAMPLES_TRUE@bin_PROGRAMS = bin/framebuffer$(EXEEXT) \
@@ -161,7 +161,7 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" \
 	"$(DESTDIR)$(pkgincludedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libccore_la_LIBADD =
+libccore_la_DEPENDENCIES =
 am__libccore_la_SOURCES_DIST =  \
 	src/ccore/common/interface/com_display.c \
 	src/ccore/common/interface/com_event.c \
@@ -173,8 +173,8 @@ am__libccore_la_SOURCES_DIST =  \
 	src/ccore/common/utils/com_sysinfo.c \
 	src/ccore/windows/interface/win_display.c \
 	src/ccore/windows/interface/win_gamepad.c \
-	src/ccore/windows/interface/win_opengl.c \
 	src/ccore/windows/interface/win_window.c \
+	src/ccore/windows/interface/win_opengl.c \
 	src/ccore/windows/utils/win_file.c \
 	src/ccore/windows/utils/win_sysinfo.c \
 	src/ccore/windows/utils/win_thread.c \
@@ -185,34 +185,35 @@ am__libccore_la_SOURCES_DIST =  \
 	src/ccore/linux/utils/lin_thread.c \
 	src/ccore/linux/utils/lin_time.c \
 	src/ccore/x11/interface/x11_display.c \
-	src/ccore/x11/interface/x11_opengl.c \
 	src/ccore/x11/interface/x11_window.c \
+	src/ccore/x11/interface/x11_opengl.c \
 	src/ccore/gtk3/interface/gtk3_display.c \
-	src/ccore/gtk3/interface/gtk3_opengl.c \
-	src/ccore/gtk3/interface/gtk3_window.c
+	src/ccore/gtk3/interface/gtk3_window.c \
+	src/ccore/gtk3/interface/gtk3_opengl.c
 am__dirstamp = $(am__leading_dot)dirstamp
 @BUILD_WINDOWS_TRUE@am__objects_1 = src/ccore/windows/interface/win_display.lo \
 @BUILD_WINDOWS_TRUE@	src/ccore/windows/interface/win_gamepad.lo \
-@BUILD_WINDOWS_TRUE@	src/ccore/windows/interface/win_opengl.lo \
-@BUILD_WINDOWS_TRUE@	src/ccore/windows/interface/win_window.lo \
+@BUILD_WINDOWS_TRUE@	src/ccore/windows/interface/win_window.lo
+@BUILD_OPENGL_TRUE@@BUILD_WINDOWS_TRUE@am__objects_2 = src/ccore/windows/interface/win_opengl.lo
+@BUILD_WINDOWS_TRUE@am__objects_3 =  \
 @BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/win_file.lo \
 @BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/win_sysinfo.lo \
 @BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/win_thread.lo \
 @BUILD_WINDOWS_TRUE@	src/ccore/windows/utils/win_time.lo
-@BUILD_LINUX_TRUE@am__objects_2 =  \
+@BUILD_LINUX_TRUE@am__objects_4 =  \
 @BUILD_LINUX_TRUE@	src/ccore/linux/interface/lin_gamepad.lo \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_file.lo \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_sysinfo.lo \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_thread.lo \
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_time.lo
-@BUILD_X11_TRUE@am__objects_3 =  \
+@BUILD_X11_TRUE@am__objects_5 =  \
 @BUILD_X11_TRUE@	src/ccore/x11/interface/x11_display.lo \
-@BUILD_X11_TRUE@	src/ccore/x11/interface/x11_opengl.lo \
 @BUILD_X11_TRUE@	src/ccore/x11/interface/x11_window.lo
-@BUILD_GTK3_TRUE@am__objects_4 =  \
+@BUILD_OPENGL_TRUE@@BUILD_X11_TRUE@am__objects_6 = src/ccore/x11/interface/x11_opengl.lo
+@BUILD_GTK3_TRUE@am__objects_7 =  \
 @BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_display.lo \
-@BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_opengl.lo \
 @BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_window.lo
+@BUILD_GTK3_TRUE@@BUILD_OPENGL_TRUE@am__objects_8 = src/ccore/gtk3/interface/gtk3_opengl.lo
 am_libccore_la_OBJECTS = src/ccore/common/interface/com_display.lo \
 	src/ccore/common/interface/com_event.lo \
 	src/ccore/common/interface/com_window.lo \
@@ -221,31 +222,33 @@ am_libccore_la_OBJECTS = src/ccore/common/interface/com_display.lo \
 	src/ccore/common/utils/com_rect.lo \
 	src/ccore/common/utils/com_string.lo \
 	src/ccore/common/utils/com_sysinfo.lo $(am__objects_1) \
-	$(am__objects_2) $(am__objects_3) $(am__objects_4)
+	$(am__objects_2) $(am__objects_3) $(am__objects_4) \
+	$(am__objects_5) $(am__objects_6) $(am__objects_7) \
+	$(am__objects_8)
 libccore_la_OBJECTS = $(am_libccore_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+libccore_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(libccore_la_LDFLAGS) $(LDFLAGS) -o $@
 PROGRAMS = $(bin_PROGRAMS)
 am__bin_framebuffer_SOURCES_DIST = examples/framebuffer.c
 @BUILD_EXAMPLES_TRUE@am_bin_framebuffer_OBJECTS =  \
 @BUILD_EXAMPLES_TRUE@	examples/framebuffer.$(OBJEXT)
 bin_framebuffer_OBJECTS = $(am_bin_framebuffer_OBJECTS)
-@BUILD_EXAMPLES_TRUE@bin_framebuffer_DEPENDENCIES =  \
-@BUILD_EXAMPLES_TRUE@	$(top_builddir)/.libs/libccore.la
+@BUILD_EXAMPLES_TRUE@bin_framebuffer_DEPENDENCIES = libccore.la
 am__bin_window_SOURCES_DIST = examples/window.c examples/icon.c
 @BUILD_EXAMPLES_TRUE@am_bin_window_OBJECTS =  \
 @BUILD_EXAMPLES_TRUE@	examples/window.$(OBJEXT) \
 @BUILD_EXAMPLES_TRUE@	examples/icon.$(OBJEXT)
 bin_window_OBJECTS = $(am_bin_window_OBJECTS)
-@BUILD_EXAMPLES_TRUE@bin_window_DEPENDENCIES =  \
-@BUILD_EXAMPLES_TRUE@	$(top_builddir)/.libs/libccore.la
+@BUILD_EXAMPLES_TRUE@bin_window_DEPENDENCIES = libccore.la
 am__check_ccore_SOURCES_DIST = test/test.c
 @BUILD_TESTS_TRUE@am_check_ccore_OBJECTS = test/test.$(OBJEXT)
 check_ccore_OBJECTS = $(am_check_ccore_OBJECTS)
-@BUILD_TESTS_TRUE@check_ccore_DEPENDENCIES =  \
-@BUILD_TESTS_TRUE@	$(top_builddir)/.libs/libccore.la
+@BUILD_TESTS_TRUE@check_ccore_DEPENDENCIES = libccore.la
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -584,6 +587,7 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+WINDRES = @WINDRES@
 XMKMF = @XMKMF@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
@@ -641,7 +645,7 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I m4
 AM_CFLAGS = $(EXTRA_CFLAGS)
 AM_CPPFLAGS = $(EXTRA_CPPFLAGS)
-AM_LDFLAGS = $(EXTRA_LDFLAGS)
+AM_LDFLAGS = $(EXTRA_LIBS) $(EXTRA_LDFLAGS)
 pkginclude_HEADERS = include/ccore/assert.h include/ccore/core.h \
 	include/ccore/display.h include/ccore/event.h \
 	include/ccore/file.h include/ccore/gamepad.h \
@@ -650,6 +654,8 @@ pkginclude_HEADERS = include/ccore/assert.h include/ccore/core.h \
 	include/ccore/thread.h include/ccore/time.h \
 	include/ccore/types.h include/ccore/window.h
 lib_LTLIBRARIES = libccore.la
+libccore_la_LDFLAGS = $(EXTRA_LDFLAGS) -export-symbols-regex '^cc[^_]'
+libccore_la_LIBADD = $(EXTRA_LIBS)
 libccore_la_SOURCES = src/ccore/common/interface/com_display.c \
 	src/ccore/common/interface/com_event.c \
 	src/ccore/common/interface/com_window.c \
@@ -658,13 +664,15 @@ libccore_la_SOURCES = src/ccore/common/interface/com_display.c \
 	src/ccore/common/utils/com_rect.c \
 	src/ccore/common/utils/com_string.c \
 	src/ccore/common/utils/com_sysinfo.c $(am__append_1) \
-	$(am__append_2) $(am__append_3) $(am__append_4)
+	$(am__append_2) $(am__append_3) $(am__append_4) \
+	$(am__append_5) $(am__append_6) $(am__append_7) \
+	$(am__append_8)
 @BUILD_TESTS_TRUE@check_ccore_SOURCES = test/test.c
-@BUILD_TESTS_TRUE@check_ccore_LDADD = @CHECK_LIBS@ $(top_builddir)/.libs/libccore.la
+@BUILD_TESTS_TRUE@check_ccore_LDADD = @CHECK_LIBS@ libccore.la
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_SOURCES = examples/framebuffer.c
-@BUILD_EXAMPLES_TRUE@bin_framebuffer_LDADD = $(top_builddir)/.libs/libccore.la
+@BUILD_EXAMPLES_TRUE@bin_framebuffer_LDADD = libccore.la
 @BUILD_EXAMPLES_TRUE@bin_window_SOURCES = examples/window.c examples/icon.c
-@BUILD_EXAMPLES_TRUE@bin_window_LDADD = $(top_builddir)/.libs/libccore.la
+@BUILD_EXAMPLES_TRUE@bin_window_LDADD = libccore.la
 all: all-am
 
 .SUFFIXES:
@@ -785,10 +793,10 @@ src/ccore/windows/interface/win_display.lo:  \
 src/ccore/windows/interface/win_gamepad.lo:  \
 	src/ccore/windows/interface/$(am__dirstamp) \
 	src/ccore/windows/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/windows/interface/win_opengl.lo:  \
+src/ccore/windows/interface/win_window.lo:  \
 	src/ccore/windows/interface/$(am__dirstamp) \
 	src/ccore/windows/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/windows/interface/win_window.lo:  \
+src/ccore/windows/interface/win_opengl.lo:  \
 	src/ccore/windows/interface/$(am__dirstamp) \
 	src/ccore/windows/interface/$(DEPDIR)/$(am__dirstamp)
 src/ccore/windows/utils/$(am__dirstamp):
@@ -845,10 +853,10 @@ src/ccore/x11/interface/$(DEPDIR)/$(am__dirstamp):
 src/ccore/x11/interface/x11_display.lo:  \
 	src/ccore/x11/interface/$(am__dirstamp) \
 	src/ccore/x11/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/x11/interface/x11_opengl.lo:  \
+src/ccore/x11/interface/x11_window.lo:  \
 	src/ccore/x11/interface/$(am__dirstamp) \
 	src/ccore/x11/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/x11/interface/x11_window.lo:  \
+src/ccore/x11/interface/x11_opengl.lo:  \
 	src/ccore/x11/interface/$(am__dirstamp) \
 	src/ccore/x11/interface/$(DEPDIR)/$(am__dirstamp)
 src/ccore/gtk3/interface/$(am__dirstamp):
@@ -860,15 +868,15 @@ src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp):
 src/ccore/gtk3/interface/gtk3_display.lo:  \
 	src/ccore/gtk3/interface/$(am__dirstamp) \
 	src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/gtk3/interface/gtk3_opengl.lo:  \
+src/ccore/gtk3/interface/gtk3_window.lo:  \
 	src/ccore/gtk3/interface/$(am__dirstamp) \
 	src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/gtk3/interface/gtk3_window.lo:  \
+src/ccore/gtk3/interface/gtk3_opengl.lo:  \
 	src/ccore/gtk3/interface/$(am__dirstamp) \
 	src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp)
 
 libccore.la: $(libccore_la_OBJECTS) $(libccore_la_DEPENDENCIES) $(EXTRA_libccore_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(LINK) -rpath $(libdir) $(libccore_la_OBJECTS) $(libccore_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libccore_la_LINK) -rpath $(libdir) $(libccore_la_OBJECTS) $(libccore_la_LIBADD) $(LIBS)
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
