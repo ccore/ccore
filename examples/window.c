@@ -44,8 +44,8 @@ int main(int argc, char **argv)
 							EXIT_ON_E(ccWindowSetCentered());
 							break;
 						case 1:
-							EXIT_ON_E(ccWindowSetTitle("ccWindowResizeMove"));
-							EXIT_ON_E(ccWindowResizeMove((ccRect){0, 0, 300, 200}));
+							EXIT_ON_E(ccWindowSetTitle("ccWindowSetRect"));
+							EXIT_ON_E(ccWindowSetRect((ccRect){0, 0, 300, 200}));
 							break;
 						case 2:
 							EXIT_ON_E(ccWindowSetTitle("ccWindowSetBlink"));

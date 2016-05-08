@@ -176,7 +176,7 @@ bool ccWindowEventPoll(void)
 	return true;
 }
 
-ccError ccWindowResizeMove(ccRect rect)
+ccError ccWindowSetRect(ccRect rect)
 {
 #ifdef _DEBUG
 	assert(_ccWindow);
@@ -226,7 +226,7 @@ ccError ccWindowSetWindowed(ccRect *rect)
 	gtk_window_unfullscreen(GTK_WINDOW(GD->win));
 	gtk_window_unmaximize(GTK_WINDOW(GD->win));
 
-	return ccWindowResizeMove(*rect);
+	return ccWindowSetRect(*rect);
 }
 
 ccError ccWindowSetMaximized(void)

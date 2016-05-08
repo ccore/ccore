@@ -57,7 +57,7 @@ int main(int argc, char** argv)
                                 goto outputError;
                             }
 
-                            returnValue = ccWindowResizeMove(windowRect);
+                            returnValue = ccWindowSetRect(windowRect);
                             if(returnValue == CC_FAIL){
                                 goto outputError;
                             }

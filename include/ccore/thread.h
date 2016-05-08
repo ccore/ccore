@@ -35,8 +35,6 @@ extern "C"
 #define ccThreadFunction(name) DWORD WINAPI name(LPVOID lpParam)
 #define ccThreadData ((void*)lpParam)
 
-#define ccThreadReturn() return 0;
-
 typedef HANDLE ccThread;
 typedef CRITICAL_SECTION ccMutex;
 
@@ -46,12 +44,12 @@ typedef CRITICAL_SECTION ccMutex;
 #define ccThreadFunction(name) void* name(void *arg)
 #define ccThreadData arg
 
-#define ccThreadReturn() return 0;
-
 typedef pthread_t ccThread;
 typedef pthread_mutex_t ccMutex;
 
 #endif
+
+#define ccThreadReturn() return 0;
 
 ccError ccThreadStart(ccThread *thread, void *function, void *data);
 ccError ccThreadJoin(ccThread *thread);

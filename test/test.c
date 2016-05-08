@@ -35,7 +35,6 @@
 
 #include <ccore/core.h>
 #include <ccore/sysinfo.h>
-#include <ccore/print.h>
 #include <ccore/file.h>
 #include <ccore/time.h>
 #include <ccore/string.h>
@@ -47,10 +46,20 @@
 
 START_TEST(test_sysinfo_ram)
 {
-	CHECK_ERROR(ccSysinfoInitialize());
-	ck_assert(ccSysinfoGetRamTotal() > 0);
-	
-	ccSysinfoFree();
+	uint64_t ram;
+	CHECK_ERROR(ccSysinfoGetRamTotal(&ram) > 0);
+	ck_assert(ram > 0);
+
+	CHECK_ERROR(ccSysinfoGetRamAvailable(&ram) > 0);
+	ck_assert(ram > 0);
+
+	unsigned int files;
+	CHECK_ERROR(ccSysinfoGetFileMaxOpen(&files) > 0);
+	ck_assert(files > 0);
+
+	unsigned int processors;
+	CHECK_ERROR(ccSysinfoGetProcessorCount(&processors) > 0);
+	ck_assert(processors > 0);
 }
 END_TEST
 

@@ -68,10 +68,10 @@ typedef enum {
 ccError ccWindowCreate(ccRect rect, const char *title, int flags);
 ccError ccWindowFree(void);
 bool ccWindowEventPoll(void); // Poll an event from the events that currently need to be processed in the window
-ccError ccWindowResizeMove(ccRect rect);
+ccError ccWindowSetRect(ccRect rect);
 ccError ccWindowSetCentered(void);
 
-ccError ccWindowSetWindowed(ccRect *rect);
+ccError ccWindowSetWindowed(ccRect rect);
 ccError ccWindowSetMaximized(void);
 ccError ccWindowSetFullscreen(int displayCount, ...);
 ccError ccWindowSetTitle(const char *title);

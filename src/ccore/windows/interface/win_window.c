@@ -421,7 +421,7 @@ ccError ccWindowSetWindowed(ccRect *rect)
 	if(rect == NULL){
 		return CC_E_NONE;
 	}else{
-		return ccWindowResizeMove(*rect);
+		return ccWindowSetRect(*rect);
 	}
 }
 
@@ -448,7 +448,7 @@ ccError ccWindowSetMaximized(void)
 	return CC_E_NONE;
 }
 
-static ccError _ccWindowResizeMove(ccRect rect, bool addBorder)
+static ccError _ccWindowSetRect(ccRect rect, bool addBorder)
 {
 #ifdef _DEBUG
 	assert(_ccWindow != NULL);
@@ -494,7 +494,7 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 	}
 
 	if(displayCount == CC_FULLSCREEN_CURRENT_DISPLAY) {
-		return _ccWindowResizeMove(ccDisplayGetRect(_ccWindow->display), false);
+		return _ccWindowSetRect(ccDisplayGetRect(_ccWindow->display), false);
 	}
 	else{
 		va_list displays;
@@ -519,7 +519,7 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 
 		va_end(displays);
 
-		return _ccWindowResizeMove(spanRect, false);
+		return _ccWindowSetRect(spanRect, false);
 	}
 }
 
@@ -528,9 +528,9 @@ ccError ccWindowSetTitle(const char *title)
 	return SetWindowText(_CC_WINDOW_DATA->winHandle, title) == TRUE?CC_E_NONE:CC_E_WINDOW_MODE;
 }
 
-ccError ccWindowResizeMove(ccRect rect)
+ccError ccWindowSetRect(ccRect rect)
 {
-	return _ccWindowResizeMove(rect, true);
+	return _ccWindowSetRect(rect, true);
 }
 
 ccError ccWindowSetCentered(void)
@@ -545,7 +545,7 @@ ccError ccWindowSetCentered(void)
 		return CC_E_WINDOW_MODE;
 	}
 
-	return _ccWindowResizeMove(
+	return _ccWindowSetRect(
 			(ccRect){_ccWindow->display->x + ((ccDisplayResolutionGetCurrent(_ccWindow->display)->width - (windowRect.right - windowRect.left)) >> 1),
 			_ccWindow->display->y + ((ccDisplayResolutionGetCurrent(_ccWindow->display)->height - (windowRect.bottom - windowRect.top)) >> 1),
 			windowRect.right - windowRect.left,

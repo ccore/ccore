@@ -47,6 +47,7 @@ static size_t _xClipstrlen;
 static Atom _CCORE_SELECTION, _WM_ICON, _WM_ICON_NAME, _WM_NAME, _CLIPBOARD, _INCR, _TARGETS, _MULTIPLE, _UTF8_STRING, _COMPOUND_STRING;
 static int _xScreen, _xWinFlags, _xInpOpCode;
 static bool _xResizable;
+static int _xErrFlag = 0;
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 static void *_xPixels;
 static XImage *_xFramebuffer;
@@ -54,6 +55,8 @@ static XShmSegmentInfo _xShminfo;
 static GC _xGc;
 static int _xFramebufferWidth, _xFramebufferHeight;
 #endif
+
+static int (*_xOrigError)(Display*, XErrorEvent*);
 
 /* Attribute list for a double buffered OpenGL context, with at least 4 bits per
  * color and a 16 bit depth buffer */
@@ -188,7 +191,6 @@ static inline unsigned int getRawKeyboardCode(XIRawEvent *event)
 	return XGetKeyboardMapping( _xDisplay, event->detail, 1, (int[]){1})[0];
 }
 
-static int (*origXError)(Display*, XErrorEvent*);
 static int handleXError(Display *display, XErrorEvent *event)
 {
 	char error[256];
@@ -198,10 +200,9 @@ static int handleXError(Display *display, XErrorEvent *event)
 	return 0;
 }
 
-static int _xErrflag = 0;
 static int handleXErrorSetFlag(Display *display, XErrorEvent *event)
 {
-	_xErrflag = 1;
+	_xErrFlag = 1;
 	return 0;
 }
 
@@ -270,8 +271,7 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 
 	_rect = rect;
 	_xWinFlags = flags;
-
-	origXError = XSetErrorHandler(handleXError);
+	_xOrigError = XSetErrorHandler(handleXError);
 
 	_xDisplay = XOpenDisplay(NULL);
 	if(CC_UNLIKELY(_xDisplay == NULL)) {
@@ -295,6 +295,8 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	Atom DELETE = XInternAtom(_xDisplay, "WM_DELETE_WINDOW", True);
 
 	_xWin = XCreateWindow(_xDisplay, RootWindow(_xDisplay, _xScreen), rect.x, rect.y, rect.width, rect.height, 0, CopyFromParent, InputOutput, CopyFromParent, 0, 0);
+
+	_hasWindow = true;
 
 	// Choose types of events
 	XSelectInput(_xDisplay, _xWin, PropertyChangeMask | ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask | FocusChangeMask);
@@ -334,8 +336,6 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	_xCursorimg = XCreateBitmapFromData(_xDisplay, _xWin, _emptyCursorData, 8, 8);
 	_mouse.x = _mouse.y = 0;
 
-	_hasWindow = true;
-
 	return CC_E_NONE;
 }
 
@@ -345,7 +345,7 @@ ccError ccWindowFree(void)
 	assert(_hasWindow);
 #endif
 
-	XSetErrorHandler(origXError);
+	XSetErrorHandler(_xOrigError);
 
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 	ccWindowFramebufferFree();
@@ -524,7 +524,7 @@ bool ccWindowEventPoll(void)
 	return true;
 }
 
-ccError ccWindowSetWindowed(ccRect *rect)
+ccError ccWindowSetWindowed(ccRect rect)
 {
 #ifdef _DEBUG
 	assert(_hasWindow);
@@ -535,11 +535,7 @@ ccError ccWindowSetWindowed(ccRect *rect)
 	setWindowState("_NET_WM_STATE_MAXIMIZED_VERT", false);
 	setWindowState("_NET_WM_STATE_MAXIMIZED_HORZ", false);
 
-	if(rect == NULL) {
-		return CC_E_NONE;
-	} else {
-		return ccWindowResizeMove(*rect);
-	}
+	return ccWindowSetRect(rect);
 }
 
 ccError ccWindowSetMaximized(void)
@@ -548,7 +544,7 @@ ccError ccWindowSetMaximized(void)
 	assert(_hasWindow);
 #endif
 
-	ccWindowSetWindowed(NULL);
+	ccWindowSetWindowed(ccWindowGetRect());
 
 	setWindowState("_NET_WM_STATE_MAXIMIZED_VERT", true);
 	setWindowState("_NET_WM_STATE_MAXIMIZED_HORZ", true);
@@ -613,7 +609,7 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 	return CC_E_NONE;
 }
 
-ccError ccWindowResizeMove(ccRect rect)
+ccError ccWindowSetRect(ccRect rect)
 {
 #ifdef _DEBUG
 	assert(_hasWindow);
@@ -647,7 +643,7 @@ ccError ccWindowSetCentered(void)
 
 	ccRect newRect = { .x = (currentResolution->width - _rect.width) >> 1, .y = (currentResolution->height - _rect.height) >> 1, .width = _rect.width, .height = _rect.height};
 
-	ccWindowResizeMove(newRect);
+	ccWindowSetRect(newRect);
 
 	return CC_E_NONE;
 }
@@ -949,14 +945,14 @@ ccError ccWindowFramebufferCreate(ccFramebufferFormat *format)
 	_xShminfo.readOnly = False;
 
 	// Check if we can trigger an X error event to know if we are on a remote display
-	_xErrflag = 0;
+	_xErrFlag = 0;
 	XSetErrorHandler(handleXErrorSetFlag);
 	XShmAttach(_xDisplay, &_xShminfo);
 	XSync(_xDisplay, False);
 
 	shmctl(_xShminfo.shmid, IPC_RMID, 0);
-	if(_xErrflag){
-		_xErrflag = 0;
+	if(_xErrFlag){
+		_xErrFlag = 0;
 		XFlush(_xDisplay);
 
 		XFreeGC(_xDisplay, _xGc);

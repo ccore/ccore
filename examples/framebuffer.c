@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 			ccRect r = ccWindowGetRect();
 			r.width += 100;
 			r.height += 100;
-			ccWindowResizeMove(r);
+			ccWindowSetRect(r);
 
 			ccWindowSetTitle("☑ccore examples: framebuffer");
 		}
