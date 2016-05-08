@@ -14,7 +14,6 @@
 #include <linux/joystick.h>
 
 #include <ccore/assert.h>
-#include <ccore/print.h>
 
 #define _CC_TEST_BIT(nr, addr) \
 	(((1UL << ((nr) & 31)) & (((const unsigned int *) addr)[(nr) >> 5])) != 0)

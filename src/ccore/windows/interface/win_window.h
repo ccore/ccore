@@ -12,7 +12,6 @@
 #include <ccore/assert.h>
 #include <ccore/gamepad.h>
 
-#include "../utils/win_file.h"
 #include "win_gamepad.h"
 
 #define _CC_WINDOW_CLASS_NAME "ccWindow"

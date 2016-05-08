@@ -102,7 +102,6 @@ typedef enum {
 	CC_E_FILE_OPEN, // Error opening the file
 } ccError;
 
-ccError ccInitialize(void); // Initialize ccore
 ccError ccFree(void); // Free ccore
 
 const char *ccErrorString(ccError error); // Returns a error string

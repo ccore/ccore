@@ -12,7 +12,6 @@
 #include <ccore/types.h>
 #include <ccore/event.h>
 #include <ccore/assert.h>
-#include <ccore/print.h>
 
 #include "x11_display.h"
 
@@ -155,11 +154,9 @@ static inline unsigned int getRawKeyboardCode(XIRawEvent *event)
 static int (*origXError)(Display*, XErrorEvent*);
 static int handleXError(Display *display, XErrorEvent *event)
 {
-	return CC_E_WM;
-
 	char error[256];
 	XGetErrorText(XD->display, event->error_code, error, sizeof(error));
-	ccPrintf("X message: %s\n", error);
+	fprintf(stderr, "X message: %s\n", error);
 
 	return 0;
 }
@@ -203,7 +200,7 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 		event.property = request->property;
 	} else if(request->target == XD->MULTIPLE) {
 		// TODO implement this and save target
-		ccPrintf( "X handleSelectionRequest: multiple targets not implemented yet!\n");
+		fprintf(stderr, "X handleSelectionRequest: multiple targets not implemented yet!\n");
 
 		event.property = None;
 	} else {

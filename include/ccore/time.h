@@ -30,17 +30,17 @@
 #define _CC_TO_MILLISECONDS 1000000LL
 #define _CC_TO_MICROSECONDS 1000LL
 
-#define ccTimeSeconds() (ccTimeNanoseconds() / _CC_TO_SECONDS)
-#define ccTimeMilliseconds() (ccTimeNanoseconds() / _CC_TO_MILLISECONDS)
-#define ccTimeMicroseconds() (ccTimeNanoseconds() / _CC_TO_MICROSECONDS)
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
 ccError ccTimeDelay(int ms);
+
 uint64_t ccTimeNanoseconds(void);
+uint64_t ccTimeMicroseconds(void);
+uint64_t ccTimeMilliseconds(void);
+uint64_t ccTimeSeconds(void);
 
 #ifdef __cplusplus
 }

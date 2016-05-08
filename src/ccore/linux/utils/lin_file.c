@@ -1,9 +1,24 @@
 #if defined CC_USE_ALL || defined CC_USE_FILE
 
-#include "lin_file.h"
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <libgen.h>
+#include <limits.h>
+
+#include <ccore/file.h>
+#include <ccore/string.h>
+
+#ifndef CC_USER_LOCATION
+#define CC_USER_LOCATION "~/.config/"
+#endif
+
+#ifndef CC_TEMP_LOCATION
+#define CC_TEMP_LOCATION "/tmp/"
+#endif
 
 #ifndef CC_DATA_LOCATION
-static char *datadir = NULL;
+static char *_dataDir = NULL;
 #endif
 
 char *ccFileUserDirGet(void)
@@ -14,16 +29,16 @@ char *ccFileUserDirGet(void)
 char *ccFileDataDirGet(void)
 {
 #ifndef CC_DATA_LOCATION
-	if(datadir == NULL){
-		datadir = malloc(PATH_MAX);
-		int len = readlink("/proc/self/exe", datadir, PATH_MAX);
+	if(_dataDir == NULL){
+		_dataDir = malloc(PATH_MAX);
+		int len = readlink("/proc/self/exe", _dataDir, PATH_MAX);
 		if(len > 0){
-			datadir[len] = '\0';
-			datadir = dirname(datadir);
-			strcat(datadir, "/");
+			_dataDir[len] = '\0';
+			_dataDir = dirname(_dataDir);
+			strcat(_dataDir, "/");
 		}
 	}
-	return datadir;
+	return _dataDir;
 #else
 	return CC_DATA_LOCATION;
 #endif
@@ -34,10 +49,10 @@ char *ccFileTempDirGet(void)
 	return CC_TEMP_LOCATION;
 }
 
-void _ccFileFree(void)
+void ccFileFree(void)
 {
 #ifndef CC_DATA_LOCATION
-	free(datadir);
+	free(_dataDir);
 #endif
 }
 

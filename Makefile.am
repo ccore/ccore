@@ -10,7 +10,6 @@ pkginclude_HEADERS += include/ccore/event.h
 pkginclude_HEADERS += include/ccore/file.h
 pkginclude_HEADERS += include/ccore/gamepad.h
 pkginclude_HEADERS += include/ccore/opengl.h
-pkginclude_HEADERS += include/ccore/print.h
 pkginclude_HEADERS += include/ccore/string.h
 pkginclude_HEADERS += include/ccore/sysinfo.h
 pkginclude_HEADERS += include/ccore/thread.h
@@ -29,6 +28,7 @@ libccore_la_SOURCES += src/ccore/common/utils/com_core.c
 libccore_la_SOURCES += src/ccore/common/utils/com_file.c
 libccore_la_SOURCES += src/ccore/common/utils/com_rect.c
 libccore_la_SOURCES += src/ccore/common/utils/com_string.c
+libccore_la_SOURCES += src/ccore/common/utils/com_time.c
 
 if BUILD_WINDOWS
 libccore_la_SOURCES += src/ccore/windows/interface/win_display.c

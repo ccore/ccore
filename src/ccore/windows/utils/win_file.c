@@ -1,12 +1,16 @@
 #if defined CC_USE_ALL || defined CC_USE_FILE
 
-#include "win_file.h"
+#include <windows.h>
+#include <string.h>
+
+#include <ccore/file.h>
+#include <ccore/string.h>
 
 #define USERHOME "%HOMEPATH%/"
 
-static char *userDir;
-static char *dataDir;
-static char *tempDir;
+static char *_userDir = NULL;
+static char *_dataDir = NULL;
+static char *_tempDir = NULL;
 
 static void scanDirs(void)
 {
@@ -17,46 +21,46 @@ static void scanDirs(void)
 	//Fetch absolue .exe path
 	pathlength = GetModuleFileName(hModule, path, MAX_PATH);
 	
-	dataDir = calloc(pathlength + 1, sizeof(char));
-	memcpy(dataDir, path, pathlength);
-	ccStringTrimToChar(dataDir, '\\', true);
-	ccStringReplaceChar(dataDir, '\\', '/');
+	_dataDir = calloc(pathlength + 1, sizeof(char));
+	memcpy(_dataDir, path, pathlength);
+	ccStringTrimToChar(_dataDir, '\\', true);
+	ccStringReplaceChar(_dataDir, '\\', '/');
 
 	//User dir
-	userDir = USERHOME;
+	_userDir = USERHOME;
 
 	//Temp directory
 	pathlength = GetTempPath(MAX_PATH, path);
 
-	tempDir = calloc(pathlength + 1, sizeof(char));
-	memcpy(tempDir, path, pathlength);
-	ccStringReplaceChar(tempDir, '\\', '/');
+	_tempDir = calloc(pathlength + 1, sizeof(char));
+	memcpy(_tempDir, path, pathlength);
+	ccStringReplaceChar(_tempDir, '\\', '/');
 }
 
 char *ccFileUserDirGet(void)
 {
-	if(userDir == NULL) scanDirs();
-	return userDir;
+	if(_userDir == NULL) scanDirs();
+	return _userDir;
 }
 
 char *ccFileDataDirGet(void)
 {
-	if(userDir == NULL) scanDirs();
-	return dataDir;
+	if(_userDir == NULL) scanDirs();
+	return _dataDir;
 }
 
 char *ccFileTempDirGet(void)
 {
-	if(userDir == NULL) scanDirs();
-	return tempDir;
+	if(_userDir == NULL) scanDirs();
+	return _tempDir;
 }
 
 void _ccFileFree(void)
 {
-	if(userDir == NULL) return;
-	free(dataDir);
-	free(tempDir);
-	userDir = NULL;
+	if(_userDir == NULL) return;
+	free(_dataDir);
+	free(_tempDir);
+	_userDir = NULL;
 }
 
 ccError ccFileDirFindFirst(ccFileDir *dir, const char *dirPath)

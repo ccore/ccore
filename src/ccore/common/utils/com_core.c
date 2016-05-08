@@ -12,21 +12,10 @@
 
 #include <ccore/event.h>
 
-ccError ccInitialize(void)
-{
-#if defined CC_USE_ALL || defined CC_USE_GAMEPAD
-	_ccGamepads = NULL;
-#endif
-	_ccDisplays = NULL;
-	_ccWindow = NULL;
-
-	return CC_E_NONE;
-}
-
 ccError ccFree(void)
 {
 #if defined CC_USE_ALL || defined CC_USE_FILE
-	_ccFileFree();
+	ccFileFree();
 #endif
 
 #if defined CC_USE_ALL || defined CC_USE_GAMEPAD

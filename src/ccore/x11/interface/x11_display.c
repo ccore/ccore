@@ -8,7 +8,6 @@
 
 #include <ccore/display.h>
 #include <ccore/assert.h>
-#include <ccore/print.h>
 
 static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
 {
