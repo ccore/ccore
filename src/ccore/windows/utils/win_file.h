@@ -2,7 +2,7 @@
 
 #if defined CC_USE_ALL || defined CC_USE_FILE
 
-#include <Windows.h>
+#include <windows.h>
 #include <string.h>
 
 #include <ccore/file.h>

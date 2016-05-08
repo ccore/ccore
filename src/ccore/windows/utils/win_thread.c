@@ -6,8 +6,7 @@ ccError ccThreadStart(ccThread *thread, void *function, void *data)
 {
 	*thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)function, (LPVOID)data, 0, NULL);
 	if(*thread == NULL) {
-		ccErrorPush(CC_ERROR_THREAD_CREATE);
-		return CC_FAIL;
+		return CC_E_THREAD_CREATE;
 	}
 	return CC_E_NONE;
 }
@@ -16,23 +15,18 @@ ccError ccThreadJoin(ccThread *thread)
 {
 	if(WaitForSingleObject(*thread, INFINITE) == WAIT_OBJECT_0) {
 		if(CloseHandle(*thread) == 0) {
-			ccErrorPush(CC_ERROR_THREAD_CREATE);
-			return CC_FAIL;
+			return CC_E_THREAD_CREATE;
 		}
 		return CC_E_NONE;
 	}
 	else{
-		ccErrorPush(CC_ERROR_THREAD_CREATE);
-		return CC_FAIL;
+		return CC_E_THREAD_CREATE;
 	}
 }
 
 bool ccThreadFinished(ccThread *thread)
 {
 	if(WaitForSingleObject(*thread, 0) == WAIT_OBJECT_0) {
-		if(CloseHandle(*thread) == 0) {
-			ccErrorPush(CC_ERROR_THREAD_CREATE);
-		}
 		return true;
 	}
 
@@ -42,8 +36,7 @@ bool ccThreadFinished(ccThread *thread)
 ccError ccThreadMutexCreate(ccMutex *mutex, unsigned int spinCount)
 {
 	if(!InitializeCriticalSectionAndSpinCount(mutex, spinCount)) {
-		ccErrorPush(CC_ERROR_THREAD_MUTEXCREATE);
-		return CC_FAIL;
+		return CC_E_THREAD_MUTEXCREATE;
 	}
 	
 	return CC_E_NONE;

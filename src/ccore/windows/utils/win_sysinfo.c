@@ -25,7 +25,7 @@ ccError ccSysinfoInitialize(void)
 
 fail:
 	free(_ccSysinfo);
-	return CC_FAIL;
+	return CC_E_OS;
 }
 
 #endif

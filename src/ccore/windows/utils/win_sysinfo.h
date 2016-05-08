@@ -4,7 +4,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <Windows.h>
+#include <windows.h>
 
 #include <ccore/sysinfo.h>
 

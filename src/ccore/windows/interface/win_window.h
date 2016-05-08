@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdlib.h>
-#include <Windows.h>
+#include <windows.h>
 #include <string.h>
 #include <hidsdi.h>
 #include <stdint.h>

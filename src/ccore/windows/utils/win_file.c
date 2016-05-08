@@ -72,7 +72,7 @@ ccError ccFileDirFindFirst(ccFileDir *dir, const char *dirPath)
 	free(pathStr);
 
 	if(dir->handle == INVALID_HANDLE_VALUE) {
-		return CC_FAIL;
+		return CC_E_FILE_OPEN;
 	}
 	
 	strLength = (unsigned int)strlen(findData.cFileName);
@@ -98,7 +98,7 @@ ccError ccFileDirFind(ccFileDir *dir)
 			dir->name = NULL;
 			return CC_E_NONE;
 		}
-		return CC_FAIL;
+		return CC_E_FILE_OPEN;
 	}
 
 	strLength = (unsigned int)strlen(findData.cFileName);
@@ -115,7 +115,7 @@ ccError ccFileDirFind(ccFileDir *dir)
 
 ccError ccFileDirClose(ccFileDir *dir)
 {
-	return FindClose(dir->handle) == 0?CC_FAIL:CC_E_NONE;
+	return FindClose(dir->handle) == 0?CC_E_FILE_OPEN:CC_E_NONE;
 }
 
 #endif

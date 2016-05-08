@@ -5,9 +5,9 @@
 #pragma comment(lib, "hid.lib")
 #pragma comment(lib, "XInput9_1_0.lib")
 
-#include <Windows.h>
+#include <windows.h>
 #include <hidsdi.h>
-#include <Xinput.h>
+#include <xinput.h>
 
 #include <ccore/gamepad.h>
 

@@ -5,7 +5,6 @@
 #pragma comment(lib, "Winmm.lib")
 
 #include <windows.h>
-#include <Windows.h>
 
 #include <ccore/time.h>
 

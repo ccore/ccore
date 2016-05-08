@@ -93,7 +93,7 @@ char *ccEventString(ccEvent event);
 #include <X11/keysym.h>
 #define KEYDEF(x11,win) x11
 #elif defined WINDOWS
-#include <Windows.h>
+#include <windows.h>
 #define KEYDEF(x11,win) win
 #endif
 

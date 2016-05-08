@@ -27,7 +27,7 @@
 #include <stdint.h>
 
 #ifdef WINDOWS
-#include <Windows.h>
+#include <windows.h>
 #elif defined LINUX
 #include <sys/time.h>
 #include <dirent.h>
