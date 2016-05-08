@@ -13,6 +13,17 @@
 #include <ccore/types.h>
 #include <ccore/event.h>
 
+static ccRect _rect;
+static ccPoint _mouse;
+static ccEvent _event;
+static ccDisplay *_display;
+static bool _supportsRawInput;
+static bool _hasWindow = false;
+
+GtkWidget *_gWin;
+int _gEvents;
+int _gFlags;
+
 enum {
 	_EV_QUIT =             1 << 0,
 	_EV_MOUSE_LEFT_DOWN =  1 << 1,
@@ -26,43 +37,43 @@ enum {
 
 static void eventDestroy(GtkWidget *widget, gpointer data)
 {
-	GD->events |= _EV_QUIT;
+	_gEvents |= _EV_QUIT;
 }
 
 static void eventButtonPress(GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
 	if(event->button == 1){
-		GD->events |= _EV_MOUSE_LEFT_DOWN;
+		_gEvents |= _EV_MOUSE_LEFT_DOWN;
 	}else if(event->button == 3){
-		GD->events |= _EV_MOUSE_RIGHT_DOWN;
+		_gEvents |= _EV_MOUSE_RIGHT_DOWN;
 	}
 }
 
 static void eventButtonRelease(GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
 	if(event->button == 1){
-		GD->events |= _EV_MOUSE_LEFT_UP;
+		_gEvents |= _EV_MOUSE_LEFT_UP;
 	}else if(event->button == 3){
-		GD->events |= _EV_MOUSE_RIGHT_UP;
+		_gEvents |= _EV_MOUSE_RIGHT_UP;
 	}
 }
 
 static void eventFocusIn(GtkWidget *widget, gpointer data)
 {
-	GD->events |= _EV_FOCUS_IN;
+	_gEvents |= _EV_FOCUS_IN;
 }
 
 static void eventFocusOut(GtkWidget *widget, gpointer data)
 {
-	GD->events |= _EV_FOCUS_OUT;
+	_gEvents |= _EV_FOCUS_OUT;
 }
 
 static void eventResize(GtkWidget *widget, GdkRectangle *rect, gpointer data)
 {
-	_ccWindow->rect.width = rect->width;
-	_ccWindow->rect.height = rect->height;
+	_rect.width = rect->width;
+	_rect.height = rect->height;
 
-	GD->events |= _EV_RESIZE;
+	_gEvents |= _EV_RESIZE;
 }
 
 static void imageDestroy(guchar *pixels, gpointer data)
@@ -78,43 +89,34 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	assert(rect.width > 0 && rect.height > 0);
 #endif
 
-	if(CC_UNLIKELY(_ccWindow)) {
+	if(CC_UNLIKELY(_hasWindow)) {
 		return CC_E_WINDOW_CREATE;
-	}
-
-	_ccWindow = malloc(sizeof(ccWindow));
-	if(CC_UNLIKELY(!_ccWindow)){
-		return CC_E_MEMORY_OVERFLOW;
-	}	
-
-	_ccWindow->data = calloc(1, sizeof(ccWindow_gtk3));
-	if(CC_UNLIKELY(!_ccWindow->data)){
-		return CC_E_MEMORY_OVERFLOW;
 	}
 
 	if(CC_UNLIKELY(!gtk_init_check(NULL, NULL))){
 		return CC_E_WM;
 	}
 
-	GD->win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	_gWin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-	gtk_window_set_title(GTK_WINDOW(GD->win), title);
-	gtk_window_set_default_size(GTK_WINDOW(GD->win), rect.width, rect.height);
-	gtk_window_set_resizable(GTK_WINDOW(GD->win), !(flags & CC_WINDOW_FLAG_NORESIZE));
-	gtk_window_set_decorated(GTK_WINDOW(GD->win), !(flags & CC_WINDOW_FLAG_NOBUTTONS));
-	gtk_window_set_keep_above(GTK_WINDOW(GD->win), flags & CC_WINDOW_FLAG_ALWAYSONTOP);
+	gtk_window_set_title(GTK_WINDOW(_gWin), title);
+	gtk_window_set_default_size(GTK_WINDOW(_gWin), rect.width, rect.height);
+	gtk_window_set_resizable(GTK_WINDOW(_gWin), !(flags & CC_WINDOW_FLAG_NORESIZE));
+	gtk_window_set_decorated(GTK_WINDOW(_gWin), !(flags & CC_WINDOW_FLAG_NOBUTTONS));
+	gtk_window_set_keep_above(GTK_WINDOW(_gWin), flags & CC_WINDOW_FLAG_ALWAYSONTOP);
 
-	g_signal_connect(GD->win, "destroy", G_CALLBACK(eventDestroy), NULL);
-	g_signal_connect(GD->win, "button-press-event", G_CALLBACK(eventButtonPress), NULL);
-	g_signal_connect(GD->win, "button-release-event", G_CALLBACK(eventButtonRelease), NULL);
-	g_signal_connect(GD->win, "focus-in-event", G_CALLBACK(eventFocusIn), NULL);
-	g_signal_connect(GD->win, "focus-out-event", G_CALLBACK(eventFocusOut), NULL);
-	g_signal_connect(GD->win, "size-allocate", G_CALLBACK(eventResize), NULL);
+	g_signal_connect(_gWin, "destroy", G_CALLBACK(eventDestroy), NULL);
+	g_signal_connect(_gWin, "button-press-event", G_CALLBACK(eventButtonPress), NULL);
+	g_signal_connect(_gWin, "button-release-event", G_CALLBACK(eventButtonRelease), NULL);
+	g_signal_connect(_gWin, "focus-in-event", G_CALLBACK(eventFocusIn), NULL);
+	g_signal_connect(_gWin, "focus-out-event", G_CALLBACK(eventFocusOut), NULL);
+	g_signal_connect(_gWin, "size-allocate", G_CALLBACK(eventResize), NULL);
 
-	gtk_widget_show_all(GD->win);
+	gtk_widget_show_all(_gWin);
 
-	_ccWindow->rect = rect;
-	GD->flags = flags;
+	_hasWindow = true;
+	_rect = rect;
+	_gFlags = flags;
 
 	return CC_E_NONE;
 }
@@ -130,47 +132,47 @@ bool ccWindowEventPoll(void)
 		gtk_main_iteration();
 	}
 
-	if(GD->events == 0){
+	if(_gEvents == 0){
 		return false;
 	}
 
-	if(GD->events & _EV_QUIT){
-		_ccWindow->event.type = CC_EVENT_WINDOW_QUIT;
+	if(_gEvents & _EV_QUIT){
+		_event.type = CC_EVENT_WINDOW_QUIT;
 
 		// Clear the flag
-		GD->events &= ~_EV_QUIT;
-	}else if(GD->events & _EV_MOUSE_LEFT_DOWN){
-		_ccWindow->event.type = CC_EVENT_MOUSE_DOWN;
-		_ccWindow->event.mouseButton = CC_MOUSE_BUTTON_LEFT;
+		_gEvents &= ~_EV_QUIT;
+	}else if(_gEvents & _EV_MOUSE_LEFT_DOWN){
+		_event.type = CC_EVENT_MOUSE_DOWN;
+		_event.mouseButton = CC_MOUSE_BUTTON_LEFT;
 
-		GD->events &= ~_EV_MOUSE_LEFT_DOWN;
-	}else if(GD->events & _EV_MOUSE_RIGHT_DOWN){
-		_ccWindow->event.type = CC_EVENT_MOUSE_DOWN;
-		_ccWindow->event.mouseButton = CC_MOUSE_BUTTON_RIGHT;
+		_gEvents &= ~_EV_MOUSE_LEFT_DOWN;
+	}else if(_gEvents & _EV_MOUSE_RIGHT_DOWN){
+		_event.type = CC_EVENT_MOUSE_DOWN;
+		_event.mouseButton = CC_MOUSE_BUTTON_RIGHT;
 
-		GD->events &= ~_EV_MOUSE_RIGHT_DOWN;
-	}else if(GD->events & _EV_MOUSE_LEFT_UP){
-		_ccWindow->event.type = CC_EVENT_MOUSE_UP;
-		_ccWindow->event.mouseButton = CC_MOUSE_BUTTON_LEFT;
+		_gEvents &= ~_EV_MOUSE_RIGHT_DOWN;
+	}else if(_gEvents & _EV_MOUSE_LEFT_UP){
+		_event.type = CC_EVENT_MOUSE_UP;
+		_event.mouseButton = CC_MOUSE_BUTTON_LEFT;
 
-		GD->events &= ~_EV_MOUSE_LEFT_UP;
-	}else if(GD->events & _EV_MOUSE_RIGHT_UP){
-		_ccWindow->event.type = CC_EVENT_MOUSE_UP;
-		_ccWindow->event.mouseButton = CC_MOUSE_BUTTON_RIGHT;
+		_gEvents &= ~_EV_MOUSE_LEFT_UP;
+	}else if(_gEvents & _EV_MOUSE_RIGHT_UP){
+		_event.type = CC_EVENT_MOUSE_UP;
+		_event.mouseButton = CC_MOUSE_BUTTON_RIGHT;
 
-		GD->events &= ~_EV_MOUSE_RIGHT_UP;
-	}else if(GD->events & _EV_FOCUS_IN){
-		_ccWindow->event.type = CC_EVENT_FOCUS_GAINED;
+		_gEvents &= ~_EV_MOUSE_RIGHT_UP;
+	}else if(_gEvents & _EV_FOCUS_IN){
+		_event.type = CC_EVENT_FOCUS_GAINED;
 
-		GD->events &= ~_EV_FOCUS_IN;
-	}else if(GD->events & _EV_FOCUS_OUT){
-		_ccWindow->event.type = CC_EVENT_FOCUS_LOST;
+		_gEvents &= ~_EV_FOCUS_IN;
+	}else if(_gEvents & _EV_FOCUS_OUT){
+		_event.type = CC_EVENT_FOCUS_LOST;
 
-		GD->events &= ~_EV_FOCUS_OUT;
-	}else if(GD->events & _EV_RESIZE){
-		_ccWindow->event.type = CC_EVENT_WINDOW_RESIZE;
+		_gEvents &= ~_EV_FOCUS_OUT;
+	}else if(_gEvents & _EV_RESIZE){
+		_event.type = CC_EVENT_WINDOW_RESIZE;
 
-		GD->events &= ~_EV_RESIZE;
+		_gEvents &= ~_EV_RESIZE;
 	}
 
 	return true;
@@ -179,22 +181,20 @@ bool ccWindowEventPoll(void)
 ccError ccWindowSetRect(ccRect rect)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
-#endif
-#ifdef _DEBUG
-	assert(GD->win);
+	assert(_hasWindow);
+	assert(_gWin);
 #endif
 
 	// We can't force to resize the window when it's not resizable
-	if(GD->flags & CC_WINDOW_FLAG_NORESIZE){
-		gtk_window_set_resizable(GTK_WINDOW(GD->win), true);
+	if(_gFlags & CC_WINDOW_FLAG_NORESIZE){
+		gtk_window_set_resizable(GTK_WINDOW(_gWin), true);
 	}
 
-	gtk_window_move(GTK_WINDOW(GD->win), rect.x, rect.y);
-	gtk_widget_set_size_request(GD->win, rect.width, rect.height);
+	gtk_window_move(GTK_WINDOW(_gWin), rect.x, rect.y);
+	gtk_widget_set_size_request(_gWin, rect.width, rect.height);
 
-	if(GD->flags & CC_WINDOW_FLAG_NORESIZE){
-		gtk_window_set_resizable(GTK_WINDOW(GD->win), false);
+	if(_gFlags & CC_WINDOW_FLAG_NORESIZE){
+		gtk_window_set_resizable(GTK_WINDOW(_gWin), false);
 	}
 
 	return CC_E_NONE;
@@ -203,52 +203,50 @@ ccError ccWindowSetRect(ccRect rect)
 ccError ccWindowSetCentered(void)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
 #ifdef _DEBUG
-	assert(GD->win);
+	assert(_gWin);
 #endif
 
-	gtk_window_set_position(GTK_WINDOW(GD->win), GTK_WIN_POS_CENTER_ALWAYS);
+	gtk_window_set_position(GTK_WINDOW(_gWin), GTK_WIN_POS_CENTER_ALWAYS);
 
 	return CC_E_NONE;
 }
 
-ccError ccWindowSetWindowed(ccRect *rect)
+ccError ccWindowSetWindowed(ccRect rect)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
-#endif
-#ifdef _DEBUG
-	assert(GD->win);
+	assert(_hasWindow);
+	assert(_gWin);
 #endif
 
-	gtk_window_unfullscreen(GTK_WINDOW(GD->win));
-	gtk_window_unmaximize(GTK_WINDOW(GD->win));
+	gtk_window_unfullscreen(GTK_WINDOW(_gWin));
+	gtk_window_unmaximize(GTK_WINDOW(_gWin));
 
-	return ccWindowSetRect(*rect);
+	return ccWindowSetRect(rect);
 }
 
 ccError ccWindowSetMaximized(void)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
 #ifdef _DEBUG
-	assert(GD->win);
+	assert(_gWin);
 #endif
 
 	// We can't force to resize the window when it's not resizable
-	if(GD->flags & CC_WINDOW_FLAG_NORESIZE){
-		gtk_widget_hide(GD->win);
-		gtk_window_set_resizable(GTK_WINDOW(GD->win), true);
+	if(_gFlags & CC_WINDOW_FLAG_NORESIZE){
+		gtk_widget_hide(_gWin);
+		gtk_window_set_resizable(GTK_WINDOW(_gWin), true);
 	}
 
-	//gtk_window_unfullscreen(GTK_WINDOW(GD->win));
-	gtk_window_maximize(GTK_WINDOW(GD->win));
+	//gtk_window_unfullscreen(GTK_WINDOW(_gWin));
+	gtk_window_maximize(GTK_WINDOW(_gWin));
 
-	if(GD->flags & CC_WINDOW_FLAG_NORESIZE){
-		gtk_widget_show_all(GD->win);
+	if(_gFlags & CC_WINDOW_FLAG_NORESIZE){
+		gtk_widget_show_all(_gWin);
 	}
 
 	return CC_E_NONE;
@@ -262,13 +260,13 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 ccError ccWindowSetTitle(const char *title)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
 #ifdef _DEBUG
-	assert(GD->win);
+	assert(_gWin);
 #endif
 
-	gtk_window_set_title(GTK_WINDOW(GD->win), title);
+	gtk_window_set_title(GTK_WINDOW(_gWin), title);
 
 	return CC_E_NONE;
 }
@@ -276,13 +274,13 @@ ccError ccWindowSetTitle(const char *title)
 ccError ccWindowSetBlink(void)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
 #ifdef _DEBUG
-	assert(GD->win);
+	assert(_gWin);
 #endif
 
-	gtk_window_set_urgency_hint(GTK_WINDOW(GD->win), true);
+	gtk_window_set_urgency_hint(GTK_WINDOW(_gWin), true);
 
 	return CC_E_NONE;
 }
@@ -290,7 +288,7 @@ ccError ccWindowSetBlink(void)
 ccError ccWindowIconSet(ccPoint size, const uint32_t *icon)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
 #ifdef _DEBUG
 	assert(size.x > 0 && size.y > 0);
@@ -324,7 +322,7 @@ ccError ccWindowIconSet(ccPoint size, const uint32_t *icon)
 		return CC_E_WM;
 	}
 
-	gtk_window_set_icon(GTK_WINDOW(GD->win), pix);
+	gtk_window_set_icon(GTK_WINDOW(_gWin), pix);
 	
 	g_object_unref(pix);
 
@@ -334,12 +332,12 @@ ccError ccWindowIconSet(ccPoint size, const uint32_t *icon)
 ccError ccWindowMouseSetPosition(ccPoint target)
 {
 	GdkDisplay *disp = gdk_display_get_default();
-	GdkDeviceManager *devs = gdk_display_get_device_manager(disp);
-	GdkDevice *pointer = gdk_device_manager_get_client_pointer(devs);
-	GdkScreen *screen = gtk_window_get_screen(GTK_WINDOW(GD->win));
+	GdkSeat *seat = gdk_display_get_default_seat(disp);
+	GdkDevice *pointer = gdk_seat_get_pointer(seat);
+	GdkScreen *screen = gtk_window_get_screen(GTK_WINDOW(_gWin));
 
 	int x, y;
-	gtk_window_get_position(GTK_WINDOW(GD->win), &x, &y);
+	gtk_window_get_position(GTK_WINDOW(_gWin), &x, &y);
 
 	gdk_device_warp(pointer, screen, x + target.x, y + target.y);
 
@@ -383,7 +381,7 @@ ccError ccWindowMouseSetCursor(ccCursor cursor)
 	}
 
 	GdkCursor *cur = gdk_cursor_new_from_name(gdk_display_get_default(), name);
-	gdk_window_set_cursor(gtk_widget_get_window(GD->win), cur);
+	gdk_window_set_cursor(gtk_widget_get_window(_gWin), cur);
 	
 	return CC_E_NONE;
 }
@@ -403,6 +401,11 @@ ccError ccWindowFramebufferFree()
 {
 	return CC_E_NONE;
 }
+
+void *ccWindowFramebufferGetPixels()
+{	
+	return NULL;
+}
 #endif
 
 ccError ccWindowClipboardSet(const char *data)
@@ -419,4 +422,14 @@ char *ccWindowClipboardGet(void)
 	GtkClipboard *clip = (GtkClipboard*)gtk_clipboard_get_default(gdk_display_get_default());
 
 	return gtk_clipboard_wait_for_text(clip);
+}
+
+ccEvent ccWindowEventGet(void)
+{
+	return _event;
+}
+
+ccRect ccWindowGetRect(void)
+{	
+	return _rect;
 }
