@@ -262,7 +262,7 @@ am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
 am__v_at_1 = 
 DEFAULT_INCLUDES = 
-depcomp = $(SHELL) $(top_srcdir)/depcomp
+depcomp = $(SHELL) $(top_srcdir)/build-scripts/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
@@ -473,7 +473,7 @@ am__set_TESTS_bases = \
 RECHECK_LOGS = $(TEST_LOGS)
 TEST_SUITE_LOG = test-suite.log
 TEST_EXTENSIONS = @EXEEXT@ .test
-LOG_DRIVER = $(SHELL) $(top_srcdir)/test-driver
+LOG_DRIVER = $(SHELL) $(top_srcdir)/build-scripts/test-driver
 LOG_COMPILE = $(LOG_COMPILER) $(AM_LOG_FLAGS) $(LOG_FLAGS)
 am__set_b = \
   case '$@' in \
@@ -488,11 +488,23 @@ am__set_b = \
 am__test_logs1 = $(TESTS:=.log)
 am__test_logs2 = $(am__test_logs1:@EXEEXT@.log=.log)
 TEST_LOGS = $(am__test_logs2:.test.log=.log)
-TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/test-driver
+TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/build-scripts/test-driver
 TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
 	$(TEST_LOG_FLAGS)
-am__DIST_COMMON = $(srcdir)/Makefile.in ar-lib compile config.guess \
-	config.sub depcomp install-sh ltmain.sh missing test-driver
+am__DIST_COMMON = $(srcdir)/Makefile.in \
+	$(top_srcdir)/build-scripts/ar-lib \
+	$(top_srcdir)/build-scripts/compile \
+	$(top_srcdir)/build-scripts/config.guess \
+	$(top_srcdir)/build-scripts/config.sub \
+	$(top_srcdir)/build-scripts/depcomp \
+	$(top_srcdir)/build-scripts/install-sh \
+	$(top_srcdir)/build-scripts/ltmain.sh \
+	$(top_srcdir)/build-scripts/missing \
+	$(top_srcdir)/build-scripts/test-driver build-scripts/ar-lib \
+	build-scripts/compile build-scripts/config.guess \
+	build-scripts/config.sub build-scripts/depcomp \
+	build-scripts/install-sh build-scripts/ltmain.sh \
+	build-scripts/missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
