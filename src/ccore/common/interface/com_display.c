@@ -1,28 +1,22 @@
 #include <ccore/display.h>
 
-bool ccDisplayResolutionEqual(ccDisplayData *resolutionA, ccDisplayData *resolutionB)
-{
-	return (resolutionA->bitDepth == resolutionB->bitDepth && resolutionA->height == resolutionB->height &&
-		resolutionA->refreshRate == resolutionB->refreshRate && resolutionA->width == resolutionB->width);
-}
-
-ccRect ccDisplayGetRect(ccDisplay *display)
+ccRect ccDisplayGetRect(const ccDisplay *display)
 {
 #ifdef _DEBUG
 	assert(display != NULL);
 #endif
 
-	return (ccRect){ display->x, display->y, display->resolution[display->current].width, display->resolution[display->current].height };
+	return (ccRect){
+		display->x, display->y, display->resolution[display->current].width, display->resolution[display->current].height };
 }
 
-bool ccDisplayResolutionExists(ccDisplay *display, ccDisplayData *resolution)
+bool ccDisplayResolutionExists(const ccDisplay *display, const ccDisplayData *resolution)
 {
+#ifdef _DEBUG
+	assert(display != NULL);
+#endif
+
 	int i;
-
-#ifdef _DEBUG
-	assert(display != NULL);
-#endif
-
 	for(i = 0; i < display->amount; i++) {
 		if(ccDisplayResolutionEqual(&display->resolution[i], resolution)) {
 			return true;
@@ -32,54 +26,42 @@ bool ccDisplayResolutionExists(ccDisplay *display, ccDisplayData *resolution)
 	return false;
 }
 
-ccError ccDisplayRevertModes(void)
-{
-	int i;
-	ccError output;
-
-#ifdef _DEBUG
-	assert(_ccDisplays != NULL);
-#endif
-
-	for(i = 0; i < _ccDisplays->amount; i++){
-		output = ccDisplayResolutionSet(_ccDisplays->display + i, CC_DEFAULT_RESOLUTION);
-		if(output != CC_E_NONE){
-			return output;
-		}
-	}
-
-	return CC_E_NONE;
-}
-
-ccDisplay *ccDisplayGetDefault(void)
+ccDisplayData *ccDisplayResolutionGetCurrent(const ccDisplay *display)
 {
 #ifdef _DEBUG
-	assert(_ccDisplays != NULL);
-#endif
-#ifdef _DEBUG
-	assert(_ccDisplays->display != NULL);
+	assert(display != NULL);
 #endif
 
-	return _ccDisplays->display + _ccDisplays->primary;
+	return display->resolution + display->current;
 }
 
-ccDisplay *ccDisplayGet(int index)
+ccDisplayData *ccDisplayResolutionGet(const ccDisplay *display, int index)
 {
 #ifdef _DEBUG
-	assert(_ccDisplays != NULL);
-#endif
-#ifdef _DEBUG
-	assert(index >= 0 && index < _ccDisplays->amount);
+	assert(display != NULL);
 #endif
 
-	return _ccDisplays->display + index;
+	return display->resolution + index;
 }
 
-int ccDisplayGetAmount(void)
+int ccDisplayResolutionGetAmount(const ccDisplay *display)
 {
 #ifdef _DEBUG
-	assert(_ccDisplays != NULL);
+	assert(display != NULL);
 #endif
 
-	return _ccDisplays->amount;
+	return display->amount;	
 }
+
+bool ccDisplayResolutionEqual(const ccDisplayData *resolutionA, const ccDisplayData *resolutionB)
+{
+#ifdef _DEBUG
+	assert(resolutionA != NULL);
+	assert(resolutionB != NULL);
+#endif
+
+	return (resolutionA->bitDepth == resolutionB->bitDepth && resolutionA->height == resolutionB->height &&
+		resolutionA->refreshRate == resolutionB->refreshRate && resolutionA->width == resolutionB->width);
+}
+
+

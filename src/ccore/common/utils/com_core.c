@@ -14,23 +14,37 @@
 
 ccError ccFree(void)
 {
+	ccError err = CC_E_NONE;
+
 #if defined CC_USE_ALL || defined CC_USE_FILE
-	ccFileFree();
+	// Free File
+	if((err = ccFileFree()) != CC_E_NONE){
+		return err;
+	}
 #endif
 
 #if defined CC_USE_ALL || defined CC_USE_GAMEPAD
-	if(_ccGamepads != NULL) {
-		ccGamepadFree();
+	// Free Gamepads
+	if((err = ccGamepadFree()) != CC_E_NONE){
+		return err;
 	}
 #endif
-	if(_ccWindow != NULL) {
-		if(ccGLContextIsActive()){
-			ccGLContextFree();
+
+	// Free OpenGL context
+	if(ccGLContextIsActive()){
+		if((err = ccGLContextFree()) != CC_E_NONE){
+			return err;
 		}
-		ccWindowFree();
 	}
-	if(_ccDisplays != NULL) {
-		ccDisplayFree();
+
+	// Free Window
+	if((err = ccWindowFree()) != CC_E_NONE){
+		return err;
+	}
+
+	// Free Displays
+	if((err = ccDisplayFree()) != CC_E_NONE){
+		return err;
 	}
 
 	return CC_E_NONE;
@@ -69,7 +83,7 @@ const char *ccErrorString(ccError error)
 			return "The cursor couldn't be changed or moved";
 		case CC_E_WINDOW_CLIPBOARD:
 			return "The clipboad couldn't be read or written to";	
-			
+
 			// Framebuffer related
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 		case CC_E_FRAMEBUFFER_SHAREDMEM:

@@ -49,11 +49,13 @@ char *ccFileTempDirGet(void)
 	return CC_TEMP_LOCATION;
 }
 
-void ccFileFree(void)
+ccError ccFileFree(void)
 {
 #ifndef CC_DATA_LOCATION
 	free(_dataDir);
 #endif
+
+	return CC_E_NONE;
 }
 
 ccError ccFileDirFindFirst(ccFileDir *dir, const char *dirpath)

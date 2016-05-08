@@ -67,7 +67,7 @@ ccError ccFileDirClose(ccFileDir *dir);
 
 ccFileInfo ccFileInfoGet(const char *file); 
 
-void ccFileFree(void);
+ccError ccFileFree(void);
 
 #ifdef __cplusplus
 }

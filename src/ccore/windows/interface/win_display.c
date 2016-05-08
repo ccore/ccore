@@ -1,5 +1,56 @@
 #include "win_display.h"
 
+static ccDisplay* _displays = 0;
+static unsigned short _amount = 0;
+static unsigned short _primary = 0;
+
+ccError ccDisplayRevertModes(void)
+{
+	int i;
+	ccError output;
+
+#ifdef _DEBUG
+	assert(_displays != NULL);
+#endif
+
+	for(i = 0; i < _amount; i++){
+		output = ccDisplayResolutionSet(_displays + i, CC_DEFAULT_RESOLUTION);
+		if(output != CC_E_NONE){
+			return output;
+		}
+	}
+
+	return CC_E_NONE;
+}
+
+ccDisplay *ccDisplayGetDefault(void)
+{
+#ifdef _DEBUG
+	assert(_displays != NULL);
+#endif
+
+	return _displays + _primary;
+}
+
+ccDisplay *ccDisplayGet(int index)
+{
+#ifdef _DEBUG
+	assert(_displays != NULL);
+	assert(index >= 0 && index < _amount);
+#endif
+
+	return _displays + index;
+}
+
+int ccDisplayGetAmount(void)
+{
+#ifdef _DEBUG
+	assert(_displays != NULL);
+#endif
+
+	return _amount;
+}
+
 ccError ccDisplayInitialize(void)
 {
 	DISPLAY_DEVICE device;
@@ -13,19 +64,13 @@ ccError ccDisplayInitialize(void)
 	int i;
 
 #ifdef _DEBUG
-	assert(_ccDisplays == NULL);
+	assert(_displays == NULL);
 #endif
-
-	_ccDisplays = malloc(sizeof(ccDisplays));
-	if(_ccDisplays == NULL){
-		return CC_E_MEMORY_OVERFLOW;
-	}
-	_ccDisplays->display = NULL;
 
 	dm.dmSize = sizeof(dm);
 	device.cb = sizeof(DISPLAY_DEVICE);
 	display.cb = sizeof(DISPLAY_DEVICE);
-	_ccDisplays->amount = 0;
+	_amount = 0;
 
 	while(EnumDisplayDevices(NULL, deviceCount, &device, 0)) {
 		displayCount = 0;
@@ -35,13 +80,13 @@ ccError ccDisplayInitialize(void)
 				break;
 			}
 
-			_ccDisplays->amount++;
-			_ccDisplays->display = realloc(_ccDisplays->display, sizeof(ccDisplay)*_ccDisplays->amount);
-			if(_ccDisplays->display == NULL){
+			_amount++;
+			_displays = realloc(_displays, sizeof(ccDisplay)*_amount);
+			if(_displays == NULL){
 				return CC_E_MEMORY_OVERFLOW;
 			}
 
-			currentDisplay = &_ccDisplays->display[_ccDisplays->amount - 1];
+			currentDisplay = &_displays[_amount - 1];
 
 			currentDisplay->gpuName = malloc(CC_MAXDEVICESTRINGSIZE);
 			if(currentDisplay->gpuName == NULL){
@@ -101,7 +146,7 @@ ccError ccDisplayInitialize(void)
 				currentDisplay->amount++;
 			}
 
-			if(currentDisplay->x == 0 && currentDisplay->y == 0) _ccDisplays->primary = _ccDisplays->amount - 1;
+			if(currentDisplay->x == 0 && currentDisplay->y == 0) _primary = _amount - 1;
 
 			displayCount++;
 
@@ -118,19 +163,18 @@ ccError ccDisplayFree(void)
 	int i;
 
 #ifdef _DEBUG
-	assert(_ccDisplays != NULL);
+	assert(_displays != NULL);
 #endif
 
-	for(i = 0; i < _ccDisplays->amount; i++) {
-		free(_ccDisplays->display[i].gpuName);
-		free(_ccDisplays->display[i].monitorName);
-		free(_ccDisplays->display[i].deviceName);
-		free(_ccDisplays->display[i].resolution);
+	for(i = 0; i < _amount; i++) {
+		free(_displays[i].gpuName);
+		free(_displays[i].monitorName);
+		free(_displays[i].deviceName);
+		free(_displays[i].resolution);
 	}
-	free(_ccDisplays->display);
-	free(_ccDisplays);
+	free(_displays);
 
-	_ccDisplays = NULL;
+	_displays = NULL;
 
 	return CC_E_NONE;
 }

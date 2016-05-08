@@ -55,12 +55,16 @@ char *ccFileTempDirGet(void)
 	return _tempDir;
 }
 
-void _ccFileFree(void)
+ccError ccFileFree(void)
 {
-	if(_userDir == NULL) return;
+	if(_userDir == NULL){
+		return CC_E_NONE;
+	}
 	free(_dataDir);
 	free(_tempDir);
 	_userDir = NULL;
+
+	return CC_E_NONE;
 }
 
 ccError ccFileDirFindFirst(ccFileDir *dir, const char *dirPath)

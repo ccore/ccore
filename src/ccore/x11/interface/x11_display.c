@@ -8,6 +8,57 @@
 
 #include <ccore/display.h>
 
+static ccDisplay* _displays = 0;
+static unsigned short _amount = 0;
+static unsigned short _primary = 0;
+
+ccError ccDisplayRevertModes(void)
+{
+	int i;
+	ccError output;
+
+#ifdef _DEBUG
+	assert(_displays != NULL);
+#endif
+
+	for(i = 0; i < _amount; i++){
+		output = ccDisplayResolutionSet(_displays + i, CC_DEFAULT_RESOLUTION);
+		if(output != CC_E_NONE){
+			return output;
+		}
+	}
+
+	return CC_E_NONE;
+}
+
+ccDisplay *ccDisplayGetDefault(void)
+{
+#ifdef _DEBUG
+	assert(_displays != NULL);
+#endif
+
+	return _displays + _primary;
+}
+
+ccDisplay *ccDisplayGet(int index)
+{
+#ifdef _DEBUG
+	assert(_displays != NULL);
+	assert(index >= 0 && index < _amount);
+#endif
+
+	return _displays + index;
+}
+
+int ccDisplayGetAmount(void)
+{
+#ifdef _DEBUG
+	assert(_displays != NULL);
+#endif
+
+	return _amount;
+}
+
 static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
 {
 	int eventBase, errorBase;
@@ -16,7 +67,7 @@ static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
 	}
 
 	ccDisplayData currentResolution = {.bitDepth = -1};
-	_ccDisplays->primary = 0;
+	_primary = 0;
 
 	Window root = RootWindow(display, 0);
 	XRRScreenResources *resources = XRRGetScreenResources(display, root);
@@ -33,19 +84,19 @@ static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
 			continue;
 		}
 
-		_ccDisplays->amount++;
-		if(_ccDisplays->amount == 1) {
-			_ccDisplays->display = malloc(sizeof(ccDisplay));
-			if(_ccDisplays->display == NULL){
+		_amount++;
+		if(_amount == 1) {
+			_displays = malloc(sizeof(ccDisplay));
+			if(_displays == NULL){
 				return CC_E_MEMORY_OVERFLOW;
 			}
 		} else {
-			_ccDisplays->display = realloc(_ccDisplays->display, sizeof(ccDisplay) * _ccDisplays->amount);
-			if(_ccDisplays->display == NULL){
+			_displays = realloc(_displays, sizeof(ccDisplay) * _amount);
+			if(_displays == NULL){
 				return CC_E_MEMORY_OVERFLOW;
 			}
 		}
-		ccDisplay *currentDisplay = _ccDisplays->display + _ccDisplays->amount - 1;
+		ccDisplay *currentDisplay = _displays + _amount - 1;
 
 		currentDisplay->data = malloc(sizeof(ccDisplay_x11));
 		if(currentDisplay->data == NULL){
@@ -146,16 +197,8 @@ static ccError ccXFindDisplaysXinerama(Display *display, char *displayName)
 }
 
 ccError ccDisplayInitialize(void)
-{
-	if(CC_UNLIKELY(_ccDisplays != NULL)) {
-		return CC_E_DISPLAY_NONE;
-	}
-
-	_ccDisplays = malloc(sizeof(ccDisplays));
-	if(_ccDisplays == NULL){
-		return CC_E_MEMORY_OVERFLOW;
-	}
-	_ccDisplays->amount = 0;
+{	
+	_amount = 0;
 
 	DIR *dir = opendir("/tmp/.X11-unix");
 	if(CC_UNLIKELY(dir == NULL)) {
@@ -183,27 +226,26 @@ ccError ccDisplayInitialize(void)
 
 ccError ccDisplayFree(void)
 {
-	if(CC_UNLIKELY(_ccDisplays == NULL)) {
-		return CC_E_DISPLAY_NONE;
+	if(CC_UNLIKELY(_displays == NULL)) {
+		return CC_E_NONE;
 	}
 
 	int i;
-	for(i = 0; i < _ccDisplays->amount; i++) {
-		free(_ccDisplays->display[i].data);
-		free(_ccDisplays->display[i].monitorName);
-		free(_ccDisplays->display[i].deviceName);
+	for(i = 0; i < _amount; i++) {
+		free(_displays[i].data);
+		free(_displays[i].monitorName);
+		free(_displays[i].deviceName);
 
 		int j;
-		for(j = 0; j < _ccDisplays->display[i].amount; j++) {
-			free(_ccDisplays->display[i].resolution[j].data);
+		for(j = 0; j < _displays[i].amount; j++) {
+			free(_displays[i].resolution[j].data);
 		}
 
-		free(_ccDisplays->display[i].resolution);
+		free(_displays[i].resolution);
 	}
-	free(_ccDisplays->display);
-	free(_ccDisplays);
+	free(_displays);
 
-	_ccDisplays = NULL;
+	_displays = NULL;
 
 	return CC_E_NONE;
 }
