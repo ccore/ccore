@@ -714,3 +714,56 @@ char *ccWindowClipboardGet(void)
 
 	return str;
 }
+
+ccEvent ccWindowEventGet(void)
+{
+	return _event;
+}
+
+ccRect ccWindowGetRect(void)
+{	
+	return _rect;
+}
+
+ccPoint ccWindowGetMouse(void)
+{
+	return _mouse;
+}
+
+ccDisplay *ccWindowGetDisplay(void)
+{
+#ifdef _DEBUG
+	assert(_display != NULL);
+#endif
+
+	return _display;
+}
+
+bool ccWindowExists(void)
+{
+	return true;
+}
+
+void ccWindowUpdateDisplay(void)
+{
+	int i;
+	int area, largestArea;
+	ccRect displayRect;
+
+	largestArea = 0;
+	for(i = 0; i < ccDisplayGetAmount(); i++) {
+		displayRect = ccDisplayGetRect(ccDisplayGet(i));
+		area = ccRectIntersectionArea(&displayRect, &_rect);
+		if(area > largestArea) {
+			largestArea = area;
+			_display = ccDisplayGet(i);
+		}
+	}
+}
+
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
+void *ccWindowFramebufferGetPixels()
+{	
+	return _pixels;
+}
+#endif

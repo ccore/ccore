@@ -1,45 +1,85 @@
-#include "x11_window.h"
-
+#include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <limits.h>
 
+#include <X11/X.h>
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
+#include <X11/cursorfont.h>
+#include <X11/extensions/XInput2.h>
+#include <GL/glx.h>
+
+#include <ccore/core.h>
 #include <ccore/window.h>
 #include <ccore/gamepad.h>
 #include <ccore/opengl.h>
 #include <ccore/types.h>
 #include <ccore/event.h>
 
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
+#ifndef LINUX
+#error "Shared memory libraries are needed to create a framebuffer object"
+#endif
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <X11/extensions/XShm.h>
+#endif
+
+#ifdef LINUX
+#include "../../linux/interface/lin_gamepad.h"
+#endif
+
 #include "x11_display.h"
 
-static int cursorList[] = {XC_arrow,
-	XC_crosshair,
-	XC_xterm,
-	XC_fleur,
-	XC_hand1,
-	XC_sb_h_double_arrow,
-	XC_sb_v_double_arrow,
-	XC_X_cursor,
-	XC_question_arrow};
+static ccRect _rect;
+static ccPoint _mouse;
+static ccEvent _event;
+static ccDisplay *_display;
+static bool _supportsRawInput;
+static bool _hasWindow = false;
 
-static char emptyCursorData[] = {0, 0, 0, 0, 0, 0, 0, 0};
+static Window _xWin;
+static Display *_xDisplay;
+static GLXContext _xContext;
+static XID _xCursor;
+static Pixmap _xCursorimg;
+static char *_xClipstr;
+static size_t _xClipstrlen;
+static Atom _CCORE_SELECTION, _WM_ICON, _WM_ICON_NAME, _WM_NAME, _CLIPBOARD, _INCR, _TARGETS, _MULTIPLE, _UTF8_STRING, _COMPOUND_STRING;
+static int _xScreen, _xWinFlags, _xInpOpCode;
+static bool _xResizable;
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
+static void *_xPixels;
+static XImage *_xFramebuffer;
+static XShmSegmentInfo _xShminfo;
+static GC _xGc;
+static int _xFramebufferWidth, _xFramebufferHeight;
+#endif
+
+/* Attribute list for a double buffered OpenGL context, with at least 4 bits per
+ * color and a 16 bit depth buffer */
+static int _glAttrList[] = {GLX_RGBA, GLX_DOUBLEBUFFER, GLX_RED_SIZE, 4, GLX_GREEN_SIZE, 4, GLX_BLUE_SIZE, 4, GLX_DEPTH_SIZE, 16, None};
+
+static int _cursorList[] = {XC_arrow, XC_crosshair, XC_xterm, XC_fleur, XC_hand1, XC_sb_h_double_arrow, XC_sb_v_double_arrow, XC_X_cursor, XC_question_arrow};
+static char _emptyCursorData[] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 static ccError setWindowState(const char *type, bool value)
 {
-	Atom wmState = XInternAtom(XD->display, "_NET_WM_STATE", 1);
-	Atom newWmState = XInternAtom(XD->display, type, 1);
+	Atom wmState = XInternAtom(_xDisplay, "_NET_WM_STATE", 1);
+	Atom newWmState = XInternAtom(_xDisplay, type, 1);
 
 	XEvent event = {0};
 	event.type = ClientMessage;
-	event.xclient.window = XD->win;
+	event.xclient.window = _xWin;
 	event.xclient.message_type = wmState;
 	event.xclient.format = 32;
 	event.xclient.data.l[0] = value;
 	event.xclient.data.l[1] = newWmState;
 
-	XSendEvent(XD->display, DefaultRootWindow(XD->display), false, SubstructureNotifyMask, &event);
+	XSendEvent(_xDisplay, DefaultRootWindow(_xDisplay), false, SubstructureNotifyMask, &event);
 
 	return CC_E_NONE;
 }
@@ -47,30 +87,30 @@ static ccError setWindowState(const char *type, bool value)
 static ccError setResizable(bool resizable)
 {
 #ifdef _DEBUG
-	assert(_ccWindow != NULL);
+	assert(_hasWindow);
 #endif
 
 	XSizeHints *sizeHints = XAllocSizeHints();
 	long flags = 0;
 
-	if(XD->resizable == resizable) {
+	if(_xResizable == resizable) {
 		XFree(sizeHints);
 		return CC_E_NONE;
 	}
 
-	XD->resizable = resizable;
+	_xResizable = resizable;
 
-	XGetWMNormalHints(XD->display, XD->win, sizeHints, &flags);
+	XGetWMNormalHints(_xDisplay, _xWin, sizeHints, &flags);
 
 	if(resizable) {
 		sizeHints->flags &= ~(PMinSize | PMaxSize);
 	} else {
 		sizeHints->flags |= PMinSize | PMaxSize;
-		sizeHints->min_width = sizeHints->max_width = _ccWindow->rect.width;
-		sizeHints->min_height = sizeHints->max_height = _ccWindow->rect.height;
+		sizeHints->min_width = sizeHints->max_width = _rect.width;
+		sizeHints->min_height = sizeHints->max_height = _rect.height;
 	}
 
-	XSetWMNormalHints(XD->display, XD->win, sizeHints);
+	XSetWMNormalHints(_xDisplay, _xWin, sizeHints);
 
 	XFree(sizeHints);
 
@@ -80,13 +120,13 @@ static ccError setResizable(bool resizable)
 static ccError checkRawSupport()
 {
 	int event, error;
-	if(CC_UNLIKELY(!XQueryExtension(XD->display, "XInputExtension", &XD->inputopcode, &event, &error))) {
+	if(CC_UNLIKELY(!XQueryExtension(_xDisplay, "XInputExtension", &_xInpOpCode, &event, &error))) {
 		return CC_E_WM;
 	}
 
 	int mayor = 2;
 	int minor = 0;
-	if(CC_UNLIKELY(XIQueryVersion(XD->display, &mayor, &minor) == BadRequest)) {
+	if(CC_UNLIKELY(XIQueryVersion(_xDisplay, &mayor, &minor) == BadRequest)) {
 		return CC_E_WM;
 	}
 
@@ -108,7 +148,7 @@ static ccError initRawSupport()
 	XISetMask(mask.mask, XI_KeyPress);
 	XISetMask(mask.mask, XI_KeyRelease);
 
-	XISelectEvents(XD->display, XD->win, &mask, 1);
+	XISelectEvents(_xDisplay, _xWin, &mask, 1);
 
 	mask.deviceid = XIAllDevices;
 	memset(mask.mask, 0, mask.mask_len);
@@ -118,7 +158,7 @@ static ccError initRawSupport()
 	XISetMask(mask.mask, XI_RawKeyPress);
 	XISetMask(mask.mask, XI_RawKeyRelease);
 
-	XISelectEvents( XD->display, DefaultRootWindow(XD->display), &mask, 1);
+	XISelectEvents( _xDisplay, DefaultRootWindow(_xDisplay), &mask, 1);
 
 	free(mask.mask);
 
@@ -149,23 +189,23 @@ static ccPoint getRawMouseMovement(XIRawEvent *event)
 
 static inline unsigned int getRawKeyboardCode(XIRawEvent *event)
 {
-	return XGetKeyboardMapping( XD->display, event->detail, 1, (int[]){1})[0];
+	return XGetKeyboardMapping( _xDisplay, event->detail, 1, (int[]){1})[0];
 }
 
 static int (*origXError)(Display*, XErrorEvent*);
 static int handleXError(Display *display, XErrorEvent *event)
 {
 	char error[256];
-	XGetErrorText(XD->display, event->error_code, error, sizeof(error));
+	XGetErrorText(_xDisplay, event->error_code, error, sizeof(error));
 	fprintf(stderr, "X message: %s\n", error);
 
 	return 0;
 }
 
-static int _xerrflag = 0;
+static int _xErrflag = 0;
 static int handleXErrorSetFlag(Display *display, XErrorEvent *event)
 {
-	_xerrflag = 1;
+	_xErrflag = 1;
 	return 0;
 }
 
@@ -174,7 +214,7 @@ static unsigned long getWindowProperty(Window window, Atom property, Atom type, 
 	Atom actualType;
 	int actualFormat;
 	unsigned long length, overflow;
-	XGetWindowProperty(XD->display, window, property, 0, LONG_MAX, False, type, &actualType, &actualFormat, &length, &overflow, value);
+	XGetWindowProperty(_xDisplay, window, property, 0, LONG_MAX, False, type, &actualType, &actualFormat, &length, &overflow, value);
 
 	if(type != AnyPropertyType && type != actualType) {
 		return 0;
@@ -185,8 +225,8 @@ static unsigned long getWindowProperty(Window window, Atom property, Atom type, 
 
 static bool handleSelectionRequest(XSelectionRequestEvent *request)
 {
-	const Atom formats[] = {XD->UTF8_STRING, XD->COMPOUND_STRING, XA_STRING};
-	const Atom targets[] = {XD->TARGETS, XD->MULTIPLE, XD->UTF8_STRING, XD->COMPOUND_STRING, XA_STRING};
+	const Atom formats[] = {_UTF8_STRING, _COMPOUND_STRING, XA_STRING};
+	const Atom targets[] = {_TARGETS, _MULTIPLE, _UTF8_STRING, _COMPOUND_STRING, XA_STRING};
 	const int formatCount = sizeof(formats) / sizeof(formats[0]);
 
 	if(request->property == None) {
@@ -195,11 +235,11 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 	}
 
 	XSelectionEvent event = {.type = SelectionNotify, .selection = request->selection, .target = request->target, .display = request->display, .requestor = request->requestor, .time = request->time};
-	if(request->target == XD->TARGETS) {
-		XChangeProperty(XD->display, request->requestor, request->property, XA_ATOM, 32, PropModeReplace, (unsigned char*)targets, sizeof(targets) / sizeof(targets[0]));
+	if(request->target == _TARGETS) {
+		XChangeProperty(_xDisplay, request->requestor, request->property, XA_ATOM, 32, PropModeReplace, (unsigned char*)targets, sizeof(targets) / sizeof(targets[0]));
 
 		event.property = request->property;
-	} else if(request->target == XD->MULTIPLE) {
+	} else if(request->target == _MULTIPLE) {
 		// TODO implement this and save target
 		fprintf(stderr, "X handleSelectionRequest: multiple targets not implemented yet!\n");
 
@@ -209,7 +249,7 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 		int i;
 		for(i = 0; i < formatCount; i++) {
 			if(request->target == formats[i]) {
-				XChangeProperty(XD->display, request->requestor, request->property, request->target, 8, PropModeReplace, (unsigned char*)XD->clipstr, XD->clipstrlen);
+				XChangeProperty(_xDisplay, request->requestor, request->property, request->target, 8, PropModeReplace, (unsigned char*)_xClipstr, _xClipstrlen);
 
 				event.property = request->property;
 				break;
@@ -217,7 +257,7 @@ static bool handleSelectionRequest(XSelectionRequestEvent *request)
 		}
 	}
 
-	XSendEvent(XD->display, request->requestor, False, 0, (XEvent*)&event);
+	XSendEvent(_xDisplay, request->requestor, False, 0, (XEvent*)&event);
 
 	return true;
 }
@@ -228,65 +268,56 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	assert(rect.width > 0 && rect.height > 0);
 #endif
 
-	if(CC_UNLIKELY(_ccWindow != NULL)) {
+	if(CC_UNLIKELY(_hasWindow)) {
 		return CC_E_WINDOW_CREATE;
 	}
 
-	_ccWindow = malloc(sizeof(ccWindow));
-	if(_ccWindow == NULL){
-		return CC_E_MEMORY_OVERFLOW;
-	}
-
-	_ccWindow->rect = rect;
-	_ccWindow->data = calloc(1, sizeof(ccWindow_x11));
-	if(_ccWindow->data == NULL){
-		return CC_E_MEMORY_OVERFLOW;
-	}
-	XD->winflags = flags;
+	_rect = rect;
+	_xWinFlags = flags;
 
 	origXError = XSetErrorHandler(handleXError);
 
-	XD->display = XOpenDisplay(NULL);
-	if(CC_UNLIKELY(XD->display == NULL)) {
+	_xDisplay = XOpenDisplay(NULL);
+	if(CC_UNLIKELY(_xDisplay == NULL)) {
 		return CC_E_WM;
 	}
 
-	XD->screen = DefaultScreen(XD->display);
+	_xScreen = DefaultScreen(_xDisplay);
 
-	Atom WM_WINDOW_TYPE = XInternAtom(XD->display, "_NET_WM_WINDOW_TYPE", False);
-	Atom WM_WINDOW_TYPE_DIALOG = XInternAtom(XD->display, "_NET_WM_WINDOW_TYPE_DOCK", False);
-	XD->WM_ICON = XInternAtom(XD->display, "_NET_WM_ICON", False);
-	XD->WM_NAME = XInternAtom(XD->display, "_NET_WM_NAME", False);
-	XD->WM_ICON_NAME = XInternAtom(XD->display, "_NET_WM_ICON_NAME", False);
-	XD->CLIPBOARD = XInternAtom(XD->display, "CLIPBOARD", False);
-	XD->INCR = XInternAtom(XD->display, "INCR", False);
-	XD->TARGETS = XInternAtom(XD->display, "TARGETS", False);
-	XD->MULTIPLE = XInternAtom(XD->display, "MULTIPLE", False);
-	XD->UTF8_STRING = XInternAtom(XD->display, "UTF8_STRING", False);
-	XD->COMPOUND_STRING = XInternAtom(XD->display, "COMPOUND_STRING", False);
-	XD->CCORE_SELECTION = XInternAtom(XD->display, "CCORE_SELECTION", False);
-	Atom DELETE = XInternAtom(XD->display, "WM_DELETE_WINDOW", True);
+	Atom WM_WINDOW_TYPE = XInternAtom(_xDisplay, "_NET_WM_WINDOW_TYPE", False);
+	Atom WM_WINDOW_TYPE_DIALOG = XInternAtom(_xDisplay, "_NET_WM_WINDOW_TYPE_DOCK", False);
+	_WM_ICON = XInternAtom(_xDisplay, "_NET_WM_ICON", False);
+	_WM_NAME = XInternAtom(_xDisplay, "_NET_WM_NAME", False);
+	_WM_ICON_NAME = XInternAtom(_xDisplay, "_NET_WM_ICON_NAME", False);
+	_CLIPBOARD = XInternAtom(_xDisplay, "CLIPBOARD", False);
+	_INCR = XInternAtom(_xDisplay, "INCR", False);
+	_TARGETS = XInternAtom(_xDisplay, "TARGETS", False);
+	_MULTIPLE = XInternAtom(_xDisplay, "MULTIPLE", False);
+	_UTF8_STRING = XInternAtom(_xDisplay, "UTF8_STRING", False);
+	_COMPOUND_STRING = XInternAtom(_xDisplay, "COMPOUND_STRING", False);
+	_CCORE_SELECTION = XInternAtom(_xDisplay, "CCORE_SELECTION", False);
+	Atom DELETE = XInternAtom(_xDisplay, "WM_DELETE_WINDOW", True);
 
-	XD->win = XCreateWindow(XD->display, RootWindow(XD->display, XD->screen), rect.x, rect.y, rect.width, rect.height, 0, CopyFromParent, InputOutput, CopyFromParent, 0, 0);
+	_xWin = XCreateWindow(_xDisplay, RootWindow(_xDisplay, _xScreen), rect.x, rect.y, rect.width, rect.height, 0, CopyFromParent, InputOutput, CopyFromParent, 0, 0);
 
 	// Choose types of events
-	XSelectInput(XD->display, XD->win, PropertyChangeMask | ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask | FocusChangeMask);
+	XSelectInput(_xDisplay, _xWin, PropertyChangeMask | ExposureMask | ButtonPressMask | ButtonReleaseMask | StructureNotifyMask | PointerMotionMask | KeyPressMask | KeyReleaseMask | FocusChangeMask);
 
 	// Disable resizing
-	XD->resizable = true;
+	_xResizable = true;
 	if(flags & CC_WINDOW_FLAG_NORESIZE) {
 		setResizable(false);
 	}
 
 	if(flags & CC_WINDOW_FLAG_NOBUTTONS) {
-		XChangeProperty(XD->display, XD->win, WM_WINDOW_TYPE, XA_ATOM, 32, PropModeReplace, (unsigned char*)&WM_WINDOW_TYPE_DIALOG, 1);
+		XChangeProperty(_xDisplay, _xWin, WM_WINDOW_TYPE, XA_ATOM, 32, PropModeReplace, (unsigned char*)&WM_WINDOW_TYPE_DIALOG, 1);
 	}
 
-	XMapWindow(XD->display, XD->win);
-	XStoreName(XD->display, XD->win, "");
+	XMapWindow(_xDisplay, _xWin);
+	XStoreName(_xDisplay, _xWin, "");
 	ccWindowSetTitle(title);
 
-	XSetWMProtocols(XD->display, XD->win, &DELETE, 1);
+	XSetWMProtocols(_xDisplay, _xWin, &DELETE, 1);
 
 	ccWindowUpdateDisplay();
 
@@ -296,17 +327,18 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 	}
 
 	if((flags & CC_WINDOW_FLAG_NORAWINPUT) != 0) {
-		_ccWindow->supportsRawInput = checkRawSupport();
-		if(_ccWindow->supportsRawInput) {
+		_supportsRawInput = checkRawSupport();
+		if(_supportsRawInput) {
 			initRawSupport();
 		}
 	} else {
-		_ccWindow->supportsRawInput = false;
+		_supportsRawInput = false;
 	}
 
-	XD->cursorimg = XCreateBitmapFromData(XD->display, XD->win, emptyCursorData, 8, 8);
+	_xCursorimg = XCreateBitmapFromData(_xDisplay, _xWin, _emptyCursorData, 8, 8);
+	_mouse.x = _mouse.y = 0;
 
-	_ccWindow->mouse.x = _ccWindow->mouse.y = 0;
+	_hasWindow = true;
 
 	return CC_E_NONE;
 }
@@ -314,7 +346,7 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 ccError ccWindowFree(void)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
 
 	XSetErrorHandler(origXError);
@@ -323,16 +355,12 @@ ccError ccWindowFree(void)
 	ccWindowFramebufferFree();
 #endif
 
-	if(XD->cursor != 0) {
-		XFreeCursor(XD->display, XD->cursor);
+	if(_xCursor != 0) {
+		XFreeCursor(_xDisplay, _xCursor);
 	}
-	XFreePixmap(XD->display, XD->cursorimg);
-	XUnmapWindow(XD->display, XD->win);
-	XCloseDisplay(XD->display);
-
-	free(_ccWindow->data);
-	free(_ccWindow);
-	_ccWindow = NULL;
+	XFreePixmap(_xDisplay, _xCursorimg);
+	XUnmapWindow(_xDisplay, _xWin);
+	XCloseDisplay(_xDisplay);
 
 	return CC_E_NONE;
 }
@@ -340,127 +368,127 @@ ccError ccWindowFree(void)
 bool ccWindowEventPoll(void)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
 
-	_ccWindow->event.type = CC_EVENT_SKIP;
+	_event.type = CC_EVENT_SKIP;
 
 #if defined CC_USE_ALL || defined CC_USE_GAMEPAD
 	if(_ccGamepads != NULL) {
 		ccGamepadEvent gamepadEvent = ccGamepadEventPoll();
 		if(gamepadEvent.type != CC_GAMEPAD_UNHANDLED) {
-			_ccWindow->event.type = CC_EVENT_GAMEPAD;
-			_ccWindow->event.gamepadEvent = gamepadEvent;
+			_event.type = CC_EVENT_GAMEPAD;
+			_event.gamepadEvent = gamepadEvent;
 			return true;
 		}
 	}
 #endif
 
-	if(XPending(XD->display) == 0) {
+	if(XPending(_xDisplay) == 0) {
 		return false;
 	}
 
 	XEvent event;
-	XNextEvent(XD->display, &event);
+	XNextEvent(_xDisplay, &event);
 	switch(event.type) {
 		case GenericEvent:
-			if(CC_UNLIKELY(!_ccWindow->supportsRawInput)) {
+			if(CC_UNLIKELY(!_supportsRawInput)) {
 				return false;
 			}
 
 			XGenericEventCookie *cookie = &event.xcookie;
-			if(!XGetEventData(XD->display, cookie) || cookie->type != GenericEvent || cookie->extension != XD->inputopcode) {
+			if(!XGetEventData(_xDisplay, cookie) || cookie->type != GenericEvent || cookie->extension != _xInpOpCode) {
 				return false;
 			}
 
 			switch(cookie->evtype) {
 				case XI_RawMotion:
-					_ccWindow->event.type = CC_EVENT_MOUSE_MOVE;
-					_ccWindow->event.mouseDelta = getRawMouseMovement(cookie->data);
+					_event.type = CC_EVENT_MOUSE_MOVE;
+					_event.mouseDelta = getRawMouseMovement(cookie->data);
 					break;
 				case XI_RawButtonPress:
-					_ccWindow->event.type = CC_EVENT_MOUSE_DOWN;
-					_ccWindow->event.mouseButton = ((XIRawEvent*)cookie->data)->detail;
+					_event.type = CC_EVENT_MOUSE_DOWN;
+					_event.mouseButton = ((XIRawEvent*)cookie->data)->detail;
 					break;
 				case XI_RawButtonRelease:
-					_ccWindow->event.type = CC_EVENT_MOUSE_UP;
-					_ccWindow->event.mouseButton = ((XIRawEvent*)cookie->data)->detail;
+					_event.type = CC_EVENT_MOUSE_UP;
+					_event.mouseButton = ((XIRawEvent*)cookie->data)->detail;
 					break;
 				case XI_RawKeyPress:
-					_ccWindow->event.type = CC_EVENT_KEY_DOWN;
-					_ccWindow->event.keyCode = getRawKeyboardCode(cookie->data);
+					_event.type = CC_EVENT_KEY_DOWN;
+					_event.keyCode = getRawKeyboardCode(cookie->data);
 					break;
 				case XI_RawKeyRelease:
-					_ccWindow->event.type = CC_EVENT_KEY_UP;
-					_ccWindow->event.keyCode = getRawKeyboardCode(cookie->data);
+					_event.type = CC_EVENT_KEY_UP;
+					_event.keyCode = getRawKeyboardCode(cookie->data);
 					break;
 				case XI_Enter:
-					_ccWindow->event.type = CC_EVENT_FOCUS_GAINED;
+					_event.type = CC_EVENT_FOCUS_GAINED;
 					break;
 				case XI_Leave:
-					_ccWindow->event.type = CC_EVENT_FOCUS_LOST;
+					_event.type = CC_EVENT_FOCUS_LOST;
 					break;
 			}
 			break;
 		case ButtonPress:
 			if(event.xbutton.button <= 3) {
-				_ccWindow->event.type = CC_EVENT_MOUSE_DOWN;
-				_ccWindow->event.mouseButton = event.xbutton.button;
+				_event.type = CC_EVENT_MOUSE_DOWN;
+				_event.mouseButton = event.xbutton.button;
 			} else if(event.xbutton.button == 4) {
-				_ccWindow->event.type = CC_EVENT_MOUSE_SCROLL;
-				_ccWindow->event.scrollDelta = 1;
+				_event.type = CC_EVENT_MOUSE_SCROLL;
+				_event.scrollDelta = 1;
 			} else if(event.xbutton.button == 5) {
-				_ccWindow->event.type = CC_EVENT_MOUSE_SCROLL;
-				_ccWindow->event.scrollDelta = -1;
+				_event.type = CC_EVENT_MOUSE_SCROLL;
+				_event.scrollDelta = -1;
 			}
 			break;
 		case ButtonRelease:
-			_ccWindow->event.type = CC_EVENT_MOUSE_UP;
-			_ccWindow->event.mouseButton = event.xbutton.button;
+			_event.type = CC_EVENT_MOUSE_UP;
+			_event.mouseButton = event.xbutton.button;
 			break;
 		case MotionNotify:
-			if(CC_UNLIKELY(!_ccWindow->supportsRawInput)) {
-				_ccWindow->event.type = CC_EVENT_MOUSE_MOVE;
-				_ccWindow->event.mouseDelta.x = _ccWindow->mouse.x - event.xmotion.x;
-				_ccWindow->event.mouseDelta.y = _ccWindow->mouse.y - event.xmotion.y;
+			if(CC_UNLIKELY(!_supportsRawInput)) {
+				_event.type = CC_EVENT_MOUSE_MOVE;
+				_event.mouseDelta.x = _mouse.x - event.xmotion.x;
+				_event.mouseDelta.y = _mouse.y - event.xmotion.y;
 			}
-			if(CC_LIKELY(_ccWindow->mouse.x != event.xmotion.x || _ccWindow->mouse.y != event.xmotion.y)) {
-				_ccWindow->event.type = CC_EVENT_MOUSE_MOVE;
-				_ccWindow->mouse.x = event.xmotion.x;
-				_ccWindow->mouse.y = event.xmotion.y;
+			if(CC_LIKELY(_mouse.x != event.xmotion.x || _mouse.y != event.xmotion.y)) {
+				_event.type = CC_EVENT_MOUSE_MOVE;
+				_mouse.x = event.xmotion.x;
+				_mouse.y = event.xmotion.y;
 			}
 			break;
 		case KeymapNotify:
 			XRefreshKeyboardMapping(&event.xmapping);
 			break;
 		case KeyPress:
-			_ccWindow->event.type = CC_EVENT_KEY_DOWN;
-			_ccWindow->event.keyCode = XLookupKeysym(&event.xkey, 0);
+			_event.type = CC_EVENT_KEY_DOWN;
+			_event.keyCode = XLookupKeysym(&event.xkey, 0);
 			break;
 		case KeyRelease:
-			_ccWindow->event.type = CC_EVENT_KEY_UP;
-			_ccWindow->event.keyCode = XLookupKeysym(&event.xkey, 0);
+			_event.type = CC_EVENT_KEY_UP;
+			_event.keyCode = XLookupKeysym(&event.xkey, 0);
 			break;
 		case ConfigureNotify:
-			if(_ccWindow->rect.width != event.xconfigure.width || _ccWindow->rect.height != event.xconfigure.height) {
-				_ccWindow->event.type = CC_EVENT_WINDOW_RESIZE;
-				_ccWindow->rect.width = event.xconfigure.width;
-				_ccWindow->rect.height = event.xconfigure.height;
+			if(_rect.width != event.xconfigure.width || _rect.height != event.xconfigure.height) {
+				_event.type = CC_EVENT_WINDOW_RESIZE;
+				_rect.width = event.xconfigure.width;
+				_rect.height = event.xconfigure.height;
 
 				XWindowAttributes _ccWindowAttributes;
-				XGetWindowAttributes(XD->display, XD->win, &_ccWindowAttributes);
+				XGetWindowAttributes(_xDisplay, _xWin, &_ccWindowAttributes);
 
-				_ccWindow->rect.x = _ccWindowAttributes.x;
-				_ccWindow->rect.y = _ccWindowAttributes.y;
+				_rect.x = _ccWindowAttributes.x;
+				_rect.y = _ccWindowAttributes.y;
 
 				ccWindowUpdateDisplay();
 
-				if(XD->winflags & CC_WINDOW_FLAG_NORESIZE) {
+				if(_xWinFlags & CC_WINDOW_FLAG_NORESIZE) {
 					setResizable(false);
 				}
 
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
-				if(XD->fb != NULL){
+				if(_xFramebuffer != NULL){
 					ccWindowFramebufferFree();
 
 					ccFramebufferFormat format;
@@ -469,27 +497,27 @@ bool ccWindowEventPoll(void)
 #endif
 			}
 
-			if(_ccWindow->rect.x != event.xconfigure.x || _ccWindow->rect.y != event.xconfigure.y) {
-				_ccWindow->rect.x = event.xconfigure.x;
-				_ccWindow->rect.y = event.xconfigure.y;
+			if(_rect.x != event.xconfigure.x || _rect.y != event.xconfigure.y) {
+				_rect.x = event.xconfigure.x;
+				_rect.y = event.xconfigure.y;
 
 				ccWindowUpdateDisplay();
 			}
 			break;
 		case ClientMessage:
-			_ccWindow->event.type = CC_EVENT_WINDOW_QUIT;
+			_event.type = CC_EVENT_WINDOW_QUIT;
 			break;
 		case FocusIn:
-			_ccWindow->event.type = CC_EVENT_FOCUS_GAINED;
+			_event.type = CC_EVENT_FOCUS_GAINED;
 			break;
 		case FocusOut:
-			_ccWindow->event.type = CC_EVENT_FOCUS_LOST;
+			_event.type = CC_EVENT_FOCUS_LOST;
 			break;
 		case SelectionClear:
-			if(XD->clipstr) {
-				free(XD->clipstr);
-				XD->clipstr = NULL;
-				XD->clipstrlen = 0;
+			if(_xClipstr) {
+				free(_xClipstr);
+				_xClipstr = NULL;
+				_xClipstrlen = 0;
 			}
 			return false;
 		case SelectionRequest:
@@ -505,7 +533,7 @@ bool ccWindowEventPoll(void)
 ccError ccWindowSetWindowed(ccRect *rect)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
 
 	setResizable(true);
@@ -523,7 +551,7 @@ ccError ccWindowSetWindowed(ccRect *rect)
 ccError ccWindowSetMaximized(void)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
 
 	ccWindowSetWindowed(NULL);
@@ -537,12 +565,12 @@ ccError ccWindowSetMaximized(void)
 ccError ccWindowSetFullscreen(int displayCount, ...)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
 
 	ccDisplay *current, *topDisplay, *bottomDisplay, *leftDisplay, *rightDisplay;
 	if(CC_LIKELY(displayCount == CC_FULLSCREEN_CURRENT_DISPLAY)) {
-		ccDisplay *topDisplay = bottomDisplay = leftDisplay = rightDisplay = _ccWindow->display;
+		ccDisplay *topDisplay = bottomDisplay = leftDisplay = rightDisplay = _display;
 	} else {
 		va_list displays;
 		va_start(displays, displayCount);
@@ -570,11 +598,11 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 		va_end(displays);
 	}
 
-	Atom atom = XInternAtom(XD->display, "_NET_WM_FULLSCREEN_MONITORS", False);
+	Atom atom = XInternAtom(_xDisplay, "_NET_WM_FULLSCREEN_MONITORS", False);
 
 	XEvent event = {0};
 	event.type = ClientMessage;
-	event.xclient.window = XD->win;
+	event.xclient.window = _xWin;
 	event.xclient.message_type = atom;
 	event.xclient.format = 32;
 	event.xclient.data.l[0] = DISPLAY_DATA(topDisplay)->XineramaScreen;
@@ -583,7 +611,7 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 	event.xclient.data.l[3] = DISPLAY_DATA(rightDisplay)->XineramaScreen;
 	event.xclient.data.l[4] = 0;
 
-	XSendEvent(XD->display, DefaultRootWindow(XD->display), false, SubstructureNotifyMask, &event);
+	XSendEvent(_xDisplay, DefaultRootWindow(_xDisplay), false, SubstructureNotifyMask, &event);
 
 	setResizable(true);
 	setWindowState("_NET_WM_STATE_FULLSCREEN", true);
@@ -594,16 +622,16 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 ccError ccWindowResizeMove(ccRect rect)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
 #ifdef _DEBUG
 	assert(rect.width > 0 && rect.height > 0);
 #endif
 
 	setResizable(true);
-	XMoveResizeWindow(XD->display, XD->win, rect.x, rect.y, rect.width, rect.height);
+	XMoveResizeWindow(_xDisplay, _xWin, rect.x, rect.y, rect.width, rect.height);
 
-	if(XD->winflags & CC_WINDOW_FLAG_NORESIZE) {
+	if(_xWinFlags & CC_WINDOW_FLAG_NORESIZE) {
 		setResizable(false);
 	}
 
@@ -615,15 +643,15 @@ ccError ccWindowResizeMove(ccRect rect)
 ccError ccWindowSetCentered(void)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
-	if(CC_UNLIKELY(_ccWindow->display == NULL)) {
+	if(CC_UNLIKELY(_display == NULL)) {
 		return CC_E_DISPLAY_NONE;
 	}
 
-	ccDisplayData *currentResolution = ccDisplayResolutionGetCurrent(_ccWindow->display);
+	ccDisplayData *currentResolution = ccDisplayResolutionGetCurrent(_display);
 
-	ccRect newRect = { .x = (currentResolution->width - _ccWindow->rect.width) >> 1, .y = (currentResolution->height - _ccWindow->rect.height) >> 1, .width = _ccWindow->rect.width, .height = _ccWindow->rect.height};
+	ccRect newRect = { .x = (currentResolution->width - _rect.width) >> 1, .y = (currentResolution->height - _rect.height) >> 1, .width = _rect.width, .height = _rect.height};
 
 	ccWindowResizeMove(newRect);
 
@@ -633,7 +661,7 @@ ccError ccWindowSetCentered(void)
 ccError ccWindowSetBlink(void)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
 
 	return setWindowState("_NET_WM_STATE_DEMANDS_ATTENTION", true);
@@ -643,8 +671,8 @@ ccError ccWindowSetTitle(const char *title)
 {
 #ifdef X_HAVE_UTF8_STRING
 	size_t len = strlen(title);
-	XChangeProperty(XD->display, XD->win, XD->WM_NAME, XD->UTF8_STRING, 8, PropModeReplace, (unsigned char*)title, len);
-	XChangeProperty(XD->display, XD->win, XD->WM_ICON_NAME, XD->UTF8_STRING, 8, PropModeReplace, (unsigned char*)title, len);
+	XChangeProperty(_xDisplay, _xWin, _WM_NAME, _UTF8_STRING, 8, PropModeReplace, (unsigned char*)title, len);
+	XChangeProperty(_xDisplay, _xWin, _WM_ICON_NAME, _UTF8_STRING, 8, PropModeReplace, (unsigned char*)title, len);
 #else
 	char *titleCopy = strdup(title);
 
@@ -655,10 +683,10 @@ ccError ccWindowSetTitle(const char *title)
 	}
 	free(titleCopy);
 
-	XSetTextProperty(XD->display, XD->win, &titleProperty, XD->WM_NAME);
-	XSetTextProperty(XD->display, XD->win, &titleProperty, XD->WM_ICON_NAME);
-	XSetWMName(XD->display, XD->win, &titleProperty);
-	XSetWMIconName(XD->display, XD->win, &titleProperty);
+	XSetTextProperty(_xDisplay, _xWin, &titleProperty, _WM_NAME);
+	XSetTextProperty(_xDisplay, _xWin, &titleProperty, _WM_ICON_NAME);
+	XSetWMName(_xDisplay, _xWin, &titleProperty);
+	XSetWMIconName(_xDisplay, _xWin, &titleProperty);
 	XFree(titleProperty.value);
 #endif
 
@@ -668,7 +696,7 @@ ccError ccWindowSetTitle(const char *title)
 ccError ccWindowIconSet(ccPoint size, const uint32_t *icon)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
 #ifdef _DEBUG
 	assert(size.x > 0 && size.y > 0);
@@ -685,7 +713,7 @@ ccError ccWindowIconSet(ccPoint size, const uint32_t *icon)
 	data[1] = (uint32_t)size.y;
 	memcpy(data + 2, icon, datalen * sizeof(uint32_t));
 
-	XChangeProperty(XD->display, XD->win, XD->WM_ICON, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)data, totallen);
+	XChangeProperty(_xDisplay, _xWin, _WM_ICON, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)data, totallen);
 
 	free(data);
 
@@ -695,10 +723,10 @@ ccError ccWindowIconSet(ccPoint size, const uint32_t *icon)
 ccError ccWindowMouseSetPosition(ccPoint target)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
 
-	XWarpPointer(XD->display, None, XD->win, 0, 0, 0, 0, target.x, target.y);
+	XWarpPointer(_xDisplay, None, _xWin, 0, 0, 0, 0, target.x, target.y);
 
 	return CC_E_NONE;
 }
@@ -706,24 +734,24 @@ ccError ccWindowMouseSetPosition(ccPoint target)
 ccError ccWindowMouseSetCursor(ccCursor cursor)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
 
-	if(XD->cursor != 0) {
-		XFreeCursor(XD->display, XD->cursor);
+	if(_xCursor != 0) {
+		XFreeCursor(_xDisplay, _xCursor);
 	}
 
 	if(cursor != CC_CURSOR_NONE) {
-		XD->cursor = XCreateFontCursor(XD->display, cursorList[cursor]);
-		if(!XD->cursor) {
+		_xCursor = XCreateFontCursor(_xDisplay, _cursorList[cursor]);
+		if(!_xCursor) {
 			return CC_E_WINDOW_CURSOR;
 		}
 	} else {
 		XColor black = {0};
-		XD->cursor = XCreatePixmapCursor(XD->display, XD->cursorimg, XD->cursorimg, &black, &black, 0, 0);
+		_xCursor = XCreatePixmapCursor(_xDisplay, _xCursorimg, _xCursorimg, &black, &black, 0, 0);
 	}
 
-	XDefineCursor(XD->display, XD->win, XD->cursor);
+	XDefineCursor(_xDisplay, _xWin, _xCursor);
 
 	return CC_E_NONE;
 }
@@ -732,33 +760,33 @@ ccError ccWindowMouseSetCursor(ccCursor cursor)
 ccError ccWindowFramebufferCreate(ccFramebufferFormat *format)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
 
 	// There already is a OpenGL context, you can't create both
-	if(XD->context != NULL){
+	if(_xContext != NULL){
 		return CC_E_FRAMEBUFFER_CREATE;
 	}
 
 	int ignore;
-	if(!XQueryExtension(XD->display, "MIT-SHM", &ignore, &ignore, &ignore)){
+	if(!XQueryExtension(_xDisplay, "MIT-SHM", &ignore, &ignore, &ignore)){
 		return CC_E_FRAMEBUFFER_SHAREDMEM;
 	}
 
-	XD->gc = XCreateGC(XD->display, XD->win, 0, 0);
-	if(!XD->gc){
+	_xGc = XCreateGC(_xDisplay, _xWin, 0, 0);
+	if(!_xGc){
 		return CC_E_FRAMEBUFFER_CREATE;
 	}
 
-	XD->shminfo = (XShmSegmentInfo){0};
-	XD->fb = XShmCreateImage(XD->display, DefaultVisual(XD->display, XD->screen), DefaultDepth(XD->display, XD->screen), ZPixmap, NULL, &XD->shminfo, _ccWindow->rect.width, _ccWindow->rect.height);
-	if(XD->fb == NULL){
-		XFreeGC(XD->display, XD->gc);
-		XD->gc = NULL;
+	_xShminfo = (XShmSegmentInfo){0};
+	_xFramebuffer = XShmCreateImage(_xDisplay, DefaultVisual(_xDisplay, _xScreen), DefaultDepth(_xDisplay, _xScreen), ZPixmap, NULL, &_xShminfo, _rect.width, _rect.height);
+	if(_xFramebuffer == NULL){
+		XFreeGC(_xDisplay, _xGc);
+		_xGc = NULL;
 		return CC_E_FRAMEBUFFER_CREATE;
 	}
 
-	switch(XD->fb->bits_per_pixel){
+	switch(_xFramebuffer->bits_per_pixel){
 		case 24:
 			*format = CC_FRAMEBUFFER_PIXEL_BGR24;
 			break;
@@ -766,69 +794,69 @@ ccError ccWindowFramebufferCreate(ccFramebufferFormat *format)
 			*format = CC_FRAMEBUFFER_PIXEL_BGR32;
 			break;
 		default:
-			XFreeGC(XD->display, XD->gc);
-			XD->gc = NULL;
-			XDestroyImage(XD->fb);
-			XD->fb = NULL;
+			XFreeGC(_xDisplay, _xGc);
+			_xGc = NULL;
+			XDestroyImage(_xFramebuffer);
+			_xFramebuffer = NULL;
 			return CC_E_FRAMEBUFFER_PIXELFORMAT;
 	}
 
-	XD->shminfo.shmid = shmget(IPC_PRIVATE, XD->fb->bytes_per_line * XD->fb->height, IPC_CREAT | 0777);
-	if(XD->shminfo.shmid == -1){
-		XFreeGC(XD->display, XD->gc);
-		XD->gc = NULL;
-		XDestroyImage(XD->fb);
-		XD->fb = NULL;
+	_xShminfo.shmid = shmget(IPC_PRIVATE, _xFramebuffer->bytes_per_line * _xFramebuffer->height, IPC_CREAT | 0777);
+	if(_xShminfo.shmid == -1){
+		XFreeGC(_xDisplay, _xGc);
+		_xGc = NULL;
+		XDestroyImage(_xFramebuffer);
+		_xFramebuffer = NULL;
 		return CC_E_FRAMEBUFFER_SHAREDMEM;
 	}
 
-	XD->shminfo.shmaddr = (char*)shmat(XD->shminfo.shmid, 0, 0);
-	if(XD->shminfo.shmaddr == (char*)-1){
-		XFreeGC(XD->display, XD->gc);
-		XD->gc = NULL;
-		XDestroyImage(XD->fb);
-		XD->fb = NULL;
+	_xShminfo.shmaddr = (char*)shmat(_xShminfo.shmid, 0, 0);
+	if(_xShminfo.shmaddr == (char*)-1){
+		XFreeGC(_xDisplay, _xGc);
+		_xGc = NULL;
+		XDestroyImage(_xFramebuffer);
+		_xFramebuffer = NULL;
 		return CC_E_FRAMEBUFFER_SHAREDMEM;
 	}
-	XD->fb->data = XD->shminfo.shmaddr;
-	_ccWindow->pixels = XD->shminfo.shmaddr;
+	_xFramebuffer->data = _xShminfo.shmaddr;
+	_xPixels = _xShminfo.shmaddr;
 
-	XD->shminfo.readOnly = False;
+	_xShminfo.readOnly = False;
 
 	// Check if we can trigger an X error event to know if we are on a remote display
-	_xerrflag = 0;
+	_xErrflag = 0;
 	XSetErrorHandler(handleXErrorSetFlag);
-	XShmAttach(XD->display, &XD->shminfo);
-	XSync(XD->display, False);
+	XShmAttach(_xDisplay, &_xShminfo);
+	XSync(_xDisplay, False);
 
-	shmctl(XD->shminfo.shmid, IPC_RMID, 0);
-	if(_xerrflag){
-		_xerrflag = 0;
-		XFlush(XD->display);
+	shmctl(_xShminfo.shmid, IPC_RMID, 0);
+	if(_xErrflag){
+		_xErrflag = 0;
+		XFlush(_xDisplay);
 
-		XFreeGC(XD->display, XD->gc);
-		XD->gc = NULL;
-		XDestroyImage(XD->fb);
-		XD->fb = NULL;
-		shmdt(XD->shminfo.shmaddr);
+		XFreeGC(_xDisplay, _xGc);
+		_xGc = NULL;
+		XDestroyImage(_xFramebuffer);
+		_xFramebuffer = NULL;
+		shmdt(_xShminfo.shmaddr);
 
 		return CC_E_FRAMEBUFFER_SHAREDMEM;
 	}
 
-	XD->w = _ccWindow->rect.width;
-	XD->h = _ccWindow->rect.height;
+	_xFramebufferWidth = _rect.width;
+	_xFramebufferHeight = _rect.height;
 
 	return CC_E_NONE;
 }
 
 ccError ccWindowFramebufferUpdate()
 {
-	if(CC_UNLIKELY(XD->fb == NULL)){
+	if(CC_UNLIKELY(_xFramebuffer == NULL)){
 		return CC_E_FRAMEBUFFER_CREATE;
 	}
 
-	XShmPutImage(XD->display, XD->win, XD->gc, XD->fb, 0, 0, 0, 0, XD->w, XD->h, False);
-	XSync(XD->display, False);
+	XShmPutImage(_xDisplay, _xWin, _xGc, _xFramebuffer, 0, 0, 0, 0, _xFramebufferWidth, _xFramebufferHeight, False);
+	XSync(_xDisplay, False);
 
 	return CC_E_NONE;
 }
@@ -836,80 +864,129 @@ ccError ccWindowFramebufferUpdate()
 ccError ccWindowFramebufferFree()
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
 
-	if(XD->fb){
-		XShmDetach(XD->display, &XD->shminfo);
-		XDestroyImage(XD->fb);		
-		XD->fb = NULL;
-		shmdt(XD->shminfo.shmaddr);
-		shmctl(XD->shminfo.shmid, IPC_RMID, 0);
+	if(_xFramebuffer){
+		XShmDetach(_xDisplay, &_xShminfo);
+		XDestroyImage(_xFramebuffer);		
+		_xFramebuffer = NULL;
+		shmdt(_xShminfo.shmaddr);
+		shmctl(_xShminfo.shmid, IPC_RMID, 0);
 	}
 
-	if(XD->gc){
-		XFreeGC(XD->display, XD->gc);
-		XD->gc = NULL;
+	if(_xGc){
+		XFreeGC(_xDisplay, _xGc);
+		_xGc = NULL;
 	}
 
-	_ccWindow->pixels = NULL;
+	_xPixels = NULL;
 
 	return CC_E_NONE;
 }
+
+void *ccWindowFramebufferGetPixels()
+{	
+	return _xPixels;
+}
 #endif
+
+ccError ccGLContextBind(void)
+{
+	if(CC_UNLIKELY(!_hasWindow)) {
+		return CC_E_WINDOW_NONE;
+	}
+
+	XVisualInfo *visual = glXChooseVisual(_xDisplay, _xScreen, _glAttrList);
+	if(CC_UNLIKELY(!visual)) {
+		return CC_E_GL_CONTEXT;
+	}
+
+	_xContext = glXCreateContext(_xDisplay, visual, NULL, GL_TRUE);
+	glXMakeCurrent(_xDisplay, _xWin, _xContext);
+
+	return CC_E_NONE;
+}
+
+ccError ccGLContextFree(void)
+{
+	if(CC_UNLIKELY(_xContext == NULL)) {
+		return CC_E_GL_CONTEXT;
+	}
+
+	glXDestroyContext(_xDisplay, _xContext);
+
+	return CC_E_NONE;
+}
+
+ccError ccGLBuffersSwap(void)
+{
+	if(CC_UNLIKELY(_xContext == NULL)) {
+		return CC_E_GL_CONTEXT;
+	}
+
+	glXSwapBuffers(_xDisplay, _xWin);
+
+	return CC_E_NONE;
+}
+
+bool ccGLContextIsActive(void)
+{
+	return _xContext != NULL;
+}
 
 ccError ccWindowClipboardSet(const char *text)
 {
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
 
 	if(text == NULL) {
 		return CC_E_INVALID_ARGUMENT;
 	}
 
-	if(XD->CLIPBOARD != None && XGetSelectionOwner(XD->display, XD->CLIPBOARD) != XD->win) {
-		XSetSelectionOwner(XD->display, XD->CLIPBOARD, XD->win, CurrentTime);
+	if(_CLIPBOARD != None && XGetSelectionOwner(_xDisplay, _CLIPBOARD) != _xWin) {
+		XSetSelectionOwner(_xDisplay, _CLIPBOARD, _xWin, CurrentTime);
 	}
 
-	XD->clipstrlen = strlen(text);
-	if(!XD->clipstr) {
-		XD->clipstr = malloc(XD->clipstrlen);
-		if(XD->clipstr == NULL){
+	_xClipstrlen = strlen(text);
+	if(!_xClipstr) {
+		_xClipstr = malloc(_xClipstrlen);
+		if(_xClipstr == NULL){
 			return CC_E_MEMORY_OVERFLOW;
 		}
 	} else {
-		XD->clipstr = realloc(XD->clipstr, XD->clipstrlen);
-		if(XD->clipstr == NULL){
+		_xClipstr = realloc(_xClipstr, _xClipstrlen);
+		if(_xClipstr == NULL){
 			return CC_E_MEMORY_OVERFLOW;
 		}
 	}
-	strcpy(XD->clipstr, text);
+	strcpy(_xClipstr, text);
 
 	return CC_E_NONE;
 }
 
 char *ccWindowClipboardGet()
 {
-	const Atom formats[] = { XA_STRING, XD->UTF8_STRING, XD->COMPOUND_STRING};
+	const Atom formats[] = { XA_STRING, _UTF8_STRING, _COMPOUND_STRING};
 	const int formatCount = sizeof(formats) / sizeof(formats[0]);
 
 #ifdef _DEBUG
-	assert(_ccWindow);
+	assert(_hasWindow);
 #endif
 
-	Window owner = XGetSelectionOwner(XD->display, XD->CLIPBOARD);
-	if(owner == XD->win) {
-		return XD->clipstr;
+	Window owner = XGetSelectionOwner(_xDisplay, _CLIPBOARD);
+	if(owner == _xWin) {
+		return _xClipstr;
 	} else if(owner == None) {
 		return NULL;
 	}
 
 	int i;
 	for(i = 0; i < formatCount; i++) {
-		XConvertSelection(XD->display, XD->CLIPBOARD, formats[i], XD->CCORE_SELECTION, XD->win, CurrentTime); 
+		XConvertSelection(_xDisplay, _CLIPBOARD, formats[i], _CCORE_SELECTION, _xWin, CurrentTime); 
 		XEvent event;
-		while(XCheckTypedEvent(XD->display, SelectionNotify, &event) || event.xselection.requestor != XD->win);
+		while(XCheckTypedEvent(_xDisplay, SelectionNotify, &event) || event.xselection.requestor != _xWin);
 
 		if(event.xselection.property == None) {
 			continue;
@@ -936,4 +1013,55 @@ char *ccWindowClipboardGet()
 	}
 
 	return NULL;
+}
+
+ccEvent ccWindowEventGet(void)
+{
+	return _event;
+}
+
+ccRect ccWindowGetRect(void)
+{	
+	return _rect;
+}
+
+ccPoint ccWindowGetMouse(void)
+{
+	return _mouse;
+}
+
+ccDisplay *ccWindowGetDisplay(void)
+{
+#ifdef _DEBUG
+	assert(_display != NULL);
+#endif
+
+	return _display;
+}
+
+bool ccWindowExists(void)
+{
+	return true;
+}
+
+void ccWindowUpdateDisplay(void)
+{
+	int i;
+	int area, largestArea;
+	ccRect displayRect;
+
+	largestArea = 0;
+	for(i = 0; i < ccDisplayGetAmount(); i++) {
+		displayRect = ccDisplayGetRect(ccDisplayGet(i));
+		area = ccRectIntersectionArea(&displayRect, &_rect);
+		if(area > largestArea) {
+			largestArea = area;
+			_display = ccDisplayGet(i);
+		}
+	}
+}
+
+bool ccWindowSupportsRawInput(void)
+{
+	return _supportsRawInput;
 }

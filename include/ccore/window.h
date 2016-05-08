@@ -64,25 +64,6 @@ typedef enum {
 } ccFramebufferFormat;
 #endif
 
-// The window struct
-typedef struct {
-	ccRect rect;
-	ccPoint mouse;
-	ccEvent event;
-	ccDisplay *display;
-	bool supportsRawInput;
-#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
-	void *pixels;
-#endif
-
-	void *data;
-} ccWindow;
-
-// Only access through getters
-ccWindow *_ccWindow;
-
-#define ccWindowSupportsRawInput() _ccWindow->supportsRawInput
-
 // Window functions
 ccError ccWindowCreate(ccRect rect, const char *title, int flags);
 ccError ccWindowFree(void);
@@ -117,6 +98,7 @@ ccRect ccWindowGetRect(void);
 ccPoint ccWindowGetMouse(void);
 ccDisplay *ccWindowGetDisplay(void);
 bool ccWindowExists(void);
+bool ccWindowSupportsRawInput(void);
 
 // Usually for internal use only, finds the display the window currently is in
 void ccWindowUpdateDisplay(void);

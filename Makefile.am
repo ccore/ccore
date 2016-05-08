@@ -21,7 +21,6 @@ libccore_la_LDFLAGS = $(EXTRA_LDFLAGS) -version-info $(CCORE_VERSION) -no-undefi
 libccore_la_LIBADD = $(EXTRA_LIBS)
 libccore_la_SOURCES = src/ccore/common/interface/com_display.c
 libccore_la_SOURCES += src/ccore/common/interface/com_event.c
-libccore_la_SOURCES += src/ccore/common/interface/com_window.c
 
 libccore_la_SOURCES += src/ccore/common/utils/com_core.c
 libccore_la_SOURCES += src/ccore/common/utils/com_file.c
@@ -53,9 +52,6 @@ endif
 if BUILD_X11
 libccore_la_SOURCES += src/ccore/x11/interface/x11_display.c
 libccore_la_SOURCES += src/ccore/x11/interface/x11_window.c
-if BUILD_OPENGL
-libccore_la_SOURCES += src/ccore/x11/interface/x11_opengl.c
-endif
 endif
 if BUILD_GTK3
 libccore_la_SOURCES += src/ccore/gtk3/interface/gtk3_display.c

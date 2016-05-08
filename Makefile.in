@@ -107,11 +107,10 @@ host_triplet = @host@
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_time.c
 @BUILD_X11_TRUE@am__append_5 = src/ccore/x11/interface/x11_display.c \
 @BUILD_X11_TRUE@	src/ccore/x11/interface/x11_window.c
-@BUILD_OPENGL_TRUE@@BUILD_X11_TRUE@am__append_6 = src/ccore/x11/interface/x11_opengl.c
-@BUILD_GTK3_TRUE@am__append_7 =  \
+@BUILD_GTK3_TRUE@am__append_6 =  \
 @BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_display.c \
 @BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_window.c
-@BUILD_GTK3_TRUE@@BUILD_OPENGL_TRUE@am__append_8 = src/ccore/gtk3/interface/gtk3_opengl.c
+@BUILD_GTK3_TRUE@@BUILD_OPENGL_TRUE@am__append_7 = src/ccore/gtk3/interface/gtk3_opengl.c
 @BUILD_TESTS_TRUE@check_PROGRAMS = check_ccore$(EXEEXT)
 @BUILD_TESTS_TRUE@TESTS = check_ccore$(EXEEXT)
 @BUILD_EXAMPLES_TRUE@bin_PROGRAMS = bin/framebuffer$(EXEEXT) \
@@ -165,7 +164,6 @@ libccore_la_DEPENDENCIES =
 am__libccore_la_SOURCES_DIST =  \
 	src/ccore/common/interface/com_display.c \
 	src/ccore/common/interface/com_event.c \
-	src/ccore/common/interface/com_window.c \
 	src/ccore/common/utils/com_core.c \
 	src/ccore/common/utils/com_file.c \
 	src/ccore/common/utils/com_rect.c \
@@ -186,7 +184,6 @@ am__libccore_la_SOURCES_DIST =  \
 	src/ccore/linux/utils/lin_time.c \
 	src/ccore/x11/interface/x11_display.c \
 	src/ccore/x11/interface/x11_window.c \
-	src/ccore/x11/interface/x11_opengl.c \
 	src/ccore/gtk3/interface/gtk3_display.c \
 	src/ccore/gtk3/interface/gtk3_window.c \
 	src/ccore/gtk3/interface/gtk3_opengl.c
@@ -209,22 +206,19 @@ am__dirstamp = $(am__leading_dot)dirstamp
 @BUILD_X11_TRUE@am__objects_5 =  \
 @BUILD_X11_TRUE@	src/ccore/x11/interface/x11_display.lo \
 @BUILD_X11_TRUE@	src/ccore/x11/interface/x11_window.lo
-@BUILD_OPENGL_TRUE@@BUILD_X11_TRUE@am__objects_6 = src/ccore/x11/interface/x11_opengl.lo
-@BUILD_GTK3_TRUE@am__objects_7 =  \
+@BUILD_GTK3_TRUE@am__objects_6 =  \
 @BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_display.lo \
 @BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_window.lo
-@BUILD_GTK3_TRUE@@BUILD_OPENGL_TRUE@am__objects_8 = src/ccore/gtk3/interface/gtk3_opengl.lo
+@BUILD_GTK3_TRUE@@BUILD_OPENGL_TRUE@am__objects_7 = src/ccore/gtk3/interface/gtk3_opengl.lo
 am_libccore_la_OBJECTS = src/ccore/common/interface/com_display.lo \
 	src/ccore/common/interface/com_event.lo \
-	src/ccore/common/interface/com_window.lo \
 	src/ccore/common/utils/com_core.lo \
 	src/ccore/common/utils/com_file.lo \
 	src/ccore/common/utils/com_rect.lo \
 	src/ccore/common/utils/com_string.lo \
 	src/ccore/common/utils/com_time.lo $(am__objects_1) \
 	$(am__objects_2) $(am__objects_3) $(am__objects_4) \
-	$(am__objects_5) $(am__objects_6) $(am__objects_7) \
-	$(am__objects_8)
+	$(am__objects_5) $(am__objects_6) $(am__objects_7)
 libccore_la_OBJECTS = $(am_libccore_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -669,15 +663,13 @@ libccore_la_LDFLAGS = $(EXTRA_LDFLAGS) -version-info $(CCORE_VERSION) -no-undefi
 libccore_la_LIBADD = $(EXTRA_LIBS)
 libccore_la_SOURCES = src/ccore/common/interface/com_display.c \
 	src/ccore/common/interface/com_event.c \
-	src/ccore/common/interface/com_window.c \
 	src/ccore/common/utils/com_core.c \
 	src/ccore/common/utils/com_file.c \
 	src/ccore/common/utils/com_rect.c \
 	src/ccore/common/utils/com_string.c \
 	src/ccore/common/utils/com_time.c $(am__append_1) \
 	$(am__append_2) $(am__append_3) $(am__append_4) \
-	$(am__append_5) $(am__append_6) $(am__append_7) \
-	$(am__append_8)
+	$(am__append_5) $(am__append_6) $(am__append_7)
 @BUILD_TESTS_TRUE@check_ccore_SOURCES = test/test.c
 @BUILD_TESTS_TRUE@check_ccore_LDADD = @CHECK_LIBS@ libccore.la
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_SOURCES = examples/framebuffer.c
@@ -766,9 +758,6 @@ src/ccore/common/interface/com_display.lo:  \
 	src/ccore/common/interface/$(am__dirstamp) \
 	src/ccore/common/interface/$(DEPDIR)/$(am__dirstamp)
 src/ccore/common/interface/com_event.lo:  \
-	src/ccore/common/interface/$(am__dirstamp) \
-	src/ccore/common/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/common/interface/com_window.lo:  \
 	src/ccore/common/interface/$(am__dirstamp) \
 	src/ccore/common/interface/$(DEPDIR)/$(am__dirstamp)
 src/ccore/common/utils/$(am__dirstamp):
@@ -865,9 +854,6 @@ src/ccore/x11/interface/x11_display.lo:  \
 	src/ccore/x11/interface/$(am__dirstamp) \
 	src/ccore/x11/interface/$(DEPDIR)/$(am__dirstamp)
 src/ccore/x11/interface/x11_window.lo:  \
-	src/ccore/x11/interface/$(am__dirstamp) \
-	src/ccore/x11/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/x11/interface/x11_opengl.lo:  \
 	src/ccore/x11/interface/$(am__dirstamp) \
 	src/ccore/x11/interface/$(DEPDIR)/$(am__dirstamp)
 src/ccore/gtk3/interface/$(am__dirstamp):
@@ -1011,7 +997,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@examples/$(DEPDIR)/window.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/com_display.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/com_event.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/com_window.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_core.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_file.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_rect.Plo@am__quote@
@@ -1034,7 +1019,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/windows/utils/$(DEPDIR)/win_thread.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/windows/utils/$(DEPDIR)/win_time.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/x11/interface/$(DEPDIR)/x11_display.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/x11/interface/$(DEPDIR)/x11_opengl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/x11/interface/$(DEPDIR)/x11_window.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@test/$(DEPDIR)/test.Po@am__quote@
 
