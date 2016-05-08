@@ -144,7 +144,8 @@ const char *ccErrorString(ccError error)
 	}
 }
 
-char *ccEventString(ccEvent event){
+char *ccEventString(ccEvent event)
+{
 	switch(event.type){
 		case CC_EVENT_SKIP:
 			return "Skip";

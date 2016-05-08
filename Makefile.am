@@ -19,7 +19,7 @@ pkginclude_HEADERS += include/ccore/types.h
 pkginclude_HEADERS += include/ccore/window.h
 
 lib_LTLIBRARIES = libccore.la
-libccore_la_LDFLAGS = $(EXTRA_LDFLAGS) -export-symbols-regex '^cc[^_]'
+libccore_la_LDFLAGS = $(EXTRA_LDFLAGS) -version-info $(CCORE_VERSION) -no-undefined
 libccore_la_LIBADD = $(EXTRA_LIBS)
 libccore_la_SOURCES = src/ccore/common/interface/com_display.c
 libccore_la_SOURCES += src/ccore/common/interface/com_event.c

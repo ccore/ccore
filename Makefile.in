@@ -666,7 +666,7 @@ pkginclude_HEADERS = include/ccore/assert.h include/ccore/core.h \
 	include/ccore/thread.h include/ccore/time.h \
 	include/ccore/types.h include/ccore/window.h
 lib_LTLIBRARIES = libccore.la
-libccore_la_LDFLAGS = $(EXTRA_LDFLAGS) -export-symbols-regex '^cc[^_]'
+libccore_la_LDFLAGS = $(EXTRA_LDFLAGS) -version-info $(CCORE_VERSION) -no-undefined
 libccore_la_LIBADD = $(EXTRA_LIBS)
 libccore_la_SOURCES = src/ccore/common/interface/com_display.c \
 	src/ccore/common/interface/com_event.c \

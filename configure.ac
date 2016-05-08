@@ -4,6 +4,9 @@
 AC_PREREQ([2.69])
 AC_INIT([ccore], m4_esyscmd_s([cat VERSION]))
 
+# Setup m4 folder for libtool
+AC_CONFIG_MACRO_DIR([m4])
+# Setup build dir to get rid of all the scripts in the root folder
 AC_CONFIG_AUX_DIR([build-scripts])
 
 CCORE_VERSION="$(cat VERSION)"
@@ -19,6 +22,8 @@ AM_PROG_AR
 
 # Initialize libtool
 LT_INIT([win32-dll])
+AC_ENABLE_STATIC
+AC_ENABLE_SHARED
 
 # Checks for programs.
 AC_PROG_LIBTOOL
@@ -33,6 +38,7 @@ PKG_CHECK_MODULES([CHECK], [check >= 0.8.2], [have_check=yes], [have_check=no])
 
 # Checks for header files.
 AC_HEADER_STDC
+AC_CHECK_HEADERS(sys/types.h stdio.h stdlib.h stddef.h stdarg.h malloc.h memory.h string.h strings.h inttypes.h stdint.h ctype.h math.h iconv.h signal.h)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
@@ -64,14 +70,15 @@ build_examples=yes
 SUMMARY="Configuration summary\n"
 SUMMARY="${SUMMARY}ccore version: ${CCORE_VERSION}\n"
 
-case "$host" in
-	*-*-cygwin*)
+AC_CANONICAL_HOST
+case "${host_os}" in
+	cygwin*)
 		# We build SDL on cygwin without the UNIX emulation layer
 		BASE_CFLAGS="-I/usr/include/mingw -mno-cygwin"
 		BASE_LDFLAGS="-mno-cygwin"
 		;;
 	*)
-		BASE_CFLAGS="-D_GNU_SOURCE=1"
+    BASE_CFLAGS="-D_GNU_SOURCE=1"
 		;;
 esac
 
@@ -133,8 +140,6 @@ CheckWin32()
 }
 
 # AC_CANONICAL_HOST is needed to acces the 'host_os' variable
-AC_CANONICAL_HOST
-
 SUMMARY="${SUMMARY}Target host: ${host_os}\n"
 case "${host_os}" in
 	linux*)
@@ -154,10 +159,20 @@ case "${host_os}" in
 	mingw* | cygwin*)
 		AC_FUNC_ALLOCA
 
+		if test "$build" != "$host"; then # cross-compiling
+			# Default cross-compile location
+			ac_default_prefix=/usr/local/cross-tools/i386-mingw32
+		else
+			# Look for the location of the tools and install there
+			if test "$BUILD_PREFIX" != ""; then
+					ac_default_prefix=$BUILD_PREFIX
+			fi
+		fi
+
 		CheckWin32
 
-		EXTRA_LDFLAGS="${EXTRA_LDFLAGS} -static-libgcc -no-undefined -version-info ${CCORE_VERSION}"
-		EXTRA_LIBS="${EXTRA_LIBS} -mwindows -lmingw32 -lws2_32 -luser32 -lgdi32 -lwinmm"
+		EXTRA_LDFLAGS="${EXTRA_LDFLAGS} -static"
+		EXTRA_LIBS="${EXTRA_LIBS} -luser32 -lgdi32 -lwinmm -mwindows -lmingw32 "
 
 		build_windows=yes
 		;;
@@ -210,8 +225,6 @@ SUMMARY="${SUMMARY}- CFLAGS:\n\t${EXTRA_CFLAGS}\n"
 # Check if the source files are in the right location
 AC_CONFIG_SRCDIR([src/ccore/common/interface/com_display.c])
 AC_CONFIG_FILES([Makefile])
-# Setup m4 folder for libtool
-AC_CONFIG_MACRO_DIR([m4])
 
 # Display the output summary and show the ccore logo
 AC_CONFIG_COMMANDS([summary], [cat logo.txt ; echo -en "$SUMMARY"], [SUMMARY="$SUMMARY"])

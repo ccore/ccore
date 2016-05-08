@@ -73,4 +73,4 @@ typedef struct {
 #define _CC_GAMEPAD_DATA ((ccGamepad_win*)currentGamepad->data)
 #define _CC_GAMEPADS_DATA ((ccGamepads_win*)_ccGamepads->data)
 
-#endif CC_USE_GAMEPAD
+#endif //CC_USE_GAMEPAD
