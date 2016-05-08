@@ -13,11 +13,11 @@ ccError ccThreadStart(ccThread *thread, void *function, void *data)
 
 ccError ccThreadJoin(ccThread *thread)
 {
-	if(CC_UNLIKELY(pthread_join(*thread, NULL) == 0)){
-		return CC_E_NONE;  
-	}else{
-		return CC_E_THREAD_CREATE;
+	if(CC_UNLIKELY(pthread_join(*thread, NULL) != 0)){
+		return CC_E_THREAD_CREATE;  
 	}
+	
+	return CC_E_NONE;
 }
 
 bool ccThreadFinished(ccThread *thread)

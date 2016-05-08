@@ -22,7 +22,6 @@
 #if defined CC_USE_ALL || defined CC_USE_THREAD
 
 #include "core.h"
-
 #include "types.h"
 
 #ifdef __cplusplus
@@ -31,7 +30,6 @@ extern "C"
 #endif
 
 #ifdef WINDOWS
-
 #include <windows.h>
 
 #define ccThreadFunction(name) DWORD WINAPI name(LPVOID lpParam)
@@ -43,7 +41,6 @@ typedef HANDLE ccThread;
 typedef CRITICAL_SECTION ccMutex;
 
 #elif defined LINUX
-
 #include <pthread.h>
 
 #define ccThreadFunction(name) void* name(void *arg)

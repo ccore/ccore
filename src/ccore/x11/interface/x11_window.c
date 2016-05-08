@@ -28,10 +28,6 @@
 #include <X11/extensions/XShm.h>
 #endif
 
-#ifdef LINUX
-#include "../../linux/interface/lin_gamepad.h"
-#endif
-
 #include "x11_display.h"
 
 static ccRect _rect;
@@ -374,13 +370,11 @@ bool ccWindowEventPoll(void)
 	_event.type = CC_EVENT_SKIP;
 
 #if defined CC_USE_ALL || defined CC_USE_GAMEPAD
-	if(_ccGamepads != NULL) {
-		ccGamepadEvent gamepadEvent = ccGamepadEventPoll();
-		if(gamepadEvent.type != CC_GAMEPAD_UNHANDLED) {
-			_event.type = CC_EVENT_GAMEPAD;
-			_event.gamepadEvent = gamepadEvent;
-			return true;
-		}
+	ccGamepadEvent gamepadEvent = ccGamepadEventPoll();
+	if(gamepadEvent.type != CC_GAMEPAD_UNHANDLED) {
+		_event.type = CC_EVENT_GAMEPAD;
+		_event.gamepadEvent = gamepadEvent;
+		return true;
 	}
 #endif
 
@@ -756,6 +750,137 @@ ccError ccWindowMouseSetCursor(ccCursor cursor)
 	return CC_E_NONE;
 }
 
+ccError ccWindowClipboardSet(const char *text)
+{
+#ifdef _DEBUG
+	assert(_hasWindow);
+#endif
+
+	if(text == NULL) {
+		return CC_E_INVALID_ARGUMENT;
+	}
+
+	if(_CLIPBOARD != None && XGetSelectionOwner(_xDisplay, _CLIPBOARD) != _xWin) {
+		XSetSelectionOwner(_xDisplay, _CLIPBOARD, _xWin, CurrentTime);
+	}
+
+	_xClipstrlen = strlen(text);
+	if(!_xClipstr) {
+		_xClipstr = malloc(_xClipstrlen);
+		if(_xClipstr == NULL){
+			return CC_E_MEMORY_OVERFLOW;
+		}
+	} else {
+		_xClipstr = realloc(_xClipstr, _xClipstrlen);
+		if(_xClipstr == NULL){
+			return CC_E_MEMORY_OVERFLOW;
+		}
+	}
+	strcpy(_xClipstr, text);
+
+	return CC_E_NONE;
+}
+
+char *ccWindowClipboardGet()
+{
+	const Atom formats[] = { XA_STRING, _UTF8_STRING, _COMPOUND_STRING};
+	const int formatCount = sizeof(formats) / sizeof(formats[0]);
+
+#ifdef _DEBUG
+	assert(_hasWindow);
+#endif
+
+	Window owner = XGetSelectionOwner(_xDisplay, _CLIPBOARD);
+	if(owner == _xWin) {
+		return _xClipstr;
+	} else if(owner == None) {
+		return NULL;
+	}
+
+	int i;
+	for(i = 0; i < formatCount; i++) {
+		XConvertSelection(_xDisplay, _CLIPBOARD, formats[i], _CCORE_SELECTION, _xWin, CurrentTime); 
+		XEvent event;
+		while(XCheckTypedEvent(_xDisplay, SelectionNotify, &event) || event.xselection.requestor != _xWin);
+
+		if(event.xselection.property == None) {
+			continue;
+		}
+
+		unsigned char *data;
+		unsigned long length = getWindowProperty(event.xselection.requestor, event.xselection.property, event.xselection.target, &data);
+
+		if(length == 0) {
+			XFree(data);
+			continue;
+		}
+
+		char *output = malloc(length + 1);
+		if(!output) {
+			XFree(data);
+			return NULL;
+		}
+		memcpy(output, data, length);
+		output[length] = '\0';
+
+		XFree(data);
+		return output;
+	}
+
+	return NULL;
+}
+
+ccEvent ccWindowEventGet(void)
+{
+	return _event;
+}
+
+ccRect ccWindowGetRect(void)
+{	
+	return _rect;
+}
+
+ccPoint ccWindowGetMouse(void)
+{
+	return _mouse;
+}
+
+ccDisplay *ccWindowGetDisplay(void)
+{
+#ifdef _DEBUG
+	assert(_display != NULL);
+#endif
+
+	return _display;
+}
+
+bool ccWindowExists(void)
+{
+	return _hasWindow;
+}
+
+void ccWindowUpdateDisplay(void)
+{
+	int i;
+	int area, largestArea;
+	ccRect displayRect;
+
+	largestArea = 0;
+	for(i = 0; i < ccDisplayGetAmount(); i++) {
+		displayRect = ccDisplayGetRect(ccDisplayGet(i));
+		area = ccRectIntersectionArea(&displayRect, &_rect);
+		if(area > largestArea) {
+			largestArea = area;
+			_display = ccDisplayGet(i);
+		}
+	}
+}
+
+bool ccWindowSupportsRawInput(void)
+{
+	return _supportsRawInput;
+}
+
 #if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
 ccError ccWindowFramebufferCreate(ccFramebufferFormat *format)
 {
@@ -891,6 +1016,7 @@ void *ccWindowFramebufferGetPixels()
 }
 #endif
 
+#if defined CC_USE_ALL || defined CC_USE_OPENGL
 ccError ccGLContextBind(void)
 {
 	if(CC_UNLIKELY(!_hasWindow)) {
@@ -934,134 +1060,4 @@ bool ccGLContextIsActive(void)
 {
 	return _xContext != NULL;
 }
-
-ccError ccWindowClipboardSet(const char *text)
-{
-#ifdef _DEBUG
-	assert(_hasWindow);
 #endif
-
-	if(text == NULL) {
-		return CC_E_INVALID_ARGUMENT;
-	}
-
-	if(_CLIPBOARD != None && XGetSelectionOwner(_xDisplay, _CLIPBOARD) != _xWin) {
-		XSetSelectionOwner(_xDisplay, _CLIPBOARD, _xWin, CurrentTime);
-	}
-
-	_xClipstrlen = strlen(text);
-	if(!_xClipstr) {
-		_xClipstr = malloc(_xClipstrlen);
-		if(_xClipstr == NULL){
-			return CC_E_MEMORY_OVERFLOW;
-		}
-	} else {
-		_xClipstr = realloc(_xClipstr, _xClipstrlen);
-		if(_xClipstr == NULL){
-			return CC_E_MEMORY_OVERFLOW;
-		}
-	}
-	strcpy(_xClipstr, text);
-
-	return CC_E_NONE;
-}
-
-char *ccWindowClipboardGet()
-{
-	const Atom formats[] = { XA_STRING, _UTF8_STRING, _COMPOUND_STRING};
-	const int formatCount = sizeof(formats) / sizeof(formats[0]);
-
-#ifdef _DEBUG
-	assert(_hasWindow);
-#endif
-
-	Window owner = XGetSelectionOwner(_xDisplay, _CLIPBOARD);
-	if(owner == _xWin) {
-		return _xClipstr;
-	} else if(owner == None) {
-		return NULL;
-	}
-
-	int i;
-	for(i = 0; i < formatCount; i++) {
-		XConvertSelection(_xDisplay, _CLIPBOARD, formats[i], _CCORE_SELECTION, _xWin, CurrentTime); 
-		XEvent event;
-		while(XCheckTypedEvent(_xDisplay, SelectionNotify, &event) || event.xselection.requestor != _xWin);
-
-		if(event.xselection.property == None) {
-			continue;
-		}
-
-		unsigned char *data;
-		unsigned long length = getWindowProperty(event.xselection.requestor, event.xselection.property, event.xselection.target, &data);
-
-		if(length == 0) {
-			XFree(data);
-			continue;
-		}
-
-		char *output = malloc(length + 1);
-		if(!output) {
-			XFree(data);
-			return NULL;
-		}
-		memcpy(output, data, length);
-		output[length] = '\0';
-
-		XFree(data);
-		return output;
-	}
-
-	return NULL;
-}
-
-ccEvent ccWindowEventGet(void)
-{
-	return _event;
-}
-
-ccRect ccWindowGetRect(void)
-{	
-	return _rect;
-}
-
-ccPoint ccWindowGetMouse(void)
-{
-	return _mouse;
-}
-
-ccDisplay *ccWindowGetDisplay(void)
-{
-#ifdef _DEBUG
-	assert(_display != NULL);
-#endif
-
-	return _display;
-}
-
-bool ccWindowExists(void)
-{
-	return true;
-}
-
-void ccWindowUpdateDisplay(void)
-{
-	int i;
-	int area, largestArea;
-	ccRect displayRect;
-
-	largestArea = 0;
-	for(i = 0; i < ccDisplayGetAmount(); i++) {
-		displayRect = ccDisplayGetRect(ccDisplayGet(i));
-		area = ccRectIntersectionArea(&displayRect, &_rect);
-		if(area > largestArea) {
-			largestArea = area;
-			_display = ccDisplayGet(i);
-		}
-	}
-}
-
-bool ccWindowSupportsRawInput(void)
-{
-	return _supportsRawInput;
-}

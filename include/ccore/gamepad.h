@@ -69,21 +69,12 @@ typedef struct {
 	void *data;
 } ccGamepad;
 
-typedef struct {
-	ccGamepad *gamepad;
-	int amount;
-
-	void *data;
-} ccGamepads;
-
-ccGamepads *_ccGamepads;
-
-#define ccGamepadGetAmount() _ccGamepads->amount
-#define ccGamepadGet(index) (&_ccGamepads->gamepad[index])
-
 ccError ccGamepadInitialize(void); // Initializes gamepad input
 ccError ccGamepadFree(void); // Stops gamepad input
 ccError ccGamepadOutputSet(ccGamepad *gamepad, int outputIndex, int force);
+
+ccError ccGamepadGetAmount(int *amount);
+ccError ccGamepadGet(ccGamepad *pad, int index);
 
 #ifdef X11
 ccGamepadEvent ccGamepadEventPoll(void);
