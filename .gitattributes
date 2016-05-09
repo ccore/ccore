@@ -24,3 +24,9 @@
 # Github language settings
 *.h linguist-language=c
 *.c linguist-language=c
+
+build-scripts/* linguist-vendored
+debian/*        linguist-vendored
+aclocal.m4      linguist-vendored
+configure       linguist-vendored
+Makefile.in     linguist-vendored

@@ -1,107 +1,71 @@
-﻿#include <ccore/display.h>
+﻿#include <stdio.h>
+
+#include <GL/gl.h>
+
+#include <ccore/display.h>
 #include <ccore/window.h>
 #include <ccore/time.h>
 #include <ccore/opengl.h>
 
-#include <GL/gl.h>
+#define EXIT_ON_E(x) {\
+	ccError e = x; \
+	if(e != CC_E_NONE){ \
+		fprintf(stderr, "Line %d error: %s\n\t" #x ";\n", __LINE__, ccErrorString(e)); \
+		ccFree(); \
+		exit(1); \
+	} \
+}
 
 int main(int argc, char** argv)
 {
-    ccRect windowRect;
-    ccReturn returnValue;
-    ccError error;
-    bool loop = true;
+	EXIT_ON_E(ccDisplayInitialize());
 
-    returnValue = ccDisplayInitialize();
-    if(returnValue == CC_FAIL){
-        goto outputError;
-    }
+	ccRect windowRect = {.x = 0, .y = 0, .width = 800, .height = 600};
+	EXIT_ON_E(ccWindowCreate(windowRect, "ccore examples: opengl", CC_WINDOW_FLAG_NORESIZE));
 
-    windowRect.x = 0;
-    windowRect.y = 0;
-    windowRect.width = 800;
-    windowRect.height = 600;
+	EXIT_ON_E(ccGLContextBind());
 
-    returnValue = ccWindowCreate(windowRect, "A ccore window", CC_WINDOW_FLAG_NORESIZE);
-    if(returnValue == CC_FAIL){
-        goto outputError;
-    }
+	EXIT_ON_E(ccWindowSetCentered());
 
-    returnValue = ccGLContextBind();
-    if(returnValue == CC_FAIL){
-        goto outputError;
-    }
+	bool loop = true;
+	while(loop) {
+		while(ccWindowEventPoll()) {
+			switch(ccWindowEventGet().type) {
+				case CC_EVENT_WINDOW_QUIT:
+					loop = false;
+					break;
+				case CC_EVENT_KEY_DOWN:
+					switch(ccWindowEventGet().keyCode) {
+						case CC_KEY_M:
+							EXIT_ON_E(ccWindowSetMaximized());
+							break;
+						case CC_KEY_W:
+							EXIT_ON_E(ccWindowSetWindowed(windowRect));
 
-    returnValue = ccWindowSetCentered();
-    if(returnValue == CC_FAIL){
-        goto outputError;
-    }
-
-    while(loop) {
-        while(ccWindowEventPoll()) {
-            switch(ccWindowEventGet().type) {
-                case CC_EVENT_WINDOW_QUIT:
-                    loop = false;
-                    break;
-                case CC_EVENT_KEY_DOWN:
-                    switch(ccWindowEventGet().keyCode) {
-                        case CC_KEY_M:
-                            returnValue = ccWindowSetMaximized();
-                            if(returnValue == CC_FAIL){
-                                goto outputError;
-                            }
-                            break;
-                        case CC_KEY_W:
-                            returnValue = ccWindowSetWindowed(NULL);
-                            if(returnValue == CC_FAIL){
-                                goto outputError;
-                            }
-
-                            returnValue = ccWindowSetRect(windowRect);
-                            if(returnValue == CC_FAIL){
-                                goto outputError;
-                            }
-
-                            returnValue = ccWindowSetCentered();
-                            if(returnValue == CC_FAIL){
-                                goto outputError;
-                            }
-                            break;
+							EXIT_ON_E(ccWindowSetCentered());
+							break;
 						case CC_KEY_ESCAPE:
 							loop = false;
 							break;
-                    }
+					}
 
-                    break;
-            }
-        }
+					break;
+			}
+		}
 
-        glBegin(GL_TRIANGLES);
-        glColor3f(0.0f, 0.0f, 1.0f);
-        glVertex3f(-1.0f, -1.0f, 0.0f);
-        glColor3f(0.0f, 1.0f, 0.0f);
-        glVertex3f(-1.0f, 1.0f, 0.0f);
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glVertex3f(1.0f, 1.0f, 0.0f);
-        glEnd();
+		glBegin(GL_TRIANGLES);
+		glColor3f(0.0f, 0.0f, 1.0f);
+		glVertex3f(-1.0f, -1.0f, 0.0f);
+		glColor3f(0.0f, 1.0f, 0.0f);
+		glVertex3f(-1.0f, 1.0f, 0.0f);
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glVertex3f(1.0f, 1.0f, 0.0f);
+		glEnd();
 
-        returnValue = ccGLBuffersSwap();
-        if(returnValue == CC_FAIL){
-            goto outputError;
-        }
-    }
+		EXIT_ON_E(ccGLBuffersSwap());
+	}
 
-    ccFree();
+	ccFree();
 
-    return 0;
-
-outputError:
-
-    while((error = ccErrorPop()) != CC_ERROR_NONE){
-        ccPrintf("Error catched:\n%s\n", ccErrorString(error));
-    }
-
-    ccFree();
-
-    return -1;
+	return 0;
 }

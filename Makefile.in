@@ -114,7 +114,7 @@ host_triplet = @host@
 @BUILD_TESTS_TRUE@check_PROGRAMS = check_ccore$(EXEEXT)
 @BUILD_TESTS_TRUE@TESTS = check_ccore$(EXEEXT)
 @BUILD_EXAMPLES_TRUE@bin_PROGRAMS = bin/framebuffer$(EXEEXT) \
-@BUILD_EXAMPLES_TRUE@	bin/window$(EXEEXT)
+@BUILD_EXAMPLES_TRUE@	bin/window$(EXEEXT) bin/opengl$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -233,6 +233,11 @@ am__bin_framebuffer_SOURCES_DIST = examples/framebuffer.c
 @BUILD_EXAMPLES_TRUE@	examples/framebuffer.$(OBJEXT)
 bin_framebuffer_OBJECTS = $(am_bin_framebuffer_OBJECTS)
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_DEPENDENCIES = libccore.la
+am__bin_opengl_SOURCES_DIST = examples/opengl.c
+@BUILD_EXAMPLES_TRUE@am_bin_opengl_OBJECTS =  \
+@BUILD_EXAMPLES_TRUE@	examples/opengl.$(OBJEXT)
+bin_opengl_OBJECTS = $(am_bin_opengl_OBJECTS)
+@BUILD_EXAMPLES_TRUE@bin_opengl_DEPENDENCIES = libccore.la
 am__bin_window_SOURCES_DIST = examples/window.c examples/icon.c
 @BUILD_EXAMPLES_TRUE@am_bin_window_OBJECTS =  \
 @BUILD_EXAMPLES_TRUE@	examples/window.$(OBJEXT) \
@@ -278,10 +283,12 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(libccore_la_SOURCES) $(bin_framebuffer_SOURCES) \
-	$(bin_window_SOURCES) $(check_ccore_SOURCES)
+	$(bin_opengl_SOURCES) $(bin_window_SOURCES) \
+	$(check_ccore_SOURCES)
 DIST_SOURCES = $(am__libccore_la_SOURCES_DIST) \
 	$(am__bin_framebuffer_SOURCES_DIST) \
-	$(am__bin_window_SOURCES_DIST) $(am__check_ccore_SOURCES_DIST)
+	$(am__bin_opengl_SOURCES_DIST) $(am__bin_window_SOURCES_DIST) \
+	$(am__check_ccore_SOURCES_DIST)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -676,6 +683,8 @@ libccore_la_SOURCES = src/ccore/common/interface/com_display.c \
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_LDADD = libccore.la
 @BUILD_EXAMPLES_TRUE@bin_window_SOURCES = examples/window.c examples/icon.c
 @BUILD_EXAMPLES_TRUE@bin_window_LDADD = libccore.la
+@BUILD_EXAMPLES_TRUE@bin_opengl_SOURCES = examples/opengl.c
+@BUILD_EXAMPLES_TRUE@bin_opengl_LDADD = libccore.la
 all: all-am
 
 .SUFFIXES:
@@ -947,6 +956,12 @@ bin/$(am__dirstamp):
 bin/framebuffer$(EXEEXT): $(bin_framebuffer_OBJECTS) $(bin_framebuffer_DEPENDENCIES) $(EXTRA_bin_framebuffer_DEPENDENCIES) bin/$(am__dirstamp)
 	@rm -f bin/framebuffer$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(bin_framebuffer_OBJECTS) $(bin_framebuffer_LDADD) $(LIBS)
+examples/opengl.$(OBJEXT): examples/$(am__dirstamp) \
+	examples/$(DEPDIR)/$(am__dirstamp)
+
+bin/opengl$(EXEEXT): $(bin_opengl_OBJECTS) $(bin_opengl_DEPENDENCIES) $(EXTRA_bin_opengl_DEPENDENCIES) bin/$(am__dirstamp)
+	@rm -f bin/opengl$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(bin_opengl_OBJECTS) $(bin_opengl_LDADD) $(LIBS)
 examples/window.$(OBJEXT): examples/$(am__dirstamp) \
 	examples/$(DEPDIR)/$(am__dirstamp)
 examples/icon.$(OBJEXT): examples/$(am__dirstamp) \
@@ -994,6 +1009,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@examples/$(DEPDIR)/framebuffer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@examples/$(DEPDIR)/icon.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@examples/$(DEPDIR)/opengl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@examples/$(DEPDIR)/window.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/com_display.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/interface/$(DEPDIR)/com_event.Plo@am__quote@

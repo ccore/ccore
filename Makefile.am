@@ -70,11 +70,14 @@ TESTS = check_ccore
 endif
 
 if BUILD_EXAMPLES
-bin_PROGRAMS = bin/framebuffer bin/window
+bin_PROGRAMS = bin/framebuffer bin/window bin/opengl
 
 bin_framebuffer_SOURCES = examples/framebuffer.c
 bin_framebuffer_LDADD = libccore.la
 
 bin_window_SOURCES = examples/window.c examples/icon.c
 bin_window_LDADD = libccore.la
+
+bin_opengl_SOURCES = examples/opengl.c
+bin_opengl_LDADD = libccore.la
 endif
