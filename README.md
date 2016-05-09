@@ -23,6 +23,12 @@ The features of ccore include support for the following:
 - Clipboard cutting/pasting
 - Cross platform implementations for several OS specific functions
 
+###Use Cases###
+
+- Video games that are easy to port
+- Simple OpenGL applications
+- List and configure display modi on different platforms
+
 ###Documentation###
 - [How to install](../../wiki/Building-the-ccore-library)
 - [Example code](../../wiki/Examples)
