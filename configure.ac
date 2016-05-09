@@ -199,12 +199,63 @@ if test x$have_check != xyes; then
 	SUMMARY="${SUMMARY}Please install the check package to be able to run the tests\n"
 fi
 
-# The library automatically includes all modules, change this if it is unwanted
-AC_ARG_ENABLE(all-modules, AC_HELP_STRING([--disable-all-modules], [Disable all ccore modules (not recommeded)]))
-if test x$disable_all_modules != xyes; then
+use_all_modules=yes
+
+# Let the user specify what modules they want to include
+AC_ARG_ENABLE([module-file], [AS_HELP_STRING([--enable-module-file], [compile with file module [default=auto]])], [enable_mod_file=$enableval],	[enable_mod_file=auto])
+if test x$enable_mod_file = xyes; then
+	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DCC_USE_FILE"
+	SUMMARY="${SUMMARY}Enabling file module (#define CC_USE_FILE)\n"
+	use_all_modules=no
+fi
+
+AC_ARG_ENABLE([module-gamepad], [AS_HELP_STRING([--enable-module-gamepad], [compile with gamepad module [default=auto]])], [enable_mod_gamepad=$enableval],	[enable_mod_gamepad=auto])
+if test x$enable_mod_gamepad = xyes; then
+	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DCC_USE_GAMEPAD"
+	SUMMARY="${SUMMARY}Enabling gamepad module (#define CC_USE_GAMEPAD)\n"
+	use_all_modules=no
+fi
+
+AC_ARG_ENABLE([module-opengl], [AS_HELP_STRING([--enable-module-opengl], [compile with opengl module [default=auto]])], [enable_mod_opengl=$enableval],	[enable_mod_opengl=auto])
+if test x$enable_mod_opengl = xyes; then
+	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DCC_USE_OPENGL"
+	SUMMARY="${SUMMARY}Enabling opengl module (#define CC_USE_OPENGL)\n"
+	use_all_modules=no
+fi
+
+AC_ARG_ENABLE([module-sysinfo], [AS_HELP_STRING([--enable-module-sysinfo], [compile with sysinfo module [default=auto]])], [enable_mod_sysinfo=$enableval],	[enable_mod_sysinfo=auto])
+if test x$enable_mod_sysinfo = xyes; then
+	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DCC_USE_SYSINFO"
+	SUMMARY="${SUMMARY}Enabling sysinfo module (#define CC_USE_SYSINFO)\n"
+	use_all_modules=no
+fi
+
+AC_ARG_ENABLE([module-thread], [AS_HELP_STRING([--enable-module-thread], [compile with thread module [default=auto]])], [enable_mod_thread=$enableval],	[enable_mod_thread=auto])
+if test x$enable_mod_thread = xyes; then
+	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DCC_USE_THREAD"
+	SUMMARY="${SUMMARY}Enabling thread module (#define CC_USE_THREAD)\n"
+	use_all_modules=no
+fi
+
+AC_ARG_ENABLE([module-time], [AS_HELP_STRING([--enable-module-time], [compile with time module [default=auto]])], [enable_mod_time=$enableval],	[enable_mod_time=auto])
+if test x$enable_mod_time = xyes; then
+	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DCC_USE_TIME"
+	SUMMARY="${SUMMARY}Enabling time module (#define CC_USE_TIME)\n"
+	use_all_modules=no
+fi
+
+AC_ARG_ENABLE([module-framebuffer], [AS_HELP_STRING([--enable-module-framebuffer], [compile with framebuffer module [default=auto]])], [enable_mod_framebuffer=$enableval],	[enable_mod_framebuffer=auto])
+if test x$enable_mod_framebuffer = xyes; then
+	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DCC_USE_FRAMEBUFFER"
+	SUMMARY="${SUMMARY}Enabling framebuffer module (#define CC_USE_FRAMEBUFFER)\n"
+	use_all_modules=no
+fi
+
+if test x$use_all_modules = xyes; then
 	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DCC_USE_ALL"
 	SUMMARY="${SUMMARY}Enabling all ccore modules (#define CC_USE_ALL)\n"
 fi
+
 # Check if we want to build ccore with the debug flag
 AC_ARG_ENABLE([debug], [AS_HELP_STRING([--enable-debug], [compile with assertions and other debug options [default=auto]])], [enable_debug=$enableval],	[enable_debug=auto])
 if test x$enable_debug = xyes; then

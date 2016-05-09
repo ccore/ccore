@@ -795,7 +795,13 @@ with_sysroot
 enable_libtool_lock
 enable_gtk3
 with_x
-enable_all_modules
+enable_module_file
+enable_module_gamepad
+enable_module_opengl
+enable_module_sysinfo
+enable_module_thread
+enable_module_time
+enable_module_framebuffer
 enable_debug
 '
       ac_precious_vars='build_alias
@@ -1464,7 +1470,14 @@ Optional Features:
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
   --enable-gtk3           compile against GTK3 [default=auto]
-  --disable-all-modules   Disable all ccore modules (not recommeded)
+  --enable-module-file    compile with file module [default=auto]
+  --enable-module-gamepad compile with gamepad module [default=auto]
+  --enable-module-opengl  compile with opengl module [default=auto]
+  --enable-module-sysinfo compile with sysinfo module [default=auto]
+  --enable-module-thread  compile with thread module [default=auto]
+  --enable-module-time    compile with time module [default=auto]
+  --enable-module-framebuffer
+                          compile with framebuffer module [default=auto]
   --enable-debug          compile with assertions and other debug options
                           [default=auto]
 
@@ -15517,16 +15530,105 @@ $as_echo "#define HAVE_CHECK 1" >>confdefs.h
 	SUMMARY="${SUMMARY}Please install the check package to be able to run the tests\n"
 fi
 
-# The library automatically includes all modules, change this if it is unwanted
-# Check whether --enable-all-modules was given.
-if test "${enable_all_modules+set}" = set; then :
-  enableval=$enable_all_modules;
+use_all_modules=yes
+
+# Let the user specify what modules they want to include
+# Check whether --enable-module-file was given.
+if test "${enable_module_file+set}" = set; then :
+  enableval=$enable_module_file; enable_mod_file=$enableval
+else
+  enable_mod_file=auto
 fi
 
-if test x$disable_all_modules != xyes; then
+if test x$enable_mod_file = xyes; then
+	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DCC_USE_FILE"
+	SUMMARY="${SUMMARY}Enabling file module (#define CC_USE_FILE)\n"
+	use_all_modules=no
+fi
+
+# Check whether --enable-module-gamepad was given.
+if test "${enable_module_gamepad+set}" = set; then :
+  enableval=$enable_module_gamepad; enable_mod_gamepad=$enableval
+else
+  enable_mod_gamepad=auto
+fi
+
+if test x$enable_mod_gamepad = xyes; then
+	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DCC_USE_GAMEPAD"
+	SUMMARY="${SUMMARY}Enabling gamepad module (#define CC_USE_GAMEPAD)\n"
+	use_all_modules=no
+fi
+
+# Check whether --enable-module-opengl was given.
+if test "${enable_module_opengl+set}" = set; then :
+  enableval=$enable_module_opengl; enable_mod_opengl=$enableval
+else
+  enable_mod_opengl=auto
+fi
+
+if test x$enable_mod_opengl = xyes; then
+	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DCC_USE_OPENGL"
+	SUMMARY="${SUMMARY}Enabling opengl module (#define CC_USE_OPENGL)\n"
+	use_all_modules=no
+fi
+
+# Check whether --enable-module-sysinfo was given.
+if test "${enable_module_sysinfo+set}" = set; then :
+  enableval=$enable_module_sysinfo; enable_mod_sysinfo=$enableval
+else
+  enable_mod_sysinfo=auto
+fi
+
+if test x$enable_mod_sysinfo = xyes; then
+	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DCC_USE_SYSINFO"
+	SUMMARY="${SUMMARY}Enabling sysinfo module (#define CC_USE_SYSINFO)\n"
+	use_all_modules=no
+fi
+
+# Check whether --enable-module-thread was given.
+if test "${enable_module_thread+set}" = set; then :
+  enableval=$enable_module_thread; enable_mod_thread=$enableval
+else
+  enable_mod_thread=auto
+fi
+
+if test x$enable_mod_thread = xyes; then
+	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DCC_USE_THREAD"
+	SUMMARY="${SUMMARY}Enabling thread module (#define CC_USE_THREAD)\n"
+	use_all_modules=no
+fi
+
+# Check whether --enable-module-time was given.
+if test "${enable_module_time+set}" = set; then :
+  enableval=$enable_module_time; enable_mod_time=$enableval
+else
+  enable_mod_time=auto
+fi
+
+if test x$enable_mod_time = xyes; then
+	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DCC_USE_TIME"
+	SUMMARY="${SUMMARY}Enabling time module (#define CC_USE_TIME)\n"
+	use_all_modules=no
+fi
+
+# Check whether --enable-module-framebuffer was given.
+if test "${enable_module_framebuffer+set}" = set; then :
+  enableval=$enable_module_framebuffer; enable_mod_framebuffer=$enableval
+else
+  enable_mod_framebuffer=auto
+fi
+
+if test x$enable_mod_framebuffer = xyes; then
+	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DCC_USE_FRAMEBUFFER"
+	SUMMARY="${SUMMARY}Enabling framebuffer module (#define CC_USE_FRAMEBUFFER)\n"
+	use_all_modules=no
+fi
+
+if test x$use_all_modules = xyes; then
 	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DCC_USE_ALL"
 	SUMMARY="${SUMMARY}Enabling all ccore modules (#define CC_USE_ALL)\n"
 fi
+
 # Check if we want to build ccore with the debug flag
 # Check whether --enable-debug was given.
 if test "${enable_debug+set}" = set; then :
