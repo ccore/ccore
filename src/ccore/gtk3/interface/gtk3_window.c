@@ -254,6 +254,9 @@ ccError ccWindowSetMaximized(void)
 
 ccError ccWindowSetFullscreen(int displayCount, ...)
 {
+	//TODO implement gtk_window_fullscreen_on_window
+	gtk_window_fullscreen(GTK_WINDOW(_gWin));
+
 	return CC_E_NONE;
 }
 
@@ -410,7 +413,11 @@ void *ccWindowFramebufferGetPixels()
 
 ccError ccWindowClipboardSet(const char *data)
 {
+#ifdef GTK3_VERSION_PRE_3
+	GtkClipboard *clip = (GtkClipboard*)gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_PRIMARY);
+#else
 	GtkClipboard *clip = (GtkClipboard*)gtk_clipboard_get_default(gdk_display_get_default());
+#endif
 
 	gtk_clipboard_set_text(clip, data, strlen(data));
 
@@ -419,7 +426,11 @@ ccError ccWindowClipboardSet(const char *data)
 
 char *ccWindowClipboardGet(void)
 {
+#ifdef GTK3_VERSION_PRE_3
+	GtkClipboard *clip = (GtkClipboard*)gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_PRIMARY);
+#else
 	GtkClipboard *clip = (GtkClipboard*)gtk_clipboard_get_default(gdk_display_get_default());
+#endif
 
 	return gtk_clipboard_wait_for_text(clip);
 }
