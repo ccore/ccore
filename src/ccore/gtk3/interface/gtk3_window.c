@@ -20,9 +20,9 @@ static ccDisplay *_display;
 static bool _supportsRawInput;
 static bool _hasWindow = false;
 
-GtkWidget *_gWin;
-int _gEvents;
-int _gFlags;
+static GtkWidget *_gWin;
+static int _gEvents;
+static int _gFlags;
 
 enum {
 	_EV_QUIT =             1 << 0,
@@ -81,6 +81,11 @@ static void imageDestroy(guchar *pixels, gpointer data)
 	if(pixels){
 		g_free(pixels);
 	}
+}
+
+GtkWidget *ccGtkGetWidget()
+{
+	return _gWin;
 }
 
 ccError ccWindowCreate(ccRect rect, const char *title, int flags)
