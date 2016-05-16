@@ -81,7 +81,7 @@ ccError ccGLBuffersSwap(void)
 #ifdef _DEBUG
 	assert(_gContext != NULL);
 #endif
-
+	
 	gtk_gl_area_queue_render(GTK_GL_AREA(_gContext));
 
 	return CC_E_NONE;

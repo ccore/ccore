@@ -687,8 +687,6 @@ ccError ccWindowIconSet(ccPoint size, const uint32_t *icon)
 {
 #ifdef _DEBUG
 	assert(_hasWindow);
-#endif
-#ifdef _DEBUG
 	assert(size.x > 0 && size.y > 0);
 #endif
 
