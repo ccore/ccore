@@ -1,11 +1,19 @@
 ﻿#include <stdio.h>
 
-#include <GL/gl.h>
-
 #include <ccore/display.h>
 #include <ccore/window.h>
 #include <ccore/time.h>
 #include <ccore/opengl.h>
+
+#ifdef LINUX
+#ifdef USE_GLEW
+#include <GL/glew.h>
+#else
+#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+#endif
 
 #define EXIT_ON_E(x) {\
 	ccError e = x; \
@@ -16,6 +24,12 @@
 	} \
 }
 
+static const GLfloat vdata[] = {
+   -1.0f, -1.0f, 0.0f,
+   1.0f, -1.0f, 0.0f,
+   0.0f,  1.0f, 0.0f,
+};
+
 int main(int argc, char** argv)
 {
 	EXIT_ON_E(ccDisplayInitialize());
@@ -24,6 +38,16 @@ int main(int argc, char** argv)
 	EXIT_ON_E(ccWindowCreate(windowRect, "ccore examples: opengl", CC_WINDOW_FLAG_NORESIZE));
 
 	EXIT_ON_E(ccGLContextBind());
+
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	GLuint vbo;
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vdata), vdata, GL_STATIC_DRAW);
+
 
 	EXIT_ON_E(ccWindowSetCentered());
 
@@ -53,14 +77,16 @@ int main(int argc, char** argv)
 			}
 		}
 
-		glBegin(GL_TRIANGLES);
-		glColor3f(0.0f, 0.0f, 1.0f);
-		glVertex3f(-1.0f, -1.0f, 0.0f);
-		glColor3f(0.0f, 1.0f, 0.0f);
-		glVertex3f(-1.0f, 1.0f, 0.0f);
-		glColor3f(1.0f, 0.0f, 0.0f);
-		glVertex3f(1.0f, 1.0f, 0.0f);
-		glEnd();
+  	glClearColor(0.5, 0.5, 0.5, 1.0);
+  	glClear(GL_COLOR_BUFFER_BIT);
+	
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDisableVertexAttribArray(0);
+
+		glFlush();
 
 		EXIT_ON_E(ccGLBuffersSwap());
 	}

@@ -31,10 +31,8 @@ ccError ccFree(void)
 #endif
 
 	// Free OpenGL context
-	if(ccGLContextIsActive()){
-		if((err = ccGLContextFree()) != CC_E_NONE){
-			return err;
-		}
+	if((err = ccGLContextFree()) != CC_E_NONE){
+		return err;
 	}
 
 	// Free Window
