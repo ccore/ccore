@@ -1,4 +1,5 @@
 #include "gtk3_window.h"
+#include "gtk3_opengl.h"
 
 #include <string.h>
 #include <stdint.h>
@@ -136,6 +137,8 @@ bool ccWindowEventPoll(void)
 	if(gtk_events_pending()){
 		gtk_main_iteration();
 	}
+
+	ccGtkContextSetCurrent();
 
 	if(_gEvents == 0){
 		return false;

@@ -49,7 +49,9 @@ int main(int argc, char** argv)
 	EXIT_ON_E(ccDisplayInitialize());
 
 	ccRect windowRect = {.x = 0, .y = 0, .width = 800, .height = 600};
-	EXIT_ON_E(ccWindowCreate(windowRect, "ccore examples: opengl", CC_WINDOW_FLAG_NORESIZE));
+	EXIT_ON_E(ccWindowCreate(windowRect, "ccore examples: opengl", 0));
+
+	EXIT_ON_E(ccWindowSetCentered());
 
 	EXIT_ON_E(ccGLContextBind());
 
@@ -80,8 +82,6 @@ int main(int argc, char** argv)
 	glAttachShader(program, fs);
 	glAttachShader(program, vs);
 	glLinkProgram(program);
-
-	EXIT_ON_E(ccWindowSetCentered());
 
 	bool loop = true;
 	while(loop) {
