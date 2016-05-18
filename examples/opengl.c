@@ -24,11 +24,25 @@
 	} \
 }
 
-static const GLfloat vdata[] = {
-   -1.0f, -1.0f, 0.0f,
-   1.0f, -1.0f, 0.0f,
-   0.0f,  1.0f, 0.0f,
+static const float vdata[] = {
+	-1.0f, -1.0f, 0.0f,
+	1.0f, -1.0f, 0.0f,
+	0.0f,  1.0f, 0.0f,
 };
+
+static const char *vertShader =
+"#version 400\n"
+"in vec3 vp;"
+"void main () {"
+"  gl_Position = vec4 (vp, 1.0);"
+"}";
+
+static const char *fragShader =
+"#version 400\n"
+"out vec4 frag_colour;"
+"void main () {"
+"  frag_colour = vec4 (0.5, 0.0, 0.5, 1.0);"
+"}";
 
 int main(int argc, char** argv)
 {
@@ -43,14 +57,29 @@ int main(int argc, char** argv)
 	glewInit();
 #endif
 
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
 	GLuint vbo;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vdata), vdata, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), vdata, GL_STATIC_DRAW);
+
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray (vao);
+	glEnableVertexAttribArray (0);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	GLuint vs = glCreateShader (GL_VERTEX_SHADER);
+	glShaderSource(vs, 1, &vertShader, NULL);
+	glCompileShader(vs);
+	GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fs, 1, &fragShader, NULL);
+	glCompileShader(fs);
+
+	GLuint program = glCreateProgram();
+	glAttachShader(program, fs);
+	glAttachShader(program, vs);
+	glLinkProgram(program);
 
 	EXIT_ON_E(ccWindowSetCentered());
 
@@ -80,14 +109,12 @@ int main(int argc, char** argv)
 			}
 		}
 
-  	glClearColor(0.5, 0.5, 0.5, 1.0);
-  	glClear(GL_COLOR_BUFFER_BIT);
-	
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glClearColor(0.5, 0.5, 0.5, 1.0);
+
+		glUseProgram(program);
+		glBindVertexArray (vao);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
-		glDisableVertexAttribArray(0);
 
 		glFlush();
 

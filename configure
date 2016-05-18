@@ -650,8 +650,8 @@ BUILD_WINDOWS_TRUE
 BUILD_LINUX_FALSE
 BUILD_LINUX_TRUE
 ALLOCA
-epoxy_LIBS
-epoxy_CFLAGS
+EPOXY_LIBS
+EPOXY_CFLAGS
 GLEW_LIBS
 GLEW_CFLAGS
 GTK_LIBS
@@ -828,8 +828,8 @@ GTK_CFLAGS
 GTK_LIBS
 GLEW_CFLAGS
 GLEW_LIBS
-epoxy_CFLAGS
-epoxy_LIBS'
+EPOXY_CFLAGS
+EPOXY_LIBS'
 
 
 # Initialize some variables set by options.
@@ -1526,9 +1526,9 @@ Some influential environment variables:
   GTK_LIBS    linker flags for GTK, overriding pkg-config
   GLEW_CFLAGS C compiler flags for GLEW, overriding pkg-config
   GLEW_LIBS   linker flags for GLEW, overriding pkg-config
-  epoxy_CFLAGS
-              C compiler flags for epoxy, overriding pkg-config
-  epoxy_LIBS  linker flags for epoxy, overriding pkg-config
+  EPOXY_CFLAGS
+              C compiler flags for EPOXY, overriding pkg-config
+  EPOXY_LIBS  linker flags for EPOXY, overriding pkg-config
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -15129,8 +15129,6 @@ fi
 	EXTRA_CFLAGS="${EXTRA_CFLAGS} $GTK_CFLAGS"
 	EXTRA_LIBS="${EXTRA_LIBS} $GTK_LIBS"
 
-	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DUSE_EPOXY"
-
 	build_gtk3=yes
 	SUMMARY="${SUMMARY}Using GTK3 to handle window and input functions\n"
 }
@@ -15238,7 +15236,7 @@ fi
 
 CheckGLEW()
 {
-	build_examples_glew=no
+	build_examples_glew=yes
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for glewInit in -lGLEW" >&5
 $as_echo_n "checking for glewInit in -lGLEW... " >&6; }
 if ${ac_cv_lib_GLEW_glewInit+:} false; then :
@@ -15276,9 +15274,14 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_GLEW_glewInit" >&5
 $as_echo "$ac_cv_lib_GLEW_glewInit" >&6; }
 if test "x$ac_cv_lib_GLEW_glewInit" = xyes; then :
-  build_examples_glew=yes
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBGLEW 1
+_ACEOF
+
+  LIBS="-lGLEW $LIBS"
+
 else
-  echo "GLEW library could not be found"
+  build_examples_glew=no
 fi
 
 
@@ -15387,6 +15390,9 @@ fi
 done
 
 
+		EXTRA_CFLAGS="${EXTRA_CFLAGS} $GLEW_CFLAGS"
+		EXTRA_LIBS="${EXTRA_LIBS} $GLEW_LIBS"
+
 		EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DUSE_GLEW"
 
 		SUMMARY="${SUMMARY}Using GLEW for the OpenGL example\n"
@@ -15395,10 +15401,10 @@ done
 
 CheckEpoxy()
 {
-	build_examples_epoxy=no
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for glEnable in -lepoxy" >&5
-$as_echo_n "checking for glEnable in -lepoxy... " >&6; }
-if ${ac_cv_lib_epoxy_glEnable+:} false; then :
+	build_examples_epoxy=yes
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for glDrawArrays in -lepoxy" >&5
+$as_echo_n "checking for glDrawArrays in -lepoxy... " >&6; }
+if ${ac_cv_lib_epoxy_glDrawArrays+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -15412,41 +15418,46 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char glEnable ();
+char glDrawArrays ();
 int
 main ()
 {
-return glEnable ();
+return glDrawArrays ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_epoxy_glEnable=yes
+  ac_cv_lib_epoxy_glDrawArrays=yes
 else
-  ac_cv_lib_epoxy_glEnable=no
+  ac_cv_lib_epoxy_glDrawArrays=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_epoxy_glEnable" >&5
-$as_echo "$ac_cv_lib_epoxy_glEnable" >&6; }
-if test "x$ac_cv_lib_epoxy_glEnable" = xyes; then :
-  build_examples_epoxy=yes
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_epoxy_glDrawArrays" >&5
+$as_echo "$ac_cv_lib_epoxy_glDrawArrays" >&6; }
+if test "x$ac_cv_lib_epoxy_glDrawArrays" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBEPOXY 1
+_ACEOF
+
+  LIBS="-lepoxy $LIBS"
+
 else
-  echo "Epoxy library could not be found"
+  build_examples_epoxy=no
 fi
 
 
 	if test x$build_examples_epoxy = xyes; then
 
 pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for epoxy" >&5
-$as_echo_n "checking for epoxy... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for EPOXY" >&5
+$as_echo_n "checking for EPOXY... " >&6; }
 
-if test -n "$epoxy_CFLAGS"; then
-    pkg_cv_epoxy_CFLAGS="$epoxy_CFLAGS"
+if test -n "$EPOXY_CFLAGS"; then
+    pkg_cv_EPOXY_CFLAGS="$EPOXY_CFLAGS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
     { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"epoxy\""; } >&5
@@ -15454,7 +15465,7 @@ if test -n "$epoxy_CFLAGS"; then
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_epoxy_CFLAGS=`$PKG_CONFIG --cflags "epoxy" 2>/dev/null`
+  pkg_cv_EPOXY_CFLAGS=`$PKG_CONFIG --cflags "epoxy" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
@@ -15462,8 +15473,8 @@ fi
  else
     pkg_failed=untried
 fi
-if test -n "$epoxy_LIBS"; then
-    pkg_cv_epoxy_LIBS="$epoxy_LIBS"
+if test -n "$EPOXY_LIBS"; then
+    pkg_cv_EPOXY_LIBS="$EPOXY_LIBS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
     { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"epoxy\""; } >&5
@@ -15471,7 +15482,7 @@ if test -n "$epoxy_LIBS"; then
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_epoxy_LIBS=`$PKG_CONFIG --libs "epoxy" 2>/dev/null`
+  pkg_cv_EPOXY_LIBS=`$PKG_CONFIG --libs "epoxy" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
@@ -15492,22 +15503,22 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        epoxy_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "epoxy" 2>&1`
+	        EPOXY_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "epoxy" 2>&1`
         else
-	        epoxy_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "epoxy" 2>&1`
+	        EPOXY_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "epoxy" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
-	echo "$epoxy_PKG_ERRORS" >&5
+	echo "$EPOXY_PKG_ERRORS" >&5
 
 	as_fn_error $? "Package requirements (epoxy) were not met:
 
-$epoxy_PKG_ERRORS
+$EPOXY_PKG_ERRORS
 
 Consider adjusting the PKG_CONFIG_PATH environment variable if you
 installed software in a non-standard prefix.
 
-Alternatively, you may set the environment variables epoxy_CFLAGS
-and epoxy_LIBS to avoid the need to call pkg-config.
+Alternatively, you may set the environment variables EPOXY_CFLAGS
+and EPOXY_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details." "$LINENO" 5
 elif test $pkg_failed = untried; then
      	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
@@ -15518,15 +15529,15 @@ as_fn_error $? "The pkg-config script could not be found or is too old.  Make su
 is in your PATH or set the PKG_CONFIG environment variable to the full
 path to pkg-config.
 
-Alternatively, you may set the environment variables epoxy_CFLAGS
-and epoxy_LIBS to avoid the need to call pkg-config.
+Alternatively, you may set the environment variables EPOXY_CFLAGS
+and EPOXY_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details.
 
 To get pkg-config, see <http://pkg-config.freedesktop.org/>.
 See \`config.log' for more details" "$LINENO" 5; }
 else
-	epoxy_CFLAGS=$pkg_cv_epoxy_CFLAGS
-	epoxy_LIBS=$pkg_cv_epoxy_LIBS
+	EPOXY_CFLAGS=$pkg_cv_EPOXY_CFLAGS
+	EPOXY_LIBS=$pkg_cv_EPOXY_LIBS
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
@@ -15543,6 +15554,9 @@ fi
 
 done
 
+
+		EXTRA_CFLAGS="${EXTRA_CFLAGS} $EPOXY_CFLAGS"
+		EXTRA_LIBS="${EXTRA_LIBS} $EPOXY_LIBS"
 
 		EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DUSE_EPOXY"
 
@@ -15653,9 +15667,10 @@ fi
 			CheckGTK3
 		else
 			CheckX11
-			CheckGLEW
 		fi
+
 		CheckOpenGL
+		CheckEpoxy
 
 		build_linux=yes
 		;;

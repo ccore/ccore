@@ -116,8 +116,6 @@ CheckGTK3()
 
 	EXTRA_CFLAGS="${EXTRA_CFLAGS} $GTK_CFLAGS"
 	EXTRA_LIBS="${EXTRA_LIBS} $GTK_LIBS"
-	
-	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DUSE_EPOXY"
 
 	build_gtk3=yes
 	SUMMARY="${SUMMARY}Using GTK3 to handle window and input functions\n"
@@ -134,12 +132,15 @@ CheckOpenGL()
 
 CheckGLEW()
 {
-	build_examples_glew=no
-	AC_CHECK_LIB([GLEW], [glewInit], [build_examples_glew=yes], [echo "GLEW library could not be found"])
+	build_examples_glew=yes
+	AC_CHECK_LIB([GLEW], [glewInit], [], [build_examples_glew=no])
 
 	if test x$build_examples_glew = xyes; then
 		PKG_CHECK_MODULES([GLEW], [glew])
 		AC_CHECK_HEADERS(GL/glew.h)
+
+		EXTRA_CFLAGS="${EXTRA_CFLAGS} $GLEW_CFLAGS"
+		EXTRA_LIBS="${EXTRA_LIBS} $GLEW_LIBS"
 
 		EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DUSE_GLEW"
 
@@ -149,12 +150,15 @@ CheckGLEW()
 
 CheckEpoxy()
 {
-	build_examples_epoxy=no
-	AC_CHECK_LIB([epoxy], [glEnable], [build_examples_epoxy=yes], [echo "Epoxy library could not be found"])
+	build_examples_epoxy=yes
+	AC_CHECK_LIB([epoxy], [glDrawArrays], [], [build_examples_epoxy=no])
 
 	if test x$build_examples_epoxy = xyes; then
-		PKG_CHECK_MODULES([epoxy], [epoxy])
+		PKG_CHECK_MODULES([EPOXY], [epoxy])
 		AC_CHECK_HEADERS(epoxy/gl.h)
+
+		EXTRA_CFLAGS="${EXTRA_CFLAGS} $EPOXY_CFLAGS"
+		EXTRA_LIBS="${EXTRA_LIBS} $EPOXY_LIBS"
 
 		EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DUSE_EPOXY"
 
@@ -191,9 +195,10 @@ case "${host_os}" in
 			CheckGTK3
 		else
 			CheckX11
-			CheckGLEW
 		fi
+
 		CheckOpenGL
+		CheckEpoxy
 
 		build_linux=yes
 		;;
