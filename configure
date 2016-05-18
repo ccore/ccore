@@ -650,6 +650,10 @@ BUILD_WINDOWS_TRUE
 BUILD_LINUX_FALSE
 BUILD_LINUX_TRUE
 ALLOCA
+epoxy_LIBS
+epoxy_CFLAGS
+GLEW_LIBS
+GLEW_CFLAGS
 GTK_LIBS
 GTK_CFLAGS
 XMKMF
@@ -821,7 +825,11 @@ CHECK_CFLAGS
 CHECK_LIBS
 XMKMF
 GTK_CFLAGS
-GTK_LIBS'
+GTK_LIBS
+GLEW_CFLAGS
+GLEW_LIBS
+epoxy_CFLAGS
+epoxy_LIBS'
 
 
 # Initialize some variables set by options.
@@ -1516,6 +1524,11 @@ Some influential environment variables:
   XMKMF       Path to xmkmf, Makefile generator for X Window System
   GTK_CFLAGS  C compiler flags for GTK, overriding pkg-config
   GTK_LIBS    linker flags for GTK, overriding pkg-config
+  GLEW_CFLAGS C compiler flags for GLEW, overriding pkg-config
+  GLEW_LIBS   linker flags for GLEW, overriding pkg-config
+  epoxy_CFLAGS
+              C compiler flags for epoxy, overriding pkg-config
+  epoxy_LIBS  linker flags for epoxy, overriding pkg-config
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -3104,6 +3117,7 @@ END
   fi
 fi
 
+# Show less verbose output
 # Check whether --enable-silent-rules was given.
 if test "${enable_silent_rules+set}" = set; then :
   enableval=$enable_silent_rules;
@@ -14464,7 +14478,6 @@ SUMMARY="${SUMMARY}ccore version: ${CCORE_VERSION}\n"
 
 case "${host_os}" in
 	cygwin*)
-		# We build SDL on cygwin without the UNIX emulation layer
 		BASE_CFLAGS="-I/usr/include/mingw -mno-cygwin"
 		BASE_LDFLAGS="-mno-cygwin"
 		;;
@@ -15116,6 +15129,8 @@ fi
 	EXTRA_CFLAGS="${EXTRA_CFLAGS} $GTK_CFLAGS"
 	EXTRA_LIBS="${EXTRA_LIBS} $GTK_LIBS"
 
+	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DUSE_EPOXY"
+
 	build_gtk3=yes
 	SUMMARY="${SUMMARY}Using GTK3 to handle window and input functions\n"
 }
@@ -15221,6 +15236,322 @@ fi
 	SUMMARY="${SUMMARY}Using OpenGL\n"
 }
 
+CheckGLEW()
+{
+	build_examples_glew=no
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for glewInit in -lGLEW" >&5
+$as_echo_n "checking for glewInit in -lGLEW... " >&6; }
+if ${ac_cv_lib_GLEW_glewInit+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lGLEW  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char glewInit ();
+int
+main ()
+{
+return glewInit ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_GLEW_glewInit=yes
+else
+  ac_cv_lib_GLEW_glewInit=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_GLEW_glewInit" >&5
+$as_echo "$ac_cv_lib_GLEW_glewInit" >&6; }
+if test "x$ac_cv_lib_GLEW_glewInit" = xyes; then :
+  build_examples_glew=yes
+else
+  echo "GLEW library could not be found"
+fi
+
+
+	if test x$build_examples_glew = xyes; then
+
+pkg_failed=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for GLEW" >&5
+$as_echo_n "checking for GLEW... " >&6; }
+
+if test -n "$GLEW_CFLAGS"; then
+    pkg_cv_GLEW_CFLAGS="$GLEW_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"glew\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "glew") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_GLEW_CFLAGS=`$PKG_CONFIG --cflags "glew" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+if test -n "$GLEW_LIBS"; then
+    pkg_cv_GLEW_LIBS="$GLEW_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"glew\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "glew") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_GLEW_LIBS=`$PKG_CONFIG --libs "glew" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        GLEW_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "glew" 2>&1`
+        else
+	        GLEW_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "glew" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$GLEW_PKG_ERRORS" >&5
+
+	as_fn_error $? "Package requirements (glew) were not met:
+
+$GLEW_PKG_ERRORS
+
+Consider adjusting the PKG_CONFIG_PATH environment variable if you
+installed software in a non-standard prefix.
+
+Alternatively, you may set the environment variables GLEW_CFLAGS
+and GLEW_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details." "$LINENO" 5
+elif test $pkg_failed = untried; then
+     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
+is in your PATH or set the PKG_CONFIG environment variable to the full
+path to pkg-config.
+
+Alternatively, you may set the environment variables GLEW_CFLAGS
+and GLEW_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details.
+
+To get pkg-config, see <http://pkg-config.freedesktop.org/>.
+See \`config.log' for more details" "$LINENO" 5; }
+else
+	GLEW_CFLAGS=$pkg_cv_GLEW_CFLAGS
+	GLEW_LIBS=$pkg_cv_GLEW_LIBS
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+fi
+		for ac_header in GL/glew.h
+do :
+  ac_fn_c_check_header_mongrel "$LINENO" "GL/glew.h" "ac_cv_header_GL_glew_h" "$ac_includes_default"
+if test "x$ac_cv_header_GL_glew_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_GL_GLEW_H 1
+_ACEOF
+
+fi
+
+done
+
+
+		EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DUSE_GLEW"
+
+		SUMMARY="${SUMMARY}Using GLEW for the OpenGL example\n"
+	fi
+}
+
+CheckEpoxy()
+{
+	build_examples_epoxy=no
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for glEnable in -lepoxy" >&5
+$as_echo_n "checking for glEnable in -lepoxy... " >&6; }
+if ${ac_cv_lib_epoxy_glEnable+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lepoxy  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char glEnable ();
+int
+main ()
+{
+return glEnable ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_epoxy_glEnable=yes
+else
+  ac_cv_lib_epoxy_glEnable=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_epoxy_glEnable" >&5
+$as_echo "$ac_cv_lib_epoxy_glEnable" >&6; }
+if test "x$ac_cv_lib_epoxy_glEnable" = xyes; then :
+  build_examples_epoxy=yes
+else
+  echo "Epoxy library could not be found"
+fi
+
+
+	if test x$build_examples_epoxy = xyes; then
+
+pkg_failed=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for epoxy" >&5
+$as_echo_n "checking for epoxy... " >&6; }
+
+if test -n "$epoxy_CFLAGS"; then
+    pkg_cv_epoxy_CFLAGS="$epoxy_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"epoxy\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "epoxy") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_epoxy_CFLAGS=`$PKG_CONFIG --cflags "epoxy" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+if test -n "$epoxy_LIBS"; then
+    pkg_cv_epoxy_LIBS="$epoxy_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"epoxy\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "epoxy") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_epoxy_LIBS=`$PKG_CONFIG --libs "epoxy" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        epoxy_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "epoxy" 2>&1`
+        else
+	        epoxy_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "epoxy" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$epoxy_PKG_ERRORS" >&5
+
+	as_fn_error $? "Package requirements (epoxy) were not met:
+
+$epoxy_PKG_ERRORS
+
+Consider adjusting the PKG_CONFIG_PATH environment variable if you
+installed software in a non-standard prefix.
+
+Alternatively, you may set the environment variables epoxy_CFLAGS
+and epoxy_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details." "$LINENO" 5
+elif test $pkg_failed = untried; then
+     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
+is in your PATH or set the PKG_CONFIG environment variable to the full
+path to pkg-config.
+
+Alternatively, you may set the environment variables epoxy_CFLAGS
+and epoxy_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details.
+
+To get pkg-config, see <http://pkg-config.freedesktop.org/>.
+See \`config.log' for more details" "$LINENO" 5; }
+else
+	epoxy_CFLAGS=$pkg_cv_epoxy_CFLAGS
+	epoxy_LIBS=$pkg_cv_epoxy_LIBS
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+fi
+		for ac_header in epoxy/gl.h
+do :
+  ac_fn_c_check_header_mongrel "$LINENO" "epoxy/gl.h" "ac_cv_header_epoxy_gl_h" "$ac_includes_default"
+if test "x$ac_cv_header_epoxy_gl_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_EPOXY_GL_H 1
+_ACEOF
+
+fi
+
+done
+
+
+		EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DUSE_EPOXY"
+
+		SUMMARY="${SUMMARY}Using Epoxy for the OpenGL example\n"
+	else
+		CheckGLEW
+	fi
+}
+
 CheckWin32()
 {
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking Win32 compiler compatibility" >&5
@@ -15322,6 +15653,7 @@ fi
 			CheckGTK3
 		else
 			CheckX11
+			CheckGLEW
 		fi
 		CheckOpenGL
 
@@ -15536,8 +15868,6 @@ fi
 		as_fn_error $? "\"OS $host_os is not supported\"" "$LINENO" 5
 		;;
 esac
-
-# Add the include flag so the header files can read ccore/*.h
 
 # Pass the building booleans to Makefile.am
  if test "$build_linux" = "yes"; then

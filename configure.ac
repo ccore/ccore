@@ -16,6 +16,7 @@ AC_SUBST(CCORE_VERSION)
 AC_LANG_C
 
 AM_INIT_AUTOMAKE([foreign subdir-objects nostdinc silent-rules -Wall -Werror])
+# Show less verbose output
 AM_SILENT_RULES([yes])
 AM_MAINTAINER_MODE([disable])
 AM_PROG_AR
@@ -73,7 +74,6 @@ SUMMARY="${SUMMARY}ccore version: ${CCORE_VERSION}\n"
 AC_CANONICAL_HOST
 case "${host_os}" in
 	cygwin*)
-		# We build SDL on cygwin without the UNIX emulation layer
 		BASE_CFLAGS="-I/usr/include/mingw -mno-cygwin"
 		BASE_LDFLAGS="-mno-cygwin"
 		;;
@@ -116,6 +116,8 @@ CheckGTK3()
 
 	EXTRA_CFLAGS="${EXTRA_CFLAGS} $GTK_CFLAGS"
 	EXTRA_LIBS="${EXTRA_LIBS} $GTK_LIBS"
+	
+	EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DUSE_EPOXY"
 
 	build_gtk3=yes
 	SUMMARY="${SUMMARY}Using GTK3 to handle window and input functions\n"
@@ -128,6 +130,38 @@ CheckOpenGL()
 
 	build_opengl=yes
 	SUMMARY="${SUMMARY}Using OpenGL\n"
+}
+
+CheckGLEW()
+{
+	build_examples_glew=no
+	AC_CHECK_LIB([GLEW], [glewInit], [build_examples_glew=yes], [echo "GLEW library could not be found"])
+
+	if test x$build_examples_glew = xyes; then
+		PKG_CHECK_MODULES([GLEW], [glew])
+		AC_CHECK_HEADERS(GL/glew.h)
+
+		EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DUSE_GLEW"
+
+		SUMMARY="${SUMMARY}Using GLEW for the OpenGL example\n"
+	fi
+}
+
+CheckEpoxy()
+{
+	build_examples_epoxy=no
+	AC_CHECK_LIB([epoxy], [glEnable], [build_examples_epoxy=yes], [echo "Epoxy library could not be found"])
+
+	if test x$build_examples_epoxy = xyes; then
+		PKG_CHECK_MODULES([epoxy], [epoxy])
+		AC_CHECK_HEADERS(epoxy/gl.h)
+
+		EXTRA_CPPFLAGS="${EXTRA_CPPFLAGS} -DUSE_EPOXY"
+
+		SUMMARY="${SUMMARY}Using Epoxy for the OpenGL example\n"
+	else
+		CheckGLEW
+	fi
 }
 
 CheckWin32()
@@ -157,6 +191,7 @@ case "${host_os}" in
 			CheckGTK3
 		else
 			CheckX11
+			CheckGLEW
 		fi
 		CheckOpenGL
 
@@ -186,8 +221,6 @@ case "${host_os}" in
 		AC_MSG_ERROR(["OS $host_os is not supported"])
 		;;
 esac
-
-# Add the include flag so the header files can read ccore/*.h
 
 # Pass the building booleans to Makefile.am
 AM_CONDITIONAL([BUILD_LINUX], [test "$build_linux" = "yes"])

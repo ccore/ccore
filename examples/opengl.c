@@ -5,14 +5,14 @@
 #include <ccore/time.h>
 #include <ccore/opengl.h>
 
-#ifdef LINUX
-#ifdef USE_GLEW
+#ifdef USE_EPOXY
+#include <epoxy/gl.h>
+#elif defined USE_GLEW
 #include <GL/glew.h>
 #else
 #define GL_GLEXT_PROTOTYPES
 #include <GL/gl.h>
 #include <GL/glext.h>
-#endif
 #endif
 
 #define EXIT_ON_E(x) {\
@@ -39,6 +39,10 @@ int main(int argc, char** argv)
 
 	EXIT_ON_E(ccGLContextBind());
 
+#ifdef USE_GLEW
+	glewInit();
+#endif
+
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
@@ -47,7 +51,6 @@ int main(int argc, char** argv)
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vdata), vdata, GL_STATIC_DRAW);
-
 
 	EXIT_ON_E(ccWindowSetCentered());
 
