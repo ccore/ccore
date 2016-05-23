@@ -128,6 +128,8 @@ ccError ccWindowCreate(ccRect rect, const char *title, int flags)
 
 ccError ccWindowFree(void)
 {
+	gtk_widget_destroy(_gWin);
+
 	return CC_E_NONE;
 }
 
