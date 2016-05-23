@@ -2,15 +2,13 @@
 
 #if defined CC_USE_ALL || defined CC_USE_FILE
 
+
 #ifdef WINDOWS
-
 #define ccStat _stat
-
 #elif defined LINUX
 #include <sys/stat.h>
 
 #define ccStat stat
-
 #endif
 
 ccFileInfo ccFileInfoGet(const char *file)

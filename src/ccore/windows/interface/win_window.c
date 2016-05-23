@@ -246,7 +246,7 @@ static bool regHinstance(HINSTANCE instanceHandle)
 	winClass.lpszClassName = _CC_WINDOW_CLASS_NAME;
 	winClass.hIconSm = NULL;
 
-	if((_CC_WINDOW_DATA->winClass = RegisterClassEx(&winClass)) == 0) {
+	if((_CC_WINDOW_DATA->winClass = RegisterClassExW(&winClass)) == 0) {
 		ccErrorPush(CC_ERROR_WINDOW_CREATE);
 		return false;
 	}
@@ -336,7 +336,7 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 	
 	if(!regHinstance(moduleHandle)) return CC_FAIL;
 
-	_CC_WINDOW_DATA->winHandle = CreateWindowEx(
+	_CC_WINDOW_DATA->winHandle = CreateWindowExW(
 		WS_EX_APPWINDOW,
 		_CC_WINDOW_CLASS_NAME,
 		title,
@@ -347,6 +347,8 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 		NULL,
 		moduleHandle,
 		NULL);
+
+	free(titleW);
 
 	_CC_WINDOW_DATA->style |= WS_VISIBLE;
 	

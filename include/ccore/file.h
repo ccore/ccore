@@ -28,6 +28,7 @@
 #include <stdint.h>
 
 #ifdef WINDOWS
+#include <sys/stat.h>
 #include <Windows.h>
 #elif defined LINUX
 #include <sys/time.h>

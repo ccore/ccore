@@ -22,7 +22,7 @@ int main(int argc, char** argv)
     windowRect.width = 800;
     windowRect.height = 600;
 
-    returnValue = ccWindowCreate(windowRect, "A ccore window", CC_WINDOW_FLAG_NORESIZE);
+    returnValue = ccWindowCreate(windowRect, L"♥ A ccore window", CC_WINDOW_FLAG_NORESIZE);
     if(returnValue == CC_FAIL){
         goto outputError;
     }

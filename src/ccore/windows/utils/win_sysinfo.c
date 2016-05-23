@@ -28,4 +28,9 @@ fail:
 	return CC_FAIL;
 }
 
+void ccSysinfoFree(void)
+{
+	free(_ccSysinfo);
+}
+
 #endif
