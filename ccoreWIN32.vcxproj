@@ -45,7 +45,7 @@
     <ClInclude Include="test\icon.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="examples\opengl.c" />
+    <ClCompile Include="examples\framebuffer.c" />
     <ClCompile Include="src\ccore\common\interface\com_display.c" />
     <ClCompile Include="src\ccore\common\interface\com_event.c" />
     <ClCompile Include="src\ccore\common\interface\com_window.c" />

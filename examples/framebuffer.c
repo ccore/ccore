@@ -14,7 +14,7 @@
 int main(int argc, char **argv)
 {
 	ccDisplayInitialize();
-	ccWindowCreate((ccRect){0, 0, 300, 100}, "☐ccore examples: framebuffer", 0);
+	ccWindowCreate((ccRect){0, 0, 300, 100}, L"☐ccore examples: framebuffer", 0);
 
 	void *pixels;
 	ccFramebufferFormat format;

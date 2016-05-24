@@ -348,8 +348,6 @@ ccReturn ccWindowCreate(ccRect rect, const char* title, int flags)
 		moduleHandle,
 		NULL);
 
-	free(titleW);
-
 	_CC_WINDOW_DATA->style |= WS_VISIBLE;
 	
 	if(ShowWindow(_CC_WINDOW_DATA->winHandle, SW_SHOW) != 0) {
@@ -641,6 +639,29 @@ ccReturn ccWindowMouseSetCursor(ccCursor cursor)
 
 	return CC_SUCCESS;
 }
+
+#if defined CC_USE_ALL || defined CC_USE_FRAMEBUFFER
+ccReturn ccWindowFramebufferCreate(ccFramebufferFormat *format)
+{
+	ccAssert(_ccWindow);
+
+	return CC_SUCCESS;
+}
+
+ccReturn ccWindowFramebufferUpdate()
+{
+	ccAssert(_ccWindow);
+
+	return CC_SUCCESS;
+}
+
+ccReturn ccWindowFramebufferFree()
+{
+	ccAssert(_ccWindow);
+
+	return CC_SUCCESS;
+}
+#endif
 
 ccReturn ccWindowClipboardSet(const char *data)
 {
