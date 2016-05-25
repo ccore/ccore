@@ -560,7 +560,7 @@ ccError ccWindowSetFullscreen(int displayCount, ...)
 
 	ccDisplay *current, *topDisplay, *bottomDisplay, *leftDisplay, *rightDisplay;
 	if(CC_LIKELY(displayCount == CC_FULLSCREEN_CURRENT_DISPLAY)) {
-		ccDisplay *topDisplay = bottomDisplay = leftDisplay = rightDisplay = _display;
+		topDisplay = bottomDisplay = leftDisplay = rightDisplay = _display;
 	} else {
 		va_list displays;
 		va_start(displays, displayCount);
