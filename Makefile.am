@@ -58,6 +58,7 @@ libccore_la_SOURCES += src/ccore/gtk3/interface/gtk3_display.c
 libccore_la_SOURCES += src/ccore/gtk3/interface/gtk3_window.c
 if BUILD_OPENGL
 libccore_la_SOURCES += src/ccore/gtk3/interface/gtk3_opengl.c
+libccore_la_SOURCES += src/ccore/gtk3/interface/gtk3_widget.c
 endif
 endif
 

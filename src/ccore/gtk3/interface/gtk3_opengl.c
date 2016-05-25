@@ -1,9 +1,5 @@
 #include "gtk3_window.h"
-
-#include <epoxy/gl.h>
-
-#include <gdk/gdk.h>
-#include <gdk/gdkx.h>
+#include "gtk3_widget.h"
 
 #include <GL/glx.h>
 
@@ -11,13 +7,7 @@
 #include <ccore/display.h>
 #include <ccore/opengl.h>
 
-static GLXContext _glContext;
-static Display *_xDisplay;
-static Window _xWin;
-
-/* Attribute list for a double buffered OpenGL context, with at least 4 bits per
- * color and a 16 bit depth buffer */
-static int _glAttrList[] = {GLX_RGBA, GLX_DOUBLEBUFFER, GLX_RED_SIZE, 4, GLX_GREEN_SIZE, 4, GLX_BLUE_SIZE, 4, GLX_DEPTH_SIZE, 16, None};
+static GtkWidget *_context = NULL;
 
 ccError ccGLContextBind(void)
 {	
@@ -25,30 +15,23 @@ ccError ccGLContextBind(void)
 
 #ifdef _DEBUG
 	assert(win != NULL);
+	assert(_context == NULL);
 #endif
 
-	_xDisplay = gdk_x11_get_default_xdisplay();
-	XVisualInfo *vi = glXChooseVisual(_xDisplay, 0, _glAttrList);
-	if(CC_UNLIKELY(!vi)){
-		return CC_E_GL_CONTEXT;
-	}
+	_context = ccGLGtk_new();
 
-	_glContext = glXCreateContext(_xDisplay, vi, NULL, GL_TRUE);
-	XFree(vi);
+	gtk_container_add(GTK_CONTAINER(win), _context);
 
-	Window _xWindow = gdk_x11_window_get_xid(gtk_widget_get_window(win));
-	glXMakeCurrent(_xDisplay, _xWindow, _glContext);
+	gtk_widget_show_all(win);
+
+	ccGLGtkMakeCurrent(CC_GLGTK(_context));
 
 	return CC_E_NONE;
 }
 
 ccError ccGLContextFree(void)
 {		
-#ifdef _DEBUG
-	assert(_xDisplay != NULL);
-#endif
-
-	glXDestroyContext(_xDisplay, _glContext);
+	//TODO
 
 	return CC_E_NONE;
 }
@@ -56,15 +39,15 @@ ccError ccGLContextFree(void)
 ccError ccGLBuffersSwap(void)
 {
 #ifdef _DEBUG
-	assert(_xDisplay != NULL);
+	assert(_context != NULL);
 #endif
 
-	glXSwapBuffers(_xDisplay, _xWin);
+	ccGLGtkSwapBuffers(CC_GLGTK(_context));
 
 	return CC_E_NONE;
 }
 
 bool ccGLContextIsActive(void)
 {
-	return _xDisplay != NULL;
+	return _context != NULL;
 }
