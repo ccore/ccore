@@ -44,6 +44,8 @@ ccError ccGLBuffersSwap(void)
 
 	ccGLGtkSwapBuffers(CC_GLGTK(_context));
 
+	ccGLGtkMakeCurrent(CC_GLGTK(_context));
+
 	return CC_E_NONE;
 }
 

@@ -131,7 +131,7 @@ static void ccGLGtk_init(ccGLGtk *self)
 	gtk_widget_set_can_focus(widget, true);
 	gtk_widget_set_receives_default(widget, true);
 	gtk_widget_set_has_window(widget, true);
-	gtk_widget_set_double_buffered(widget, false);
+	//gtk_widget_set_double_buffered(widget, false);
 
 	priv->disp = NULL;
 }
