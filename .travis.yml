@@ -16,7 +16,6 @@ addons:
     - libxi-dev
     - libxext-dev
     - libibus-1.0-dev
-    - libgtk-3-dev
     - libtool
     - binutils-mingw-w64-x86-64
     - binutils-mingw-w64-i686
@@ -24,7 +23,6 @@ addons:
   
 script: 
   - ./configure --enable-debug && make && make check
-  - ./configure --enable-gtk3 --enable-debug && make && make check
 # - ./configure --host=x86_64-w64-mingw32 --enable-debug && make && make check
 #  - ./configure --host=i686-w64-mingw32 --enable-debug && make && make check
 

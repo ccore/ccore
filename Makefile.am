@@ -53,14 +53,6 @@ if BUILD_X11
 libccore_la_SOURCES += src/ccore/x11/interface/x11_display.c
 libccore_la_SOURCES += src/ccore/x11/interface/x11_window.c
 endif
-if BUILD_GTK3
-libccore_la_SOURCES += src/ccore/gtk3/interface/gtk3_display.c
-libccore_la_SOURCES += src/ccore/gtk3/interface/gtk3_window.c
-if BUILD_OPENGL
-libccore_la_SOURCES += src/ccore/gtk3/interface/gtk3_opengl.c
-libccore_la_SOURCES += src/ccore/gtk3/interface/gtk3_widget.c
-endif
-endif
 
 if BUILD_TESTS
 check_PROGRAMS = check_ccore

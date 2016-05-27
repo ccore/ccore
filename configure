@@ -641,8 +641,6 @@ BUILD_TESTS_FALSE
 BUILD_TESTS_TRUE
 BUILD_OPENGL_FALSE
 BUILD_OPENGL_TRUE
-BUILD_GTK3_FALSE
-BUILD_GTK3_TRUE
 BUILD_X11_FALSE
 BUILD_X11_TRUE
 BUILD_WINDOWS_FALSE
@@ -654,8 +652,6 @@ EPOXY_LIBS
 EPOXY_CFLAGS
 GLEW_LIBS
 GLEW_CFLAGS
-GTK_LIBS
-GTK_CFLAGS
 XMKMF
 LIBOBJS
 CHECK_LIBS
@@ -797,7 +793,6 @@ with_aix_soname
 with_gnu_ld
 with_sysroot
 enable_libtool_lock
-enable_gtk3
 with_x
 enable_module_file
 enable_module_gamepad
@@ -824,8 +819,6 @@ PKG_CONFIG_LIBDIR
 CHECK_CFLAGS
 CHECK_LIBS
 XMKMF
-GTK_CFLAGS
-GTK_LIBS
 GLEW_CFLAGS
 GLEW_LIBS
 EPOXY_CFLAGS
@@ -1477,7 +1470,6 @@ Optional Features:
   --enable-fast-install[=PKGS]
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
-  --enable-gtk3           compile against GTK3 [default=auto]
   --enable-module-file    compile with file module [default=auto]
   --enable-module-gamepad compile with gamepad module [default=auto]
   --enable-module-opengl  compile with opengl module [default=auto]
@@ -1522,8 +1514,6 @@ Some influential environment variables:
               C compiler flags for CHECK, overriding pkg-config
   CHECK_LIBS  linker flags for CHECK, overriding pkg-config
   XMKMF       Path to xmkmf, Makefile generator for X Window System
-  GTK_CFLAGS  C compiler flags for GTK, overriding pkg-config
-  GTK_LIBS    linker flags for GTK, overriding pkg-config
   GLEW_CFLAGS C compiler flags for GLEW, overriding pkg-config
   GLEW_LIBS   linker flags for GLEW, overriding pkg-config
   EPOXY_CFLAGS
@@ -14455,19 +14445,9 @@ fi
 done
 
 
-# Check if we want to build with Gtk3 instead of X11
-# Check whether --enable-gtk3 was given.
-if test "${enable_gtk3+set}" = set; then :
-  enableval=$enable_gtk3; enable_gtk3=$enableval
-else
-  enable_gtk3=auto
-fi
-
-
 build_linux=no
 build_windows=no
 build_x11=no
-build_gtk3=no
 build_opengl=no
 
 build_examples=yes
@@ -14927,210 +14907,6 @@ fi
 
 	build_x11=yes
 	SUMMARY="${SUMMARY}Using X11 to handle window and input functions\n"
-}
-
-CheckGTK3()
-{
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gtk_application_new in -lgtk-3" >&5
-$as_echo_n "checking for gtk_application_new in -lgtk-3... " >&6; }
-if ${ac_cv_lib_gtk_3_gtk_application_new+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lgtk-3  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char gtk_application_new ();
-int
-main ()
-{
-return gtk_application_new ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_gtk_3_gtk_application_new=yes
-else
-  ac_cv_lib_gtk_3_gtk_application_new=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gtk_3_gtk_application_new" >&5
-$as_echo "$ac_cv_lib_gtk_3_gtk_application_new" >&6; }
-if test "x$ac_cv_lib_gtk_3_gtk_application_new" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBGTK_3 1
-_ACEOF
-
-  LIBS="-lgtk-3 $LIBS"
-
-else
-  echo "GTK3 dev library is required" && exit -1
-fi
-
-
-	gtk3_check_old=no
-
-pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for GTK" >&5
-$as_echo_n "checking for GTK... " >&6; }
-
-if test -n "$GTK_CFLAGS"; then
-    pkg_cv_GTK_CFLAGS="$GTK_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"gtk+-3.0 >= 3.16\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "gtk+-3.0 >= 3.16") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_GTK_CFLAGS=`$PKG_CONFIG --cflags "gtk+-3.0 >= 3.16" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-if test -n "$GTK_LIBS"; then
-    pkg_cv_GTK_LIBS="$GTK_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"gtk+-3.0 >= 3.16\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "gtk+-3.0 >= 3.16") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_GTK_LIBS=`$PKG_CONFIG --libs "gtk+-3.0 >= 3.16" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        GTK_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "gtk+-3.0 >= 3.16" 2>&1`
-        else
-	        GTK_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "gtk+-3.0 >= 3.16" 2>&1`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$GTK_PKG_ERRORS" >&5
-
-	echo "GTK3 dev library is a version lower than 3.16, checking for 2.2" && gtk3_check_old=yes
-elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-	echo "GTK3 dev library is a version lower than 3.16, checking for 2.2" && gtk3_check_old=yes
-else
-	GTK_CFLAGS=$pkg_cv_GTK_CFLAGS
-	GTK_LIBS=$pkg_cv_GTK_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-fi
-	if test x$gtk3_check_old = xyes; then
-
-pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for GTK" >&5
-$as_echo_n "checking for GTK... " >&6; }
-
-if test -n "$GTK_CFLAGS"; then
-    pkg_cv_GTK_CFLAGS="$GTK_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"gtk+-3.0 >= 2.2\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "gtk+-3.0 >= 2.2") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_GTK_CFLAGS=`$PKG_CONFIG --cflags "gtk+-3.0 >= 2.2" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-if test -n "$GTK_LIBS"; then
-    pkg_cv_GTK_LIBS="$GTK_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"gtk+-3.0 >= 2.2\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "gtk+-3.0 >= 2.2") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_GTK_LIBS=`$PKG_CONFIG --libs "gtk+-3.0 >= 2.2" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        GTK_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "gtk+-3.0 >= 2.2" 2>&1`
-        else
-	        GTK_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "gtk+-3.0 >= 2.2" 2>&1`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$GTK_PKG_ERRORS" >&5
-
-	echo "GTK3 dev library is the wrong version (version 2.2 or higher is required)" && exit -1
-elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-	echo "GTK3 dev library is the wrong version (version 2.2 or higher is required)" && exit -1
-else
-	GTK_CFLAGS=$pkg_cv_GTK_CFLAGS
-	GTK_LIBS=$pkg_cv_GTK_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-fi
-		EXTRA_CFLAGS="${EXTRA_CFLAGS} -DGTK3_VERSION_PRE_3"
-	fi
-
-	EXTRA_CFLAGS="${EXTRA_CFLAGS} $GTK_CFLAGS"
-	EXTRA_LIBS="${EXTRA_LIBS} $GTK_LIBS"
-
-	build_gtk3=yes
-	SUMMARY="${SUMMARY}Using GTK3 to handle window and input functions\n"
 }
 
 CheckOpenGL()
@@ -15663,12 +15439,7 @@ else
 fi
 
 
-		if test x$enable_gtk3 = xyes; then
-			CheckGTK3
-		else
-			CheckX11
-		fi
-
+		CheckX11
 		CheckOpenGL
 		CheckEpoxy
 
@@ -15907,14 +15678,6 @@ fi
 else
   BUILD_X11_TRUE='#'
   BUILD_X11_FALSE=
-fi
-
- if test "$build_gtk3" = "yes"; then
-  BUILD_GTK3_TRUE=
-  BUILD_GTK3_FALSE='#'
-else
-  BUILD_GTK3_TRUE='#'
-  BUILD_GTK3_FALSE=
 fi
 
  if test "$build_opengl" = "yes"; then
@@ -16269,10 +16032,6 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${BUILD_X11_TRUE}" && test -z "${BUILD_X11_FALSE}"; then
   as_fn_error $? "conditional \"BUILD_X11\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${BUILD_GTK3_TRUE}" && test -z "${BUILD_GTK3_FALSE}"; then
-  as_fn_error $? "conditional \"BUILD_GTK3\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${BUILD_OPENGL_TRUE}" && test -z "${BUILD_OPENGL_FALSE}"; then

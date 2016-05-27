@@ -57,13 +57,9 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC 
 AC_CHECK_FUNCS([clock_gettime memset select strdup sysinfo])
 
-# Check if we want to build with Gtk3 instead of X11
-AC_ARG_ENABLE([gtk3], [AS_HELP_STRING([--enable-gtk3], [compile against GTK3 [default=auto]])], [enable_gtk3=$enableval],	[enable_gtk3=auto])
-
 build_linux=no
 build_windows=no
 build_x11=no
-build_gtk3=no
 build_opengl=no
 
 build_examples=yes
@@ -101,24 +97,6 @@ CheckX11()
 
 	build_x11=yes
 	SUMMARY="${SUMMARY}Using X11 to handle window and input functions\n"
-}
-
-CheckGTK3()
-{
-	AC_CHECK_LIB([gtk-3], [gtk_application_new], [], [echo "GTK3 dev library is required" && exit -1])
-
-	gtk3_check_old=no
-	PKG_CHECK_MODULES([GTK], [gtk+-3.0 >= 3.16], [], [echo "GTK3 dev library is a version lower than 3.16, checking for 2.2" && gtk3_check_old=yes])
-	if test x$gtk3_check_old = xyes; then
-		PKG_CHECK_MODULES([GTK], [gtk+-3.0 >= 2.2], [], [echo "GTK3 dev library is the wrong version (version 2.2 or higher is required)" && exit -1])
-		EXTRA_CFLAGS="${EXTRA_CFLAGS} -DGTK3_VERSION_PRE_3"
-	fi
-
-	EXTRA_CFLAGS="${EXTRA_CFLAGS} $GTK_CFLAGS"
-	EXTRA_LIBS="${EXTRA_LIBS} $GTK_LIBS"
-
-	build_gtk3=yes
-	SUMMARY="${SUMMARY}Using GTK3 to handle window and input functions\n"
 }
 
 CheckOpenGL()
@@ -191,12 +169,7 @@ case "${host_os}" in
 		AC_CHECK_HEADERS([sys/ioctl.h sys/param.h sys/types.h unistd.h])
 		AC_CHECK_LIB([pthread], [pthread_create], [], [echo "Pthread dev library is required" && exit -1])
 
-		if test x$enable_gtk3 = xyes; then
-			CheckGTK3
-		else
-			CheckX11
-		fi
-
+		CheckX11
 		CheckOpenGL
 		CheckEpoxy
 
@@ -231,7 +204,6 @@ esac
 AM_CONDITIONAL([BUILD_LINUX], [test "$build_linux" = "yes"])
 AM_CONDITIONAL([BUILD_WINDOWS], [test "$build_windows" = "yes"])
 AM_CONDITIONAL([BUILD_X11], [test "$build_x11" = "yes"])
-AM_CONDITIONAL([BUILD_GTK3], [test "$build_gtk3" = "yes"])
 AM_CONDITIONAL([BUILD_OPENGL], [test "$build_opengl" = "yes"])
 
 AM_CONDITIONAL([BUILD_TESTS], [test "$have_check" = "yes"])

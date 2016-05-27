@@ -107,11 +107,6 @@ host_triplet = @host@
 @BUILD_LINUX_TRUE@	src/ccore/linux/utils/lin_time.c
 @BUILD_X11_TRUE@am__append_5 = src/ccore/x11/interface/x11_display.c \
 @BUILD_X11_TRUE@	src/ccore/x11/interface/x11_window.c
-@BUILD_GTK3_TRUE@am__append_6 =  \
-@BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_display.c \
-@BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_window.c
-@BUILD_GTK3_TRUE@@BUILD_OPENGL_TRUE@am__append_7 = src/ccore/gtk3/interface/gtk3_opengl.c \
-@BUILD_GTK3_TRUE@@BUILD_OPENGL_TRUE@	src/ccore/gtk3/interface/gtk3_widget.c
 @BUILD_TESTS_TRUE@check_PROGRAMS = check_ccore$(EXEEXT)
 @BUILD_TESTS_TRUE@TESTS = check_ccore$(EXEEXT)
 @BUILD_EXAMPLES_TRUE@bin_PROGRAMS = bin/framebuffer$(EXEEXT) \
@@ -184,11 +179,7 @@ am__libccore_la_SOURCES_DIST =  \
 	src/ccore/linux/utils/lin_thread.c \
 	src/ccore/linux/utils/lin_time.c \
 	src/ccore/x11/interface/x11_display.c \
-	src/ccore/x11/interface/x11_window.c \
-	src/ccore/gtk3/interface/gtk3_display.c \
-	src/ccore/gtk3/interface/gtk3_window.c \
-	src/ccore/gtk3/interface/gtk3_opengl.c \
-	src/ccore/gtk3/interface/gtk3_widget.c
+	src/ccore/x11/interface/x11_window.c
 am__dirstamp = $(am__leading_dot)dirstamp
 @BUILD_WINDOWS_TRUE@am__objects_1 = src/ccore/windows/interface/win_display.lo \
 @BUILD_WINDOWS_TRUE@	src/ccore/windows/interface/win_gamepad.lo \
@@ -208,11 +199,6 @@ am__dirstamp = $(am__leading_dot)dirstamp
 @BUILD_X11_TRUE@am__objects_5 =  \
 @BUILD_X11_TRUE@	src/ccore/x11/interface/x11_display.lo \
 @BUILD_X11_TRUE@	src/ccore/x11/interface/x11_window.lo
-@BUILD_GTK3_TRUE@am__objects_6 =  \
-@BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_display.lo \
-@BUILD_GTK3_TRUE@	src/ccore/gtk3/interface/gtk3_window.lo
-@BUILD_GTK3_TRUE@@BUILD_OPENGL_TRUE@am__objects_7 = src/ccore/gtk3/interface/gtk3_opengl.lo \
-@BUILD_GTK3_TRUE@@BUILD_OPENGL_TRUE@	src/ccore/gtk3/interface/gtk3_widget.lo
 am_libccore_la_OBJECTS = src/ccore/common/interface/com_display.lo \
 	src/ccore/common/interface/com_event.lo \
 	src/ccore/common/utils/com_core.lo \
@@ -221,7 +207,7 @@ am_libccore_la_OBJECTS = src/ccore/common/interface/com_display.lo \
 	src/ccore/common/utils/com_string.lo \
 	src/ccore/common/utils/com_time.lo $(am__objects_1) \
 	$(am__objects_2) $(am__objects_3) $(am__objects_4) \
-	$(am__objects_5) $(am__objects_6) $(am__objects_7)
+	$(am__objects_5)
 libccore_la_OBJECTS = $(am_libccore_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -564,8 +550,6 @@ FGREP = @FGREP@
 GLEW_CFLAGS = @GLEW_CFLAGS@
 GLEW_LIBS = @GLEW_LIBS@
 GREP = @GREP@
-GTK_CFLAGS = @GTK_CFLAGS@
-GTK_LIBS = @GTK_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -683,7 +667,7 @@ libccore_la_SOURCES = src/ccore/common/interface/com_display.c \
 	src/ccore/common/utils/com_string.c \
 	src/ccore/common/utils/com_time.c $(am__append_1) \
 	$(am__append_2) $(am__append_3) $(am__append_4) \
-	$(am__append_5) $(am__append_6) $(am__append_7)
+	$(am__append_5)
 @BUILD_TESTS_TRUE@check_ccore_SOURCES = test/test.c
 @BUILD_TESTS_TRUE@check_ccore_LDADD = @CHECK_LIBS@ libccore.la
 @BUILD_EXAMPLES_TRUE@bin_framebuffer_SOURCES = examples/framebuffer.c
@@ -872,24 +856,6 @@ src/ccore/x11/interface/x11_display.lo:  \
 src/ccore/x11/interface/x11_window.lo:  \
 	src/ccore/x11/interface/$(am__dirstamp) \
 	src/ccore/x11/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/gtk3/interface/$(am__dirstamp):
-	@$(MKDIR_P) src/ccore/gtk3/interface
-	@: > src/ccore/gtk3/interface/$(am__dirstamp)
-src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) src/ccore/gtk3/interface/$(DEPDIR)
-	@: > src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/gtk3/interface/gtk3_display.lo:  \
-	src/ccore/gtk3/interface/$(am__dirstamp) \
-	src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/gtk3/interface/gtk3_window.lo:  \
-	src/ccore/gtk3/interface/$(am__dirstamp) \
-	src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/gtk3/interface/gtk3_opengl.lo:  \
-	src/ccore/gtk3/interface/$(am__dirstamp) \
-	src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp)
-src/ccore/gtk3/interface/gtk3_widget.lo:  \
-	src/ccore/gtk3/interface/$(am__dirstamp) \
-	src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp)
 
 libccore.la: $(libccore_la_OBJECTS) $(libccore_la_DEPENDENCIES) $(EXTRA_libccore_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(libccore_la_LINK) -rpath $(libdir) $(libccore_la_OBJECTS) $(libccore_la_LIBADD) $(LIBS)
@@ -1000,8 +966,6 @@ mostlyclean-compile:
 	-rm -f src/ccore/common/interface/*.lo
 	-rm -f src/ccore/common/utils/*.$(OBJEXT)
 	-rm -f src/ccore/common/utils/*.lo
-	-rm -f src/ccore/gtk3/interface/*.$(OBJEXT)
-	-rm -f src/ccore/gtk3/interface/*.lo
 	-rm -f src/ccore/linux/interface/*.$(OBJEXT)
 	-rm -f src/ccore/linux/interface/*.lo
 	-rm -f src/ccore/linux/utils/*.$(OBJEXT)
@@ -1028,10 +992,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_rect.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_string.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/common/utils/$(DEPDIR)/com_time.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/gtk3/interface/$(DEPDIR)/gtk3_display.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/gtk3/interface/$(DEPDIR)/gtk3_opengl.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/gtk3/interface/$(DEPDIR)/gtk3_widget.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/ccore/gtk3/interface/$(DEPDIR)/gtk3_window.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/interface/$(DEPDIR)/lin_gamepad.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/utils/$(DEPDIR)/lin_file.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/ccore/linux/utils/$(DEPDIR)/lin_sysinfo.Plo@am__quote@
@@ -1081,7 +1041,6 @@ clean-libtool:
 	-rm -rf bin/.libs bin/_libs
 	-rm -rf src/ccore/common/interface/.libs src/ccore/common/interface/_libs
 	-rm -rf src/ccore/common/utils/.libs src/ccore/common/utils/_libs
-	-rm -rf src/ccore/gtk3/interface/.libs src/ccore/gtk3/interface/_libs
 	-rm -rf src/ccore/linux/interface/.libs src/ccore/linux/interface/_libs
 	-rm -rf src/ccore/linux/utils/.libs src/ccore/linux/utils/_libs
 	-rm -rf src/ccore/windows/interface/.libs src/ccore/windows/interface/_libs
@@ -1544,8 +1503,6 @@ distclean-generic:
 	-rm -f src/ccore/common/interface/$(am__dirstamp)
 	-rm -f src/ccore/common/utils/$(DEPDIR)/$(am__dirstamp)
 	-rm -f src/ccore/common/utils/$(am__dirstamp)
-	-rm -f src/ccore/gtk3/interface/$(DEPDIR)/$(am__dirstamp)
-	-rm -f src/ccore/gtk3/interface/$(am__dirstamp)
 	-rm -f src/ccore/linux/interface/$(DEPDIR)/$(am__dirstamp)
 	-rm -f src/ccore/linux/interface/$(am__dirstamp)
 	-rm -f src/ccore/linux/utils/$(DEPDIR)/$(am__dirstamp)
@@ -1569,7 +1526,7 @@ clean-am: clean-binPROGRAMS clean-checkPROGRAMS clean-generic \
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf examples/$(DEPDIR) src/ccore/common/interface/$(DEPDIR) src/ccore/common/utils/$(DEPDIR) src/ccore/gtk3/interface/$(DEPDIR) src/ccore/linux/interface/$(DEPDIR) src/ccore/linux/utils/$(DEPDIR) src/ccore/windows/interface/$(DEPDIR) src/ccore/windows/utils/$(DEPDIR) src/ccore/x11/interface/$(DEPDIR) test/$(DEPDIR)
+	-rm -rf examples/$(DEPDIR) src/ccore/common/interface/$(DEPDIR) src/ccore/common/utils/$(DEPDIR) src/ccore/linux/interface/$(DEPDIR) src/ccore/linux/utils/$(DEPDIR) src/ccore/windows/interface/$(DEPDIR) src/ccore/windows/utils/$(DEPDIR) src/ccore/x11/interface/$(DEPDIR) test/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-libtool distclean-tags
@@ -1617,7 +1574,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf examples/$(DEPDIR) src/ccore/common/interface/$(DEPDIR) src/ccore/common/utils/$(DEPDIR) src/ccore/gtk3/interface/$(DEPDIR) src/ccore/linux/interface/$(DEPDIR) src/ccore/linux/utils/$(DEPDIR) src/ccore/windows/interface/$(DEPDIR) src/ccore/windows/utils/$(DEPDIR) src/ccore/x11/interface/$(DEPDIR) test/$(DEPDIR)
+	-rm -rf examples/$(DEPDIR) src/ccore/common/interface/$(DEPDIR) src/ccore/common/utils/$(DEPDIR) src/ccore/linux/interface/$(DEPDIR) src/ccore/linux/utils/$(DEPDIR) src/ccore/windows/interface/$(DEPDIR) src/ccore/windows/utils/$(DEPDIR) src/ccore/x11/interface/$(DEPDIR) test/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
