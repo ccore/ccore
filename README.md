@@ -7,8 +7,8 @@ ccore is described in detail in [the ccore wiki.](../../wiki)
 
 | Branch | Status |
 | --- | --- |
-| Master | [![Build Status](https://travis-ci.org/ccore/ccore.svg?branch=master)](https://travis-ci.org/ccore/ccore) |
-| Develop | [![Build Status](https://travis-ci.org/ccore/ccore.svg?branch=develop)](https://travis-ci.org/ccore/ccore) |
+| Master | [![Build Status](https://travis-ci.org/ccore/ccore_legacy.svg?branch=master)](https://travis-ci.org/ccore/ccore) |
+| Develop | [![Build Status](https://travis-ci.org/ccore/ccore_legacy.svg?branch=develop)](https://travis-ci.org/ccore/ccore) |
 
 ###Features###
 
