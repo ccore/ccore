@@ -25,4 +25,4 @@ override_dh_strip:
 	dh_strip -plibccore1 --dbg-package=libccore1-dbg
 
 #override_dh_makeshlibs:
-#	dh_makeshlibs -V"libccore1 (>= 1.1.3)"
+#	dh_makeshlibs -V"libccore1 (>= 1.2.0)"
