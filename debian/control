@@ -43,7 +43,6 @@ Depends:
  libxi-dev,
  libxinerama-dev,
  libxrandr-dev,
- libccore1 (= ${binary:Version}), 
  ${misc:Depends}
 Description: Development files for the ccore library
  ccore is an low-level abstraction library for writing multimedia
